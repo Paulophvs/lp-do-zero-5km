@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Do Zero aos Seus Primeiros 5km | Paulo Henrique</title>
+  <meta name="description" content="O método que transforma iniciantes em corredores em apenas 8 semanas — sem sofrimento, sem lesão, sem desistir na segunda semana." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde: #16a34a;
+      --verde-claro: #22c55e;
+      --verde-escuro: #14532d;
+      --laranja: #ea580c;
+      --preto: #0a0a0a;
+      --cinza-escuro: #111827;
+      --cinza: #374151;
+      --cinza-claro: #9ca3af;
+      --branco: #ffffff;
+      --bg: #0d0d0d;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--branco);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px 52px;
+      text-align: center;
+      position: relative;
+      background: linear-gradient(160deg, #0a160e 0%, #0d1a10 40%, #0d0d0d 100%);
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(22,163,74,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 100px;
+      background: linear-gradient(to bottom, transparent, var(--bg));
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(22,163,74,0.15);
+      border: 1px solid rgba(22,163,74,0.4);
+      color: var(--verde-claro);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.12;
+      max-width: 860px;
+      margin-bottom: 22px;
+      letter-spacing: -0.025em;
+    }
+
+    .hero h1 span { color: var(--verde-claro); }
+
+    .hero p.sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--cinza-claro);
+      max-width: 640px;
+      margin-bottom: 44px;
+      line-height: 1.7;
+    }
+
+    /* ===== VIDEO PLACEHOLDER ===== */
+    .video-wrapper {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto 44px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 2px solid rgba(22,163,74,0.3);
+      box-shadow: 0 0 60px rgba(22,163,74,0.15);
+      aspect-ratio: 16/9;
+      background: #0a1a10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .video-wrapper .play-icon {
+      width: 72px;
+      height: 72px;
+      background: var(--verde);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .video-wrapper:hover .play-icon {
+      background: var(--verde-claro);
+      transform: scale(1.1);
+    }
+
+    .video-wrapper .play-icon svg {
+      width: 28px;
+      height: 28px;
+      fill: white;
+      margin-left: 4px;
+    }
+
+    .video-label {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      white-space: nowrap;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--verde);
+      color: var(--branco);
+      font-size: 1.1rem;
+      font-weight: 800;
+      padding: 18px 44px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      border: none;
+      cursor: pointer;
+      letter-spacing: -0.01em;
+    }
+
+    .cta-btn:hover { background: var(--verde-claro); transform: translateY(-2px); }
+
+    .cta-btn.laranja { background: var(--laranja); }
+    .cta-btn.laranja:hover { background: #f97316; }
+
+    .hero-meta {
+      margin-top: 20px;
+      color: var(--cinza-claro);
+      font-size: 0.9rem;
+    }
+
+    /* ===== SECTION BASE ===== */
+    section {
+      padding: 52px 24px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--verde-claro);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+
+    h2 span { color: var(--verde-claro); }
+
+    /* ===== STORY ===== */
+    .story {
+      background: var(--cinza-escuro);
+    }
+
+    .story-text {
+      font-size: clamp(1rem, 1.8vw, 1.15rem);
+      color: #d1d5db;
+      line-height: 1.9;
+      margin-bottom: 16px;
+    }
+
+    .story-text em {
+      color: var(--verde-claro);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .story-quote {
+      border-left: 3px solid var(--verde);
+      padding: 16px 22px;
+      margin: 28px 0;
+      background: rgba(22,163,74,0.07);
+      border-radius: 0 10px 10px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--branco);
+      line-height: 1.6;
+    }
+
+    /* ===== IMAGEM SECAO ===== */
+    .img-section {
+      padding: 0;
+      line-height: 0;
+    }
+
+    .img-section img {
+      width: 100%;
+      max-height: 480px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ===== ERROS ===== */
+    .erros-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-top: 36px;
+    }
+
+    .erro-card {
+      background: rgba(234,88,12,0.06);
+      border: 1px solid rgba(234,88,12,0.2);
+      border-radius: 12px;
+      padding: 28px 24px;
+    }
+
+    .erro-card .num {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--laranja);
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+
+    .erro-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .erro-card p {
+      font-size: 0.88rem;
+      color: var(--cinza-claro);
+      line-height: 1.6;
+    }
+
+    /* ===== SOLUCAO / PILARES ===== */
+    .solucao {
+      background: linear-gradient(180deg, #0d0d0d 0%, #0d1f14 60%, #0d0d0d 100%);
+    }
+
+    .pilares-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 40px;
+    }
+
+    .pilar {
+      background: rgba(22,163,74,0.08);
+      border: 1px solid rgba(22,163,74,0.25);
+      border-radius: 14px;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .pilar .pilar-icon {
+      font-size: 2.2rem;
+      margin-bottom: 14px;
+    }
+
+    .pilar h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--branco);
+      margin-bottom: 10px;
+    }
+
+    .pilar p {
+      font-size: 0.85rem;
+      color: var(--cinza-claro);
+      line-height: 1.6;
+    }
+
+    /* ===== MODULOS ===== */
+    .modulos { background: var(--cinza-escuro); }
+
+    .modulos-list {
+      list-style: none;
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      counter-reset: mod;
+    }
+
+    .modulos-list li {
+      counter-increment: mod;
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 22px 24px;
+    }
+
+    .modulos-list li::before {
+      content: counter(mod, decimal-leading-zero);
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--verde-claro);
+      flex-shrink: 0;
+      min-width: 40px;
+      margin-top: 2px;
+    }
+
+    .modulos-list li .mod-info h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .modulos-list li .mod-info p {
+      font-size: 0.875rem;
+      color: var(--cinza-claro);
+      line-height: 1.55;
+    }
+
+    /* ===== RESULTADOS / VISUALIZACAO ===== */
+    .resultados {
+      background: var(--bg);
+    }
+
+    .beneficios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      margin-top: 36px;
+    }
+
+    .beneficio {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      padding: 26px 22px;
+      text-align: center;
+    }
+
+    .beneficio .b-icon { font-size: 2rem; margin-bottom: 12px; }
+    .beneficio h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .beneficio p { font-size: 0.83rem; color: var(--cinza-claro); line-height: 1.5; }
+
+    /* ===== PARA QUEM ===== */
+    .para-quem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 36px;
+    }
+
+    @media (max-width: 600px) {
+      .para-quem-grid { grid-template-columns: 1fr; }
+    }
+
+    .pq-card {
+      border-radius: 12px;
+      padding: 28px 22px;
+    }
+
+    .pq-card.sim {
+      background: rgba(22,163,74,0.08);
+      border: 1px solid rgba(22,163,74,0.25);
+    }
+
+    .pq-card.nao {
+      background: rgba(234,88,12,0.07);
+      border: 1px solid rgba(234,88,12,0.2);
+    }
+
+    .pq-card h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .pq-card.sim h3 { color: var(--verde-claro); }
+    .pq-card.nao h3 { color: var(--laranja); }
+
+    .pq-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+    .pq-list li {
+      font-size: 0.9rem;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.5;
+    }
+
+    .pq-list li .check { flex-shrink: 0; margin-top: 1px; }
+
+    /* ===== OBJECOES ===== */
+    .objecoes { background: var(--cinza-escuro); }
+
+    .objecao-item {
+      margin-bottom: 20px;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .objecao-q {
+      padding: 20px 24px;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.03);
+    }
+
+    .objecao-q .q-icon {
+      color: var(--laranja);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .objecao-r {
+      padding: 18px 24px;
+      font-size: 0.93rem;
+      color: #d1d5db;
+      line-height: 1.7;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* ===== OFERTA ===== */
+    .oferta {
+      background: linear-gradient(180deg, #0d0d0d 0%, #0a160e 50%, #0d0d0d 100%);
+    }
+
+    .oferta-box {
+      background: rgba(22,163,74,0.07);
+      border: 2px solid rgba(22,163,74,0.3);
+      border-radius: 20px;
+      padding: 40px 32px;
+      text-align: center;
+      max-width: 540px;
+      margin: 40px auto 0;
+    }
+
+    .oferta-box .preco-de {
+      font-size: 1rem;
+      color: var(--cinza-claro);
+      text-decoration: line-through;
+      margin-bottom: 6px;
+    }
+
+    .oferta-box .preco {
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--verde-claro);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .oferta-box .preco-pix {
+      font-size: 0.95rem;
+      color: var(--cinza-claro);
+      margin-bottom: 28px;
+    }
+
+    .oferta-box .preco-pix strong {
+      color: var(--branco);
+    }
+
+    .oferta-bonus {
+      list-style: none;
+      text-align: left;
+      margin: 28px 0 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .oferta-bonus li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.93rem;
+      line-height: 1.5;
+    }
+
+    .oferta-bonus li .b-check {
+      color: var(--verde-claro);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .garantia {
+      margin-top: 22px;
+      font-size: 0.85rem;
+      color: var(--cinza-claro);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* ===== PROVA ===== */
+    .prova { background: var(--bg); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+
+    .stat {
+      text-align: center;
+      padding: 28px 20px;
+      background: rgba(22,163,74,0.07);
+      border: 1px solid rgba(22,163,74,0.2);
+      border-radius: 14px;
+    }
+
+    .stat .num {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--verde-claro);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat p { font-size: 0.85rem; color: var(--cinza-claro); line-height: 1.4; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      padding: 36px 24px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      background: #080808;
+    }
+
+    footer p { font-size: 0.83rem; color: var(--cinza-claro); line-height: 1.7; }
+
+    /* ===== STICKY CTA ===== */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0; right: 0;
+      background: rgba(10,10,10,0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(22,163,74,0.25);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      z-index: 100;
+      transform: translateY(100%);
+      transition: transform 0.35s ease;
+    }
+
+    .sticky-cta.visible { transform: translateY(0); }
+
+    .sticky-cta .price-inline {
+      font-size: 0.9rem;
+      color: var(--cinza-claro);
+      display: none;
+    }
+
+    .sticky-cta .price-inline strong {
+      color: var(--verde-claro);
+      font-size: 1.1rem;
+    }
+
+    @media (min-width: 480px) {
+      .sticky-cta .price-inline { display: block; }
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent);
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="badge">Curso de Corrida Para Iniciantes</div>
+
+    <h1>De <span>Menos de 3 Minutos</span><br>para Completar seus<br>Primeiros 5km</h1>
+
+    <p class="sub">
+      O método científico que transforma iniciantes absolutos em corredores reais em 8 semanas — sem sofrimento desnecessário, sem lesão, sem desistir na segunda semana.
+    </p>
+
+    <!-- VIDEO PLACEHOLDER -->
+    <div class="video-wrapper" id="videoPlaceholder">
+      <div class="play-icon">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <span class="video-label">Vídeo de apresentação</span>
+    </div>
+
+    <a href="#oferta" class="cta-btn laranja">QUERO COMEÇAR AGORA →</a>
+
+    <p class="hero-meta">✓ Acesso imediato &nbsp;·&nbsp; ✓ 7 dias de garantia &nbsp;·&nbsp; ✓ Suporte incluído</p>
+  </section>
+
+  <!-- ===== STORY: IDENTIFICAÇÃO ===== -->
+  <section class="story">
+    <div class="container">
+      <p class="section-label">A história que você conhece</p>
+      <h2>Você tentou correr e parou em <span>menos de 3 minutos</span>?</h2>
+
+      <p class="story-text">
+        Sabe aquela cena? Você coloca o tênis, saí empolgado, começa a correr... e em dois minutos o coração dispara, a respiração falha, as pernas travam. Você para. Envergonhado. Com a sensação de que "corrida não é para mim".
+      </p>
+
+      <div class="story-quote">
+        "Tentei por três vezes e sempre desisti. Achei que tinha algum problema comigo. Não era falta de vontade — era falta do método certo."
+      </div>
+
+      <p class="story-text">
+        A verdade é que <em>você não é fraco</em>. Você simplesmente nunca teve acesso a um método estruturado para iniciantes. A maioria das pessoas começa correr da forma errada — e aí qualquer um desistiria.
+      </p>
+
+      <p class="story-text">
+        A ciência do condicionamento físico é clara: o corpo humano <em>foi feito para correr</em>. Mas precisa de uma progressão inteligente. Com o método certo, qualquer pessoa — independente da idade ou forma física — consegue completar 5km.
+      </p>
+    </div>
+  </section>
+
+  <!-- IMAGEM: INICIANTE ===== -->
+  <div class="img-section">
+    <img src="img-inicio-opt.jpg" alt="Corredor iniciante em treino" loading="lazy" />
+  </div>
+
+  <!-- ===== ERROS COMUNS ===== -->
+  <section>
+    <div class="container">
+      <p class="section-label">Por que você falhou antes</p>
+      <h2>Os <span>3 erros</span> que fazem todo iniciante desistir</h2>
+
+      <div class="erros-grid">
+        <div class="erro-card">
+          <div class="num">01</div>
+          <h3>Começar rápido demais</h3>
+          <p>Você saiu correndo com tudo logo de cara. Seu coração não estava adaptado. O certo é começar no ritmo de uma caminhada animada — e progredir gradualmente.</p>
+        </div>
+        <div class="erro-card">
+          <div class="num">02</div>
+          <h3>Pular o aquecimento</h3>
+          <p>Sem preparar músculos e articulações, o corpo entra em modo de proteção. Dor, câimbra e lesão são consequência de sair correndo a frio.</p>
+        </div>
+        <div class="erro-card">
+          <div class="num">03</div>
+          <h3>Sem progressão definida</h3>
+          <p>Correr a mesma distância toda semana não evolui ninguém. O corpo precisa de estímulos progressivos e controlados para se adaptar de verdade.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMAGEM: TREINO ===== -->
+  <div class="img-section">
+    <img src="img-treino-opt.jpg" alt="Treino progressivo estruturado" loading="lazy" />
+  </div>
+
+  <!-- ===== SOLUCAO: PILARES ===== -->
+  <section class="solucao">
+    <div class="container">
+      <p class="section-label">A solução</p>
+      <h2>O método que <span>realmente funciona</span> para iniciantes</h2>
+
+      <p style="color: var(--cinza-claro); margin-bottom: 8px; font-size: 1rem; line-height: 1.7;">
+        O "Do Zero aos 5km" é construído sobre 3 pilares que respeitam a biologia do seu corpo e garantem evolução sem sofrimento.
+      </p>
+
+      <div class="pilares-grid">
+        <div class="pilar">
+          <div class="pilar-icon">🧬</div>
+          <h3>Adaptação Inteligente</h3>
+          <p>Progressão calculada semana a semana. Seu corpo se adapta no ritmo certo, sem choques e sem risco de lesão.</p>
+        </div>
+        <div class="pilar">
+          <div class="pilar-icon">📈</div>
+          <h3>Progressão Controlada</h3>
+          <p>Cada treino tem objetivo claro. Você sabe exatamente o que fazer, por quanto tempo e por quê. Sem achismos.</p>
+        </div>
+        <div class="pilar">
+          <div class="pilar-icon">🔁</div>
+          <h3>Consistência Sem Sofrimento</h3>
+          <p>Treinos curtos e eficientes que cabem na sua rotina. 10 minutos por dia já geram resultado real comprovado pela ciência.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VISUALIZACAO: FUTURO ===== -->
+  <section class="resultados">
+    <div class="container">
+      <p class="section-label">Sua transformação</p>
+      <h2>Imagine daqui a <span>8 semanas</span>...</h2>
+
+      <p style="color: var(--cinza-claro); font-size: 1rem; line-height: 1.7; margin-bottom: 36px;">
+        Você cruza a linha de chegada de uma prova de 5km. O coração bate forte — mas dessa vez é de satisfação, não de desespero. As pessoas ao redor aplaudem. Você prova para si mesmo que é capaz.
+      </p>
+
+      <div class="beneficios-grid">
+        <div class="beneficio">
+          <div class="b-icon">❤️</div>
+          <h4>Coração Mais Forte</h4>
+          <p>10 minutos de corrida por dia reduzem o risco cardiovascular em até 45% segundo pesquisas</p>
+        </div>
+        <div class="beneficio">
+          <div class="b-icon">⚡</div>
+          <h4>Energia no Dia a Dia</h4>
+          <p>Corredores relatam +40% de energia ao longo do dia após 4 semanas de prática consistente</p>
+        </div>
+        <div class="beneficio">
+          <div class="b-icon">🧠</div>
+          <h4>Clareza Mental</h4>
+          <p>A corrida libera endorfinas e dopamina — melhora de humor e concentração comprovada</p>
+        </div>
+        <div class="beneficio">
+          <div class="b-icon">🏅</div>
+          <h4>Confiança Real</h4>
+          <p>Completar seu primeiro 5km muda a forma como você se vê. Uma conquista que ninguém tira de você</p>
+        </div>
+        <div class="beneficio">
+          <div class="b-icon">😴</div>
+          <h4>Sono Profundo</h4>
+          <p>Treinos moderados regulares melhoram significativamente a qualidade do sono</p>
+        </div>
+        <div class="beneficio">
+          <div class="b-icon">🔥</div>
+          <h4>Metabolismo Ativo</h4>
+          <p>Seu corpo queima mais calorias ao longo do dia — mesmo quando está parado</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMAGEM: CHEGADA ===== -->
+  <div class="img-section">
+    <img src="img-chegada-opt.jpg" alt="Corredor completando primeiros 5km" loading="lazy" />
+  </div>
+
+  <!-- ===== MODULOS ===== -->
+  <section class="modulos">
+    <div class="container">
+      <p class="section-label">O que você recebe</p>
+      <h2>5 módulos para ir do <span>zero aos 5km</span></h2>
+
+      <ul class="modulos-list">
+        <li>
+          <div class="mod-info">
+            <h4>Módulo 1 — Base Para Correr Sem Dor</h4>
+            <p>Avaliação do seu ponto de partida, escolha do tênis ideal, entendimento das zonas de frequência cardíaca e como usar isso a seu favor desde o primeiro treino.</p>
+          </div>
+        </li>
+        <li>
+          <div class="mod-info">
+            <h4>Módulo 2 — Aquecimento e Mobilidade</h4>
+            <p>Rotina completa de aquecimento dinâmico e mobilidade articular. Aprenda a preparar o corpo antes de cada treino para evitar lesões e correr melhor.</p>
+          </div>
+        </li>
+        <li>
+          <div class="mod-info">
+            <h4>Módulo 3 — Método Run/Walk (Corrida Progressiva)</h4>
+            <p>O método científico de alternância entre corrida e caminhada que leva iniciantes a completar 5km contínuos em 8 semanas. Com planilhas detalhadas.</p>
+          </div>
+        </li>
+        <li>
+          <div class="mod-info">
+            <h4>Módulo 4 — Fortalecimento para Corredores</h4>
+            <p>Exercícios específicos de força que protegem seus joelhos, quadril e tornozelos. Feito para quem não tem academia — só com o próprio peso corporal.</p>
+          </div>
+        </li>
+        <li>
+          <div class="mod-info">
+            <h4>Módulo 5 — Sua Primeira Prova de 5km</h4>
+            <p>Como se preparar para o dia da prova, estratégia de ritmo para não explodir no começo, nutrição pré-treino e como transformar essa conquista em hábito para a vida.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== PARA QUEM É ===== -->
+  <section>
+    <div class="container">
+      <p class="section-label">Público ideal</p>
+      <h2>Este curso é <span>pra você</span>?</h2>
+
+      <div class="para-quem-grid">
+        <div class="pq-card sim">
+          <h3>✓ É para você se...</h3>
+          <ul class="pq-list">
+            <li><span class="check">✅</span> Você é iniciante ou retomando após longo período parado</li>
+            <li><span class="check">✅</span> Você quer completar uma prova de 5km</li>
+            <li><span class="check">✅</span> Você cansou de tentar e desistir sozinho</li>
+            <li><span class="check">✅</span> Você tem medo de se lesionar correndo</li>
+            <li><span class="check">✅</span> Você tem pouco tempo e quer treinos eficientes</li>
+          </ul>
+        </div>
+        <div class="pq-card nao">
+          <h3>✗ Não é para você se...</h3>
+          <ul class="pq-list">
+            <li><span class="check">❌</span> Você já corre 5km+ confortavelmente</li>
+            <li><span class="check">❌</span> Você busca melhora de pace (veja o Curso 2)</li>
+            <li><span class="check">❌</span> Você quer resultado sem treinar</li>
+            <li><span class="check">❌</span> Você não está disposto a seguir o método</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== OBJECOES ===== -->
+  <section class="objecoes">
+    <div class="container">
+      <p class="section-label">Dúvidas comuns</p>
+      <h2>Ainda está <span>na dúvida</span>?</h2>
+
+      <div style="margin-top: 32px;">
+        <div class="objecao-item">
+          <div class="objecao-q">
+            <span class="q-icon">❓</span>
+            Mas eu nunca corri na vida. Vai funcionar mesmo para mim?
+          </div>
+          <div class="objecao-r">
+            Sim. O método foi criado exatamente para quem nunca correu ou tentou e desistiu. Começamos do absoluto zero, com treinos de apenas 20 minutos e alternância entre corrida e caminhada. Seu corpo vai se adaptar — é fisiologia, não força de vontade.
+          </div>
+        </div>
+
+        <div class="objecao-item">
+          <div class="objecao-q">
+            <span class="q-icon">❓</span>
+            Estou muito acima do peso. Posso fazer esse curso?
+          </div>
+          <div class="objecao-r">
+            Sim, e o método é ainda mais indicado para você. A progressão gradual e os exercícios de fortalecimento protegem suas articulações. Centenas de pessoas acima do peso completaram seus primeiros 5km com esse método — sem se machucar.
+          </div>
+        </div>
+
+        <div class="objecao-item">
+          <div class="objecao-q">
+            <span class="q-icon">❓</span>
+            Tenho problema no joelho. Posso correr?
+          </div>
+          <div class="objecao-r">
+            O módulo de fortalecimento e a progressão gradual foram desenhados para proteger o joelho, não sobrecarregá-lo. Dito isso, sempre recomende consulta médica para condições específicas. A maioria dos problemas leves de joelho melhora com fortalecimento muscular — que está incluído no curso.
+          </div>
+        </div>
+
+        <div class="objecao-item">
+          <div class="objecao-q">
+            <span class="q-icon">❓</span>
+            Não tenho tempo. Os treinos são muito longos?
+          </div>
+          <div class="objecao-r">
+            Os treinos iniciais duram 20 a 30 minutos. Com o tempo avançam para 40 minutos — mas são 3 vezes por semana. Isso é menos de 2 horas semanais. Se você assistiu uma série na última semana, você tem tempo para correr.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROVA SOCIAL ===== -->
+  <section class="prova">
+    <div class="container">
+      <p class="section-label">Resultados reais</p>
+      <h2>Números que <span>falam por si</span></h2>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="num">8</div>
+          <p>Semanas para completar seus primeiros 5km</p>
+        </div>
+        <div class="stat">
+          <div class="num">3x</div>
+          <p>Treinos por semana — cabe em qualquer rotina</p>
+        </div>
+        <div class="stat">
+          <div class="num">20min</div>
+          <p>Duração do primeiro treino — simples e acessível</p>
+        </div>
+        <div class="stat">
+          <div class="num">0</div>
+          <p>Equipamentos necessários — só seu tênis e vontade</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== OFERTA ===== -->
+  <section class="oferta" id="oferta">
+    <div class="container">
+      <p class="section-label" style="text-align:center;">Investimento</p>
+      <h2 style="text-align:center;">Comece hoje por <span>muito menos</span> do que parece</h2>
+      <p style="text-align:center; color: var(--cinza-claro); font-size: 0.95rem; line-height: 1.7;">Você vai gastar mais num par de tênis do que no método que vai te ensinar a correr de verdade.</p>
+
+      <div class="oferta-box">
+        <p class="preco-de">De R$ 297,00</p>
+        <div class="preco">R$ 197</div>
+        <p class="preco-pix">ou <strong>12x de R$ 18,99</strong> no cartão</p>
+
+        <ul class="oferta-bonus">
+          <li><span class="b-check">✅</span> 5 módulos completos em vídeo (acesso vitalício)</li>
+          <li><span class="b-check">✅</span> Planilha de treinos semana a semana</li>
+          <li><span class="b-check">✅</span> Guia de aquecimento em PDF</li>
+          <li><span class="b-check">✅</span> Protocolo de fortalecimento para iniciantes</li>
+          <li><span class="b-check">✅</span> Suporte direto pelo grupo exclusivo</li>
+          <li><span class="b-check">🎁</span> <strong>Bônus:</strong> Guia "Sua Primeira Prova de 5km" (R$47 de valor)</li>
+        </ul>
+
+        <a href="https://wa.me/5500000000000" class="cta-btn laranja" style="display:block; font-size: 1.1rem; padding: 20px 32px;">
+          GARANTIR MINHA VAGA AGORA →
+        </a>
+
+        <p class="garantia">🛡️ Garantia de 7 dias · Se não gostar, devolvemos 100%</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container">
+      <p>Paulo Henrique · Treinador de Corrida</p>
+      <p style="margin-top: 8px;">Este produto é digital. Após a confirmação do pagamento, você recebe acesso imediato.</p>
+    </div>
+  </footer>
+
+  <!-- ===== STICKY CTA ===== -->
+  <div class="sticky-cta" id="stickyCta">
+    <div class="price-inline">
+      Por apenas <strong>R$ 197</strong>
+    </div>
+    <a href="#oferta" class="cta-btn laranja" style="font-size: 0.95rem; padding: 14px 28px;">
+      COMEÇAR AGORA →
+    </a>
+  </div>
+
+  <script>
+    // Sticky CTA on scroll
+    const stickyCta = document.getElementById('stickyCta');
+    const hero = document.querySelector('.hero');
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        stickyCta.classList.toggle('visible', !entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(hero);
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  </script>
+</body>
+</html>
