@@ -626,6 +626,211 @@
       background: linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent);
       margin: 0;
     }
+
+    /* ===== PAULO ===== */
+    .paulo {
+      background: linear-gradient(180deg, #0d0d0d 0%, #0a160e 50%, #0d0d0d 100%);
+    }
+
+    .paulo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 44px;
+      align-items: center;
+      margin-top: 36px;
+    }
+
+    @media (max-width: 760px) {
+      .paulo-grid { grid-template-columns: 1fr; gap: 28px; }
+    }
+
+    .paulo-photo {
+      width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(22,163,74,0.25);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+      aspect-ratio: 4/5;
+    }
+
+    .paulo-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .paulo-nome {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--branco);
+      margin-bottom: 4px;
+    }
+
+    .paulo-sub {
+      color: var(--cinza-claro);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .paulo-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .paulo-bullets li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #d1d5db;
+    }
+
+    .paulo-bullets li .p-check {
+      color: var(--verde-claro);
+      font-weight: 900;
+      font-size: 1.05rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .paulo-bullets li strong { color: var(--branco); }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,5,5,0.82);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 200;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #0f1f14;
+      border: 1px solid rgba(22,163,74,0.35);
+      border-radius: 18px;
+      max-width: 440px;
+      width: 100%;
+      padding: 32px 28px 28px;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      background: transparent;
+      border: none;
+      color: var(--cinza-claro);
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+    }
+
+    .modal-close:hover { color: var(--branco); }
+
+    .modal h3 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--branco);
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+
+    .modal p.modal-sub {
+      color: var(--cinza-claro);
+      font-size: 0.9rem;
+      margin-bottom: 22px;
+      line-height: 1.55;
+    }
+
+    .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+
+    .form-field label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #d1d5db;
+    }
+
+    .form-field input {
+      background: #070e09;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--branco);
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-field input:focus {
+      border-color: var(--verde-claro);
+    }
+
+    .form-field input::placeholder { color: #6b7280; }
+
+    .form-submit {
+      width: 100%;
+      background: var(--laranja);
+      color: var(--branco);
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 14px 22px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .form-submit:hover { background: #f97316; transform: translateY(-1px); }
+    .form-submit:disabled { opacity: 0.6; cursor: wait; transform: none; }
+
+    .form-legal {
+      font-size: 0.72rem;
+      color: var(--cinza-claro);
+      text-align: center;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
+
+    .form-success {
+      text-align: center;
+      padding: 14px 0 4px;
+    }
+
+    .form-success .ok-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .form-success h4 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--verde-claro);
+      margin-bottom: 6px;
+    }
+
+    .form-success p {
+      color: #d1d5db;
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
   </style>
 </head>
 <body>
@@ -648,7 +853,7 @@
       <span class="video-label">Vídeo de apresentação</span>
     </div>
 
-    <a href="#oferta" class="cta-btn laranja">QUERO COMEÇAR AGORA →</a>
+    <button type="button" data-open-modal class="cta-btn laranja">QUERO COMEÇAR AGORA →</button>
 
     <p class="hero-meta">✓ Acesso imediato &nbsp;·&nbsp; ✓ 7 dias de garantia &nbsp;·&nbsp; ✓ Suporte incluído</p>
   </section>
@@ -679,7 +884,7 @@
 
   <!-- IMAGEM: INICIANTE ===== -->
   <div class="img-section">
-    <img src="img-inicio.jpg" alt="Corredor iniciante em treino" loading="lazy" />
+    <img src="img-esgotado.png" alt="Corredor iniciante esgotado, mãos nos joelhos recuperando o fôlego" loading="lazy" />
   </div>
 
   <!-- ===== ERROS COMUNS ===== -->
@@ -710,7 +915,7 @@
 
   <!-- IMAGEM: TREINO ===== -->
   <div class="img-section">
-    <img src="img-treino.jpg" alt="Treino progressivo estruturado" loading="lazy" />
+    <img src="img-alongando.png" alt="Corredor se alongando, preparando-se pra retomar os treinos" loading="lazy" />
   </div>
 
   <!-- ===== SOLUCAO: PILARES ===== -->
@@ -790,8 +995,44 @@
 
   <!-- IMAGEM: CHEGADA ===== -->
   <div class="img-section">
-    <img src="img-chegada.jpg" alt="Corredor completando primeiros 5km" loading="lazy" />
+    <img src="img-vitoria.png" alt="Corredor cruzando a linha de chegada, braços erguidos em vitória" loading="lazy" />
   </div>
+
+  <!-- ===== QUEM É O PAULO ===== -->
+  <section class="paulo">
+    <div class="container">
+      <p class="section-label">Quem vai te guiar</p>
+      <h2>Quem vai te levar até <span>a linha de chegada</span></h2>
+
+      <div class="paulo-grid">
+        <div class="paulo-photo">
+          <img src="img-paulo.png" alt="Paulo Henrique Viana, professor de corrida" loading="lazy" />
+        </div>
+
+        <div>
+          <p class="paulo-nome">Paulo Henrique Viana</p>
+          <p class="paulo-sub">
+            Educador físico, especialista em fisiologia do exercício e treinamento desportivo pra corrida.
+          </p>
+
+          <ul class="paulo-bullets">
+            <li>
+              <span class="p-check">✓</span>
+              <span><strong>+ de 7 anos</strong> treinando corredores — do iniciante que nunca fechou 5 km ao atleta amador brigando por PR em maratona.</span>
+            </li>
+            <li>
+              <span class="p-check">✓</span>
+              <span>Criador do <strong>Método Baixa Pace</strong> — sistema de treino que encurta a distância entre onde você está hoje e o resultado que você quer: intensidade na dose certa, periodização inteligente, zero achismo.</span>
+            </li>
+            <li>
+              <span class="p-check">✓</span>
+              <span>Pé na pista, não na teoria. O que ele ensina já fez dezenas de alunos cruzarem linhas de chegada que achavam impossíveis.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- ===== MODULOS ===== -->
   <section class="modulos">
@@ -962,9 +1203,9 @@
           <li><span class="b-check">🎁</span> <strong>Bônus:</strong> Guia "Sua Primeira Prova de 5km" (R$47 de valor)</li>
         </ul>
 
-        <a href="https://wa.me/5500000000000" class="cta-btn laranja" style="display:block; font-size: 1.1rem; padding: 20px 32px;">
+        <button type="button" data-open-modal class="cta-btn laranja" style="display:block; width:100%; font-size: 1.1rem; padding: 20px 32px;">
           GARANTIR MINHA VAGA AGORA →
-        </a>
+        </button>
 
         <p class="garantia">🛡️ Garantia de 7 dias · Se não gostar, devolvemos 100%</p>
       </div>
@@ -979,14 +1220,50 @@
     </div>
   </footer>
 
+  <!-- ===== MODAL CADASTRO ===== -->
+  <div class="modal-overlay" id="modalCadastro" role="dialog" aria-modal="true" aria-labelledby="modalCadastroTitle" aria-hidden="true">
+    <div class="modal">
+      <button type="button" class="modal-close" data-close-modal aria-label="Fechar">&times;</button>
+
+      <div id="modalForm">
+        <h3 id="modalCadastroTitle">Falta pouco pra você correr os seus primeiros 5km</h3>
+        <p class="modal-sub">Deixe seus dados e a equipe entra em contato pelo WhatsApp com os detalhes da próxima turma.</p>
+
+        <form id="formCadastro" novalidate>
+          <div class="form-field">
+            <label for="f-nome">Nome completo</label>
+            <input id="f-nome" name="nome" type="text" autocomplete="name" required />
+          </div>
+          <div class="form-field">
+            <label for="f-email">E-mail</label>
+            <input id="f-email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="form-field">
+            <label for="f-telefone">Telefone / WhatsApp</label>
+            <input id="f-telefone" name="telefone" type="tel" autocomplete="tel" placeholder="(11) 99999-9999" required />
+          </div>
+
+          <button type="submit" class="form-submit">QUERO MINHA VAGA</button>
+          <p class="form-legal">🛡️ Seus dados estão seguros. Respeitamos a LGPD.</p>
+        </form>
+      </div>
+
+      <div id="modalSuccess" class="form-success" style="display:none;">
+        <div class="ok-icon">🎉</div>
+        <h4>Recebido!</h4>
+        <p>Em breve a equipe do Paulo te chama no WhatsApp com as informações da próxima turma.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- ===== STICKY CTA ===== -->
   <div class="sticky-cta" id="stickyCta">
     <div class="price-inline">
       Por apenas <strong>R$ 197</strong>
     </div>
-    <a href="#oferta" class="cta-btn laranja" style="font-size: 0.95rem; padding: 14px 28px;">
+    <button type="button" data-open-modal class="cta-btn laranja" style="font-size: 0.95rem; padding: 14px 28px;">
       COMEÇAR AGORA →
-    </a>
+    </button>
   </div>
 
   <script>
@@ -1011,6 +1288,74 @@
         if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
+
+    // Modal cadastro
+    (function () {
+      const modal = document.getElementById('modalCadastro');
+      const form = document.getElementById('formCadastro');
+      const formBlock = document.getElementById('modalForm');
+      const successBlock = document.getElementById('modalSuccess');
+
+      const openBtns = document.querySelectorAll('[data-open-modal]');
+      const closeBtns = modal.querySelectorAll('[data-close-modal]');
+
+      const open = () => {
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => { document.getElementById('f-nome').focus(); }, 40);
+      };
+
+      const close = () => {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+          formBlock.style.display = '';
+          successBlock.style.display = 'none';
+          form.reset();
+        }, 200);
+      };
+
+      openBtns.forEach(b => b.addEventListener('click', open));
+      closeBtns.forEach(b => b.addEventListener('click', close));
+
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) close();
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) close();
+      });
+
+      // Máscara simples de telefone BR
+      const tel = document.getElementById('f-telefone');
+      tel.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{0,4}).*/, '($1) $2-$3');
+        else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+        else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2');
+        else if (v.length > 0) v = v.replace(/^(\d{0,2}).*/, '($1');
+        e.target.value = v;
+      });
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const payload = {
+          nome: form.nome.value.trim(),
+          email: form.email.value.trim(),
+          telefone: form.telefone.value.trim(),
+        };
+        if (!payload.nome || !payload.email || !payload.telefone) return;
+
+        // Integração pendente — fazer junto com o Paulo (produto + CRM/checkout).
+        // Por enquanto o form só captura visualmente.
+        console.log('[lead-cadastro]', payload);
+
+        formBlock.style.display = 'none';
+        successBlock.style.display = '';
+      });
+    })();
   </script>
 </body>
 </html>
