@@ -234,6 +234,7 @@
     }
 
     /* ===== IMAGEM SECAO ===== */
+    /* Mobile: full-bleed, recorte horizontal */
     .img-section {
       padding: 0;
       line-height: 0;
@@ -241,9 +242,33 @@
 
     .img-section img {
       width: 100%;
-      max-height: 480px;
+      max-height: 520px;
       object-fit: cover;
+      object-position: center 30%;
       display: block;
+    }
+
+    /* Desktop: foto retratada centralizada, sem recorte agressivo */
+    @media (min-width: 760px) {
+      .img-section {
+        padding: 56px 24px;
+        background: var(--bg);
+        line-height: 1.6;
+        text-align: center;
+      }
+
+      .img-section img {
+        width: auto;
+        max-width: min(520px, 90vw);
+        max-height: none;
+        aspect-ratio: 4/5;
+        object-fit: cover;
+        object-position: center center;
+        margin: 0 auto;
+        border-radius: 20px;
+        box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+        border: 1px solid rgba(255,255,255,0.05);
+      }
     }
 
     /* ===== ERROS ===== */
