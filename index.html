@@ -42,8 +42,32 @@
       padding: 60px 20px 52px;
       text-align: center;
       position: relative;
-      background: linear-gradient(160deg, #0a160e 0%, #0d1a10 40%, #0d0d0d 100%);
+      background: #0a160e;
       overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: url('hero-bg.jpg') center/cover no-repeat;
+      opacity: 0.18;
+      filter: saturate(0.85);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(10,22,14,0.72) 0%, rgba(13,26,16,0.78) 40%, rgba(13,13,13,0.92) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero > *:not(.hero-bg):not(.hero-overlay) {
+      position: relative;
+      z-index: 2;
     }
 
     .hero::before {
@@ -862,6 +886,8 @@
 
   <!-- ===== HERO ===== -->
   <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
     <div class="badge">Curso de Corrida Para Iniciantes</div>
 
     <h1>Entenda em <span>menos de 3 minutos</span> como atingir seus primeiros 5km</h1>
