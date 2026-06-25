@@ -63,6 +63,8 @@ module.exports = async (req, res) => {
   };
 
   const payload = {
+    // Se vier test_event_code, o evento aparece na aba "Eventos de Teste" do Gerenciador.
+    ...(body.test_event_code ? { test_event_code: body.test_event_code } : {}),
     data: [
       {
         event_name: 'Lead',
