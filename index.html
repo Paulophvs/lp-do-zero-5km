@@ -5,6 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Do Zero aos Seus Primeiros 5km | Paulo Henrique</title>
   <meta name="description" content="O método que transforma iniciantes em corredores em apenas 8 semanas — sem sofrimento, sem lesão, sem desistir na segunda semana." />
+
+  <!-- Meta Pixel (browser). Complementa o evento server-side da Conversions API (/api/lead), dedup por event_id. -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1803401826472530');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1803401826472530&ev=PageView&noscript=1" /></noscript>
+  <!-- End Meta Pixel -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -1385,6 +1402,13 @@
           source_url: location.href,
         };
         if (!payload.nome || !payload.email || !payload.telefone) return;
+
+        // Pixel do navegador: dispara o Lead com o MESMO event_id do server-side, pra Meta deduplicar.
+        if (window.fbq) {
+          fbq('track', 'Lead',
+            { content_name: 'LP 5km do Zero', currency: 'BRL' },
+            { eventID: payload.event_id });
+        }
 
         // Rastreio server-side: dispara o evento Lead pela Conversions API (endpoint /api/lead).
         // O token fica na Vercel, nunca no browser. Nao bloqueia a UI: mostra sucesso na hora.
