@@ -1367,18 +1367,33 @@
         e.target.value = v;
       });
 
+      // Le um cookie pelo nome (pra _fbp / _fbc, melhora o match na Meta).
+      const getCookie = (name) => {
+        const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return m ? m.pop() : '';
+      };
+
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const payload = {
           nome: form.nome.value.trim(),
           email: form.email.value.trim(),
           telefone: form.telefone.value.trim(),
+          event_id: (self.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()),
+          fbp: getCookie('_fbp'),
+          fbc: getCookie('_fbc'),
+          source_url: location.href,
         };
         if (!payload.nome || !payload.email || !payload.telefone) return;
 
-        // Integração pendente — fazer junto com o Paulo (produto + CRM/checkout).
-        // Por enquanto o form só captura visualmente.
-        console.log('[lead-cadastro]', payload);
+        // Rastreio server-side: dispara o evento Lead pela Conversions API (endpoint /api/lead).
+        // O token fica na Vercel, nunca no browser. Nao bloqueia a UI: mostra sucesso na hora.
+        fetch('/api/lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true,
+        }).catch(() => {});
 
         formBlock.style.display = 'none';
         successBlock.style.display = '';
