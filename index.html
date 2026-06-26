@@ -1296,7 +1296,8 @@
       <div id="modalSuccess" class="form-success" style="display:none;">
         <div class="ok-icon">🎉</div>
         <h4>Recebido!</h4>
-        <p>Em breve a equipe do Paulo te chama no WhatsApp com as informações da próxima turma.</p>
+        <p>Estamos te levando para o pagamento para garantir sua vaga. Se não abrir sozinho, toque no botão abaixo.</p>
+        <a id="checkoutLink" href="https://pay.hotmart.com/U105416596Q" class="cta-btn laranja" style="display:inline-block; margin-top:8px;">Ir para o pagamento →</a>
       </div>
     </div>
   </div>
@@ -1421,6 +1422,13 @@
 
         formBlock.style.display = 'none';
         successBlock.style.display = '';
+
+        // Checkout: depois de mostrar o 'Recebido!', leva pro pagamento da Hotmart.
+        // Delay curto pra dar tempo do pixel/CAPI sairem e do usuario ver a confirmacao.
+        const CHECKOUT_URL = 'https://pay.hotmart.com/U105416596Q';
+        const linkBtn = document.getElementById('checkoutLink');
+        if (linkBtn) linkBtn.href = CHECKOUT_URL;
+        setTimeout(() => { window.location.href = CHECKOUT_URL; }, 1800);
       });
     })();
   </script>
