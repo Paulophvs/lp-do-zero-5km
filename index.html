@@ -1420,6 +1420,19 @@
           keepalive: true,
         }).catch(() => {});
 
+        // Planilha (Google Sheets): grava o lead pra equipe acompanhar. Fire-and-forget,
+        // no-cors, nao bloqueia o checkout nem interfere no Pixel/CAPI.
+        const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwzyrrpLCRJLtiq_Zt_04GPBn1X2prAbk7Czjj0lktWzd8uF-cZxXU6Oe_Lw-AUZ1sE/exec';
+        if (SHEET_ENDPOINT) {
+          fetch(SHEET_ENDPOINT, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ nome: payload.nome, email: payload.email, telefone: payload.telefone }),
+            keepalive: true,
+          }).catch(() => {});
+        }
+
         formBlock.style.display = 'none';
         successBlock.style.display = '';
 
