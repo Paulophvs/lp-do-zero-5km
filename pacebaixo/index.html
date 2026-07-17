@@ -166,24 +166,27 @@
   .voltar:hover{color:var(--texto)}
 
   /* resultado */
+  /* Os 3 blocos foram encolhidos ~10% em altura (pedido do Paulo, 17/07).
+     O corte saiu todo do ar (padding + respiro), NUNCA do tamanho dos
+     numeros: o tempo e o "X segundos a menos" sao o produto da pagina. */
   .res-bloco{
     background:var(--carvao);
     border:1px solid var(--linha);
     border-radius:14px;
-    padding:22px;
-    margin-bottom:12px;
+    padding:16px 22px;
+    margin-bottom:10px;
   }
   .res-rotulo{
     font-size:12px;
     font-weight:700;
     letter-spacing:.12em;
     color:var(--texto-fraco);
-    margin-bottom:10px;
+    margin-bottom:6px;
   }
   .res-frase{font-size:16px;line-height:1.6;font-weight:500}
   .res-rotulo.laranja{color:var(--laranja)}
   .res-rotulo.verde{color:var(--verde)}
-  .res-num{font-size:30px;font-weight:900;letter-spacing:-.02em;display:block;margin:2px 0}
+  .res-num{font-size:30px;font-weight:900;letter-spacing:-.02em;display:block;margin:1px 0}
   .res-num.verde{color:var(--verde)}
   .res-pace{font-size:14px;color:var(--texto-fraco);font-weight:600}
 
@@ -194,9 +197,9 @@
     background:var(--carvao);
     border:1px solid var(--linha);
     border-radius:14px;
-    padding:26px 22px;
+    padding:20px 22px;
     text-align:center;
-    margin-bottom:24px;
+    margin-bottom:20px;
   }
   .soco-num{
     font-size:clamp(30px,7.6vw,42px);
