@@ -224,16 +224,28 @@
   }
   .venda b{color:var(--texto);font-weight:700}
 
-  .aviso-teste{
-    border:1px dashed var(--linha);
-    border-radius:10px;
-    padding:14px;
-    font-size:12px;
-    line-height:1.5;
-    color:#6E6E6E;
-    margin-top:18px;
-    text-align:center;
+  /* ----- planilha completa (tela-plano) ----- */
+  .plano-topo{margin-bottom:20px}
+  .plano-topo h2{font-size:clamp(22px,5.2vw,28px);font-weight:800;letter-spacing:-.02em;margin-bottom:6px}
+  .plano-topo p{font-size:14px;color:var(--texto-fraco);line-height:1.5}
+  .plano-topo .prev{color:var(--verde);font-weight:700}
+  .semana{margin-bottom:22px}
+  .semana-tit{
+    font-size:13px;font-weight:800;letter-spacing:.1em;
+    color:var(--laranja);margin-bottom:10px;text-transform:uppercase;
   }
+  .treino{
+    background:var(--carvao);border:1px solid var(--linha);
+    border-radius:12px;padding:14px 16px;margin-bottom:8px;
+  }
+  .treino-dia{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--texto-fraco);margin-bottom:4px}
+  .treino-corpo{font-size:15px;font-weight:600;line-height:1.45}
+  .treino-corpo b{font-weight:800}
+  .treino .pc{color:var(--laranja)}
+  .treino.competicao{border-color:var(--verde)}
+  .treino.competicao .treino-dia{color:var(--verde)}
+  .treino.competicao .pc{color:var(--verde)}
+  .descanso-nota{font-size:13px;color:var(--texto-fraco);margin:2px 0 0;font-style:italic}
 </style>
 </head>
 <body>
@@ -334,10 +346,19 @@
 
     <p class="venda">Esse número não vem de sorte. Vem de <b>4 semanas de treinos feitos sob medida pra você</b>, com o tempo, a velocidade, a distância e o pace exato de cada treino.</p>
 
-    <button class="btn" onclick="semLink()">ADQUIRA SUA PLANILHA</button>
+    <button class="btn" onclick="verPlano()">VER E BAIXAR MINHA PLANILHA</button>
     <button class="voltar" onclick="recomecar()">Calcular de novo</button>
+  </section>
 
-    <p class="aviso-teste">Versão de teste. O botão de compra e o cadastro ainda não estão ligados.</p>
+  <!-- ===== TELA 6: PLANILHA COMPLETA ===== -->
+  <section class="tela" id="tela-plano">
+    <div class="plano-topo">
+      <h2>Sua planilha completa</h2>
+      <p id="plano-sub"></p>
+    </div>
+    <div id="plano-corpo"></div>
+    <button class="btn" onclick="baixarPlano()">BAIXAR PLANILHA (.CSV)</button>
+    <button class="voltar" onclick="irPara('tela-res')">Voltar ao resultado</button>
   </section>
 
 </div>
@@ -357,6 +378,13 @@ var MODALIDADES = {
   10: { boost: 0.165, pctCompeticao: 0.87 }
 };
 
+/* Parametros dos 4 treinos de cada uma das 4 semanas, por modalidade.
+   Extraidos celula a celula da aba P2 dos .xlsx do Paulo (nao chutados).
+   As FORMULAS sao as mesmas do resto do motor; aqui so entram os pcts,
+   tempos e distancias fixos de cada dia. Dias 02 e 05 sao descanso.
+   Na semana 4 o dia 04 tambem e descanso e o dia 06 e a COMPETICAO. */
+var PLANO = {"5": [[{"dia": "01", "tipo": "intervalado", "min": 24, "pctForte": 0.91, "durForte": "2min", "durLeve": "2min"}, {"dia": "03", "tipo": "distancia", "km": 7, "pctA": 0.8, "pctB": 0.9, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 28, "pctForte": 0.93, "durForte": "1min", "durLeve": "3min"}, {"dia": "06", "tipo": "distancia", "km": 5, "pctA": 0.82, "pctB": 0.87, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 32, "pctForte": 0.96, "durForte": "4min", "durLeve": "4min"}, {"dia": "03", "tipo": "distancia", "km": 5, "pctA": 0.84, "pctB": 0.94, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 30, "pctForte": 1.03, "durForte": "2min", "durLeve": "3min"}, {"dia": "06", "tipo": "distancia", "km": 8, "pctA": 0.83, "pctB": 0.83, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 27, "pctForte": 1.07, "durForte": "1min", "durLeve": "2min"}, {"dia": "03", "tipo": "distancia", "km": 3, "pctA": 0.88, "pctB": 0.98, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 36, "pctForte": 1.04, "durForte": "3min", "durLeve": "3min"}, {"dia": "06", "tipo": "distancia", "km": 7, "pctA": 0.86, "pctB": 0.91, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 25, "pctForte": 0.95, "durForte": "2min", "durLeve": "3min"}, {"dia": "03", "tipo": "distancia", "km": 4, "pctA": 0.8, "pctB": 0.9, "leve": true}, {"dia": "04", "tipo": "descanso"}, {"dia": "06", "tipo": "competicao", "km": 5, "pctA": 0.88, "pctB": 0.93, "leve": false}]], "10": [[{"dia": "01", "tipo": "intervalado", "min": 27, "pctForte": 0.92, "durForte": "1min", "durLeve": "2min"}, {"dia": "03", "tipo": "distancia", "km": 8, "pctA": 0.8, "pctB": 0.9, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 32, "pctForte": 0.94, "durForte": "2min", "durLeve": "2min"}, {"dia": "06", "tipo": "distancia", "km": 12, "pctA": 0.82, "pctB": 0.87, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 32, "pctForte": 0.96, "durForte": "4min", "durLeve": "4min"}, {"dia": "03", "tipo": "distancia", "km": 7, "pctA": 0.84, "pctB": 0.94, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 42, "pctForte": 1, "durForte": "3min", "durLeve": "3min"}, {"dia": "06", "tipo": "distancia", "km": 14, "pctA": 0.83, "pctB": 0.83, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 35, "pctForte": 1.04, "durForte": "2min", "durLeve": "3min"}, {"dia": "03", "tipo": "distancia", "km": 5, "pctA": 0.88, "pctB": 0.98, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 40, "pctForte": 0.97, "durForte": "5min", "durLeve": "5min"}, {"dia": "06", "tipo": "distancia", "km": 11, "pctA": 0.86, "pctB": 0.91, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 30, "pctForte": 0.95, "durForte": "2min", "durLeve": "3min"}, {"dia": "03", "tipo": "distancia", "km": 5, "pctA": 0.8, "pctB": 0.9, "leve": true}, {"dia": "04", "tipo": "descanso"}, {"dia": "06", "tipo": "competicao", "km": 10, "pctA": 0.87, "pctB": 0.97, "leve": false}]]};
+
 /* P1!D2 -> P1!D3. Entra o pace decimal (min/km), sai o VO2max. */
 function vo2maxDoPace(paceDec, boost){
   var kmh  = 60 / paceDec;              // P1!F9
@@ -370,6 +398,8 @@ function kmhDoPct(pct, vo2max){
   if (vo2t <= 27.5) return (1.8182 + 0.2266 * vo2t) - 0.3;
   return (vo2t - 3.5) / 3.3;
 }
+/* pace (m:ss por km) direto de um pct de VO2max */
+function paceDoPct(pct, vo2max){ return ms(paceDoKmh(kmhDoPct(pct, vo2max))); }
 
 /* P2 linha "PACE": TIME(0; ROUNDDOWN(60/kmh); ROUND(resto*60)) */
 function paceDoKmh(kmh){
@@ -427,8 +457,8 @@ function irPara(id){
   var telas = document.querySelectorAll('.tela');
   for (var i=0;i<telas.length;i++) telas[i].classList.remove('ativa');
   document.getElementById(id).classList.add('ativa');
-  // no resultado a logo sai, pra o botao de compra caber sem rolar
-  document.body.classList.toggle('tela-resultado', id === 'tela-res');
+  // no resultado e na planilha a logo sai, pra o conteudo caber sem rolar
+  document.body.classList.toggle('tela-resultado', id === 'tela-res' || id === 'tela-plano');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -475,6 +505,7 @@ function calcular(){
   if (paceDec > 12){ e.textContent = 'Esse tempo parece de caminhada. Confere aí.'; return; }
   e.textContent = '';
 
+  resp.min = mm; resp.seg = ss;   // guarda o input pra montar a planilha completa
   var r = prever(d, mm, ss);
 
   document.getElementById('r-dist').textContent       = d + ' km';
@@ -492,8 +523,103 @@ function recomecar(){
   irPara('tela-q1');
 }
 
-function semLink(){
-  alert('Versão de teste: o link de pagamento e o cadastro ainda não foram ligados.');
+/* ---------------- planilha completa ---------------- */
+/* Monta o plano das 4 semanas personalizado pelo pace do lead. */
+function montarPlano(distancia, minutos, segundos){
+  var p = MODALIDADES[distancia];
+  var paceDec = (minutos + segundos/60) / distancia;
+  var vo2 = vo2maxDoPace(paceDec, p.boost);
+  var semanas = PLANO[distancia].map(function(dias, wi){
+    var descanso = ['02','05'];
+    var treinos = [];
+    dias.forEach(function(d){
+      if (d.tipo === 'descanso'){ descanso.push(d.dia); return; }
+      if (d.tipo === 'intervalado'){
+        treinos.push({ dia:d.dia, tipo:'intervalado', min:d.min,
+          paceForte: paceDoPct(d.pctForte, vo2), durForte:d.durForte, durLeve:d.durLeve });
+      } else if (d.tipo === 'competicao'){
+        var pa = paceDoPct(d.pctA, vo2);
+        var seg = paceParaSeg(pa) * d.km;
+        treinos.push({ dia:d.dia, tipo:'competicao', km:d.km, paceAlvo:pa, tempoPrevisto:segParaTempo(seg) });
+      } else {
+        treinos.push({ dia:d.dia, tipo:'distancia', km:d.km,
+          paceIni: paceDoPct(d.pctA, vo2), paceFim: paceDoPct(d.pctB, vo2), leve:d.leve });
+      }
+    });
+    descanso.sort();
+    return { n: wi+1, treinos: treinos, descanso: descanso };
+  });
+  return { vo2:vo2, semanas:semanas };
+}
+function paceParaSeg(t){ var q=t.split(':'); return Number(q[0])*60 + Number(q[1]); }
+
+function frasesTreino(t){
+  if (t.tipo === 'intervalado')
+    return 'Intervalado, ' + t.min + ' min. ' + t.durForte + ' forte a <b class="pc">' +
+           t.paceForte + '/km</b>, ' + t.durLeve + ' leve. Repetir até fechar o tempo.';
+  if (t.tipo === 'competicao')
+    return 'Prova, ' + t.km + ' km no pace alvo <b class="pc">' + t.paceAlvo +
+           '/km</b>. Tempo previsto: <b>' + t.tempoPrevisto + '</b>.';
+  var zona = (t.paceIni === t.paceFim)
+    ? '<b class="pc">' + t.paceIni + '/km</b>'
+    : 'entre <b class="pc">' + t.paceIni + '</b> e <b class="pc">' + t.paceFim + '/km</b>';
+  return t.km + ' km ' + (t.leve ? 'leve, ' : 'contínuo, ') + 'pace ' + zona + '.';
+}
+
+function verPlano(){
+  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg);
+  var prev = prever(d, resp.min, resp.seg);
+  document.getElementById('plano-sub').innerHTML =
+    d + ' km. Seu tempo hoje: <b>' + segParaTempo(prev.segHoje) +
+    '</b>. Previsão em 4 semanas: <b class="prev">' + segParaTempo(prev.segNovo) +
+    '</b>. São 4 treinos por semana, o resto é descanso, que faz parte do método.';
+  var html = '';
+  pl.semanas.forEach(function(s){
+    html += '<div class="semana"><div class="semana-tit">Semana ' + s.n + '</div>';
+    s.treinos.forEach(function(t){
+      html += '<div class="treino' + (t.tipo==='competicao'?' competicao':'') + '">' +
+              '<div class="treino-dia">DIA ' + t.dia + '</div>' +
+              '<div class="treino-corpo">' + frasesTreino(t) + '</div></div>';
+    });
+    html += '<p class="descanso-nota">Dias ' + s.descanso.join(', ') + ': descanso.</p></div>';
+  });
+  document.getElementById('plano-corpo').innerHTML = html;
+  irPara('tela-plano');
+  baixarPlano();
+}
+
+function baixarPlano(){
+  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg);
+  var prev = prever(d, resp.min, resp.seg);
+  var sep = ';', nl = '\r\n', linhas = [];
+  linhas.push('Pace Baixo - Planilha ' + d + ' km');
+  linhas.push('Tempo atual' + sep + segParaTempo(prev.segHoje));
+  linhas.push('Previsao em 4 semanas' + sep + segParaTempo(prev.segNovo));
+  linhas.push('');
+  linhas.push(['Semana','Dia','Treino','Tempo/Distancia','Pace'].join(sep));
+  pl.semanas.forEach(function(s){
+    s.treinos.forEach(function(t){
+      var td, pace, tipo;
+      if (t.tipo === 'intervalado'){
+        tipo='Intervalado'; td=t.min+' min';
+        pace=t.durForte+' forte a '+t.paceForte+'/km, '+t.durLeve+' leve';
+      } else if (t.tipo === 'competicao'){
+        tipo='Competicao'; td=t.km+' km'; pace='alvo '+t.paceAlvo+'/km (previsto '+t.tempoPrevisto+')';
+      } else {
+        tipo = t.leve ? 'Corrida leve' : 'Corrida na zona'; td=t.km+' km';
+        pace = (t.paceIni===t.paceFim) ? t.paceIni+'/km' : t.paceIni+' a '+t.paceFim+'/km';
+      }
+      linhas.push(['Semana '+s.n,'Dia '+t.dia,tipo,td,pace].join(sep));
+    });
+    linhas.push(['Semana '+s.n,'Descanso',s.descanso.join('/'),'',''].join(sep));
+  });
+  var csv = '﻿' + linhas.join(nl);   // BOM pra acento abrir certo no Excel
+  var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'pace-baixo-' + d + 'km.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
 }
 </script>
 </body>
