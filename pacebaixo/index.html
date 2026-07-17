@@ -36,6 +36,11 @@
   }
   .wrap{width:100%;max-width:560px}
   .logo{display:block;width:100%;max-width:260px;margin:0 auto 40px;height:auto}
+  /* Na tela do resultado a logo sai: ela custa ~206px de altura e nao faz
+     trabalho nenhum ali (o cara chegou por 4 telas, ja sabe onde esta).
+     Sem ela o botao de compra termina em ~612px e aparece sem rolagem
+     ate no celular pequeno. Com ela, ~818px, e o botao morria embaixo. */
+  body.tela-resultado .logo{display:none}
 
   .tela{display:none;animation:entra .35s ease}
   .tela.ativa{display:block}
@@ -419,6 +424,8 @@ function irPara(id){
   var telas = document.querySelectorAll('.tela');
   for (var i=0;i<telas.length;i++) telas[i].classList.remove('ativa');
   document.getElementById(id).classList.add('ativa');
+  // no resultado a logo sai, pra o botao de compra caber sem rolar
+  document.body.classList.toggle('tela-resultado', id === 'tela-res');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
