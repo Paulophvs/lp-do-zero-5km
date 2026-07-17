@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pace Baixo | Descubra seu tempo daqui a 4 semanas</title>
+<meta name="description" content="O seu pace de hoje já diz em quantos minutos você vai estar correndo 5 km e 10 km daqui a 4 semanas.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --laranja:#F86800;
+    --laranja-claro:#FF8124;
+    --preto:#0A0A0A;
+    --carvao:#141414;
+    --linha:#2A2A2A;
+    --texto:#FFFFFF;
+    --texto-fraco:#A0A0A0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--preto);
+    color:var(--texto);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:24px 20px 48px;
+  }
+  .wrap{width:100%;max-width:560px}
+  .logo{display:block;width:100%;max-width:260px;margin:0 auto 40px;height:auto}
+
+  .tela{display:none;animation:entra .35s ease}
+  .tela.ativa{display:block}
+  @keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  h1{
+    font-size:clamp(26px,6.4vw,38px);
+    font-weight:800;
+    line-height:1.2;
+    letter-spacing:-.02em;
+    margin-bottom:20px;
+  }
+  h1 .destaque{color:var(--laranja)}
+  .apoio{
+    font-size:clamp(19px,4.4vw,24px);
+    font-weight:700;
+    margin-bottom:14px;
+  }
+  .sub{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--texto-fraco);
+    margin-bottom:32px;
+  }
+
+  .btn{
+    display:block;
+    width:100%;
+    background:var(--laranja);
+    color:#fff;
+    border:0;
+    border-radius:12px;
+    padding:18px 20px;
+    font-family:inherit;
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:.04em;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .btn:hover{background:var(--laranja-claro)}
+  .btn:disabled{background:#3A3A3A;color:#777;cursor:not-allowed}
+
+  .passo{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.14em;
+    color:var(--laranja);
+    margin-bottom:14px;
+  }
+  .pergunta{
+    font-size:clamp(21px,4.8vw,26px);
+    font-weight:800;
+    line-height:1.3;
+    margin-bottom:8px;
+  }
+  .ajuda{
+    font-size:13px;
+    line-height:1.6;
+    color:var(--texto-fraco);
+    margin-bottom:24px;
+  }
+
+  .opcoes{display:grid;gap:12px;margin-bottom:28px}
+  .opcao{
+    background:var(--carvao);
+    border:2px solid var(--linha);
+    border-radius:12px;
+    padding:22px;
+    font-family:inherit;
+    font-size:20px;
+    font-weight:800;
+    color:var(--texto);
+    cursor:pointer;
+    text-align:left;
+    transition:border-color .15s,background .15s;
+  }
+  .opcao:hover{border-color:#4A4A4A}
+  .opcao.marcada{border-color:var(--laranja);background:rgba(248,104,0,.08)}
+
+  .campos{display:grid;gap:16px;margin-bottom:28px}
+  .campo label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--texto-fraco);
+    margin-bottom:7px;
+  }
+  .campo input{
+    width:100%;
+    background:var(--carvao);
+    border:2px solid var(--linha);
+    border-radius:10px;
+    padding:15px;
+    font-family:inherit;
+    font-size:17px;
+    font-weight:600;
+    color:var(--texto);
+    transition:border-color .15s;
+  }
+  .campo input:focus{outline:0;border-color:var(--laranja)}
+  .dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  .erro{
+    color:#FF6B6B;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:16px;
+    min-height:18px;
+  }
+
+  .voltar{
+    background:0;
+    border:0;
+    color:var(--texto-fraco);
+    font-family:inherit;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    padding:14px 0 0;
+    width:100%;
+  }
+  .voltar:hover{color:var(--texto)}
+
+  /* resultado */
+  .res-bloco{
+    background:var(--carvao);
+    border:1px solid var(--linha);
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:12px;
+  }
+  .res-rotulo{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.12em;
+    color:var(--texto-fraco);
+    margin-bottom:10px;
+  }
+  .res-frase{font-size:16px;line-height:1.6;font-weight:500}
+  .res-num{font-size:30px;font-weight:900;letter-spacing:-.02em;display:block;margin:2px 0}
+  .res-num.laranja{color:var(--laranja)}
+  .res-pace{font-size:14px;color:var(--texto-fraco);font-weight:600}
+
+  .soco{
+    background:var(--laranja);
+    border-radius:14px;
+    padding:26px 22px;
+    text-align:center;
+    margin-bottom:24px;
+  }
+  .soco-num{font-size:clamp(30px,7.6vw,42px);font-weight:900;letter-spacing:-.02em;line-height:1.1}
+  .soco-txt{font-size:14px;font-weight:700;letter-spacing:.06em;margin-top:6px;opacity:.9}
+
+  .venda{
+    font-size:15px;
+    line-height:1.65;
+    color:var(--texto-fraco);
+    margin-bottom:22px;
+  }
+  .venda b{color:var(--texto);font-weight:700}
+
+  .aviso-teste{
+    border:1px dashed var(--linha);
+    border-radius:10px;
+    padding:14px;
+    font-size:12px;
+    line-height:1.5;
+    color:#6E6E6E;
+    margin-top:18px;
+    text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <img class="logo" src="logo-pace-baixo.png" alt="Pace Baixo">
+
+  <!-- ===== TELA 1: HERO ===== -->
+  <section class="tela ativa" id="tela-hero">
+    <h1>O seu pace de hoje já diz em quantos minutos você vai estar correndo <span class="destaque">5 km e 10 km</span> daqui a 4 semanas.</h1>
+    <p class="apoio">Quer ver o número?</p>
+    <p class="sub">É por isso que eu só preciso saber o seu tempo atual. O método Pace Baixo faz a conta na hora, a mesma que eu uso com meus alunos de assessoria.</p>
+    <button class="btn" onclick="irPara('tela-q1')">QUERO VER MEU TEMPO</button>
+  </section>
+
+  <!-- ===== TELA 2: PERGUNTA 1 ===== -->
+  <section class="tela" id="tela-q1">
+    <p class="passo">PERGUNTA 1 DE 3</p>
+    <h2 class="pergunta">Qual corrida você deseja baixar o seu tempo?</h2>
+    <p class="ajuda">&nbsp;</p>
+    <div class="opcoes">
+      <button class="opcao" data-dist="5" onclick="escolherDistancia(5)">5 km</button>
+      <button class="opcao" data-dist="10" onclick="escolherDistancia(10)">10 km</button>
+    </div>
+    <button class="voltar" onclick="irPara('tela-hero')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 3: PERGUNTA 2 ===== -->
+  <section class="tela" id="tela-q2">
+    <p class="passo">PERGUNTA 2 DE 3</p>
+    <h2 class="pergunta">Agora me conta sobre você.</h2>
+    <p class="ajuda">São dados da sua ficha de avaliação.</p>
+    <div class="campos">
+      <div class="campo">
+        <label for="idade">Idade</label>
+        <input id="idade" type="number" inputmode="numeric" min="10" max="99" placeholder="42">
+      </div>
+      <div class="campo">
+        <label for="altura">Altura (cm)</label>
+        <input id="altura" type="number" inputmode="numeric" min="120" max="230" placeholder="178">
+      </div>
+      <div class="campo">
+        <label for="peso">Peso (kg)</label>
+        <input id="peso" type="number" inputmode="decimal" min="30" max="250" placeholder="82">
+      </div>
+    </div>
+    <p class="erro" id="erro-q2"></p>
+    <button class="btn" onclick="validarQ2()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-q1')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 4: PERGUNTA 3 ===== -->
+  <section class="tela" id="tela-q3">
+    <p class="passo">PERGUNTA 3 DE 3</p>
+    <h2 class="pergunta" id="pergunta-tempo">Qual o seu tempo exato nos 10 km hoje?</h2>
+    <p class="ajuda" id="ajuda-tempo">Use seu melhor tempo dos últimos 15 dias, ou o da última vez que você correu 10 km. Se você usar um recorde pessoal de meses atrás, o treino vai sair forte demais para você.</p>
+    <div class="dupla">
+      <div class="campo">
+        <label for="min">Minutos</label>
+        <input id="min" type="number" inputmode="numeric" min="8" max="150" placeholder="43">
+      </div>
+      <div class="campo">
+        <label for="seg">Segundos</label>
+        <input id="seg" type="number" inputmode="numeric" min="0" max="59" placeholder="54">
+      </div>
+    </div>
+    <p class="erro" id="erro-q3"></p>
+    <button class="btn" onclick="calcular()">VER MEU TEMPO</button>
+    <button class="voltar" onclick="irPara('tela-q2')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 5: RESULTADO ===== -->
+  <section class="tela" id="tela-res">
+    <div class="res-bloco">
+      <p class="res-rotulo">HOJE</p>
+      <p class="res-frase">
+        Você corre <b id="r-dist">10 km</b> em
+        <span class="res-num" id="r-tempo-hoje">43:54</span>
+        <span class="res-pace">num pace de <b id="r-pace-hoje">4:23</b> por km</span>
+      </p>
+    </div>
+
+    <div class="res-bloco">
+      <p class="res-rotulo">DAQUI A 4 SEMANAS</p>
+      <p class="res-frase">
+        Seguindo o método Pace Baixo, você vai estar correndo em
+        <span class="res-num laranja" id="r-tempo-novo">43:00</span>
+        <span class="res-pace">num pace de <b id="r-pace-novo">4:18</b> por km</span>
+      </p>
+    </div>
+
+    <div class="soco">
+      <div class="soco-num" id="r-delta">54 segundos</div>
+      <div class="soco-txt">A MENOS</div>
+    </div>
+
+    <p class="venda">Esse número não vem de sorte. Vem de <b>4 semanas de treinos feitos sob medida pra você</b>, com o tempo, a velocidade, a distância e o pace exato de cada treino.</p>
+
+    <button class="btn" onclick="semLink()">ADQUIRA SUA PLANILHA</button>
+    <button class="voltar" onclick="recomecar()">Calcular de novo</button>
+
+    <p class="aviso-teste">Versão de teste. O botão de compra e o cadastro ainda não estão ligados.</p>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   MOTOR PACE BAIXO
+   Portado do Excel do Paulo. Formulas identicas; o que muda
+   por modalidade sao os PARAMETROS. Nao chumbar 0.17 nem 0.88:
+   5 km e 10 km divergem.
+   Conferido contra:
+     Pace Baixo 5 km Test.xlsx
+     Pace Baixo 10 km - Test.xlsx (3a leva)
+   ============================================================ */
+var MODALIDADES = {
+  5:  { boost: 0.170, pctCompeticao: 0.88 },
+  10: { boost: 0.165, pctCompeticao: 0.87 }
+};
+
+/* P1!D2 -> P1!D3. Entra o pace decimal (min/km), sai o VO2max. */
+function vo2maxDoPace(paceDec, boost){
+  var kmh  = 60 / paceDec;              // P1!F9
+  var vmax = kmh + kmh * boost;         // P1!D2
+  return (vmax * 3.3) + 3.8;            // P1!D3
+}
+
+/* P2 linhas "VO2 TREINO" e "KM//H" */
+function kmhDoPct(pct, vo2max){
+  var vo2t = pct * (vo2max - 3.5) + 3.5;
+  if (vo2t <= 27.5) return (1.8182 + 0.2266 * vo2t) - 0.3;
+  return (vo2t - 3.5) / 3.3;
+}
+
+/* P2 linha "PACE": TIME(0; ROUNDDOWN(60/kmh); ROUND(resto*60)) */
+function paceDoKmh(kmh){
+  var tot = 60 / kmh;
+  var m = Math.floor(tot);
+  var s = Math.round((tot - m) * 60);
+  if (s === 60){ m += 1; s = 0; }
+  return [m, s];
+}
+
+/* Entra o tempo total de prova, sai tudo.
+   tempo / distancia = pace decimal, que e exatamente o P1!D10. */
+function prever(distancia, minutos, segundos){
+  var p = MODALIDADES[distancia];
+  var paceDec = (minutos + segundos/60) / distancia;   // P1!D10
+  var vo2max  = vo2maxDoPace(paceDec, p.boost);
+  var pf      = paceDoKmh(kmhDoPct(p.pctCompeticao, vo2max));
+  var totalNovo = (pf[0] + pf[1]/60) * distancia;      // P1!G12
+  var segHoje = Math.round((minutos*60) + segundos);
+  var segNovo = Math.round(totalNovo * 60);
+  return {
+    vo2max:    vo2max,
+    paceHoje:  decParaMS(paceDec),
+    paceNovo:  pf,
+    segHoje:   segHoje,
+    segNovo:   segNovo,
+    delta:     segHoje - segNovo
+  };
+}
+
+function decParaMS(dec){
+  var m = Math.floor(dec);
+  var s = Math.round((dec - m) * 60);
+  if (s === 60){ m += 1; s = 0; }
+  return [m, s];
+}
+function ms(par){ return par[0] + ':' + String(par[1]).padStart(2,'0'); }
+function segParaTempo(t){
+  var m = Math.floor(t/60), s = t % 60;
+  return m + ':' + String(s).padStart(2,'0');
+}
+function textoDelta(seg){
+  if (seg <= 0) return 'o mesmo tempo';
+  if (seg < 60) return seg + ' segundos';
+  var m = Math.floor(seg/60), s = seg % 60;
+  var txt = m + (m === 1 ? ' minuto' : ' minutos');
+  if (s > 0) txt += ' e ' + s + (s === 1 ? ' segundo' : ' segundos');
+  return txt;
+}
+
+/* ---------------- estado + navegacao ---------------- */
+var resp = { distancia:null, idade:null, altura:null, peso:null };
+
+function irPara(id){
+  var telas = document.querySelectorAll('.tela');
+  for (var i=0;i<telas.length;i++) telas[i].classList.remove('ativa');
+  document.getElementById(id).classList.add('ativa');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function escolherDistancia(d){
+  resp.distancia = d;
+  var ops = document.querySelectorAll('.opcao');
+  for (var i=0;i<ops.length;i++){
+    ops[i].classList.toggle('marcada', Number(ops[i].dataset.dist) === d);
+  }
+  // a distancia entra escrita na pergunta 3: confirma a escolha dela
+  document.getElementById('pergunta-tempo').textContent =
+    'Qual o seu tempo exato nos ' + d + ' km hoje?';
+  document.getElementById('ajuda-tempo').textContent =
+    'Use seu melhor tempo dos últimos 15 dias, ou o da última vez que você correu ' + d +
+    ' km. Se você usar um recorde pessoal de meses atrás, o treino vai sair forte demais para você.';
+  setTimeout(function(){ irPara('tela-q2'); }, 180);
+}
+
+function validarQ2(){
+  var i = Number(document.getElementById('idade').value);
+  var a = Number(document.getElementById('altura').value);
+  var p = Number(document.getElementById('peso').value);
+  var e = document.getElementById('erro-q2');
+  if (!i || i < 10 || i > 99){ e.textContent = 'Coloque uma idade entre 10 e 99.'; return; }
+  if (!a || a < 120 || a > 230){ e.textContent = 'Coloque uma altura em centímetros, tipo 178.'; return; }
+  if (!p || p < 30 || p > 250){ e.textContent = 'Coloque um peso em quilos, tipo 82.'; return; }
+  e.textContent = '';
+  resp.idade = i; resp.altura = a; resp.peso = p;
+  irPara('tela-q3');
+}
+
+function calcular(){
+  var mm = Number(document.getElementById('min').value);
+  var ss = Number(document.getElementById('seg').value || 0);
+  var e  = document.getElementById('erro-q3');
+  var d  = resp.distancia;
+
+  if (!mm || mm < 8 || mm > 150){ e.textContent = 'Coloque os minutos do seu tempo, tipo 43.'; return; }
+  if (ss < 0 || ss > 59){ e.textContent = 'Os segundos vão de 0 a 59.'; return; }
+
+  // sanidade: pace fora do humanamente possivel
+  var paceDec = (mm + ss/60) / d;
+  if (paceDec < 2.3){ e.textContent = 'Esse tempo é mais rápido que o recorde mundial. Confere aí.'; return; }
+  if (paceDec > 12){ e.textContent = 'Esse tempo parece de caminhada. Confere aí.'; return; }
+  e.textContent = '';
+
+  var r = prever(d, mm, ss);
+
+  document.getElementById('r-dist').textContent       = d + ' km';
+  document.getElementById('r-tempo-hoje').textContent = segParaTempo(r.segHoje);
+  document.getElementById('r-pace-hoje').textContent  = ms(r.paceHoje);
+  document.getElementById('r-tempo-novo').textContent = segParaTempo(r.segNovo);
+  document.getElementById('r-pace-novo').textContent  = ms(r.paceNovo);
+  document.getElementById('r-delta').textContent      = textoDelta(r.delta);
+  irPara('tela-res');
+}
+
+function recomecar(){
+  document.getElementById('min').value = '';
+  document.getElementById('seg').value = '';
+  irPara('tela-q1');
+}
+
+function semLink(){
+  alert('Versão de teste: o link de pagamento e o cadastro ainda não foram ligados.');
+}
+</script>
+</body>
+</html>
