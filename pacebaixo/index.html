@@ -13,6 +13,9 @@
   :root{
     --laranja:#F86800;
     --laranja-claro:#FF8124;
+    /* verde do "ganho": 11:1 de contraste sobre os blocos, contra 6:1 do laranja.
+       So aparece no que e futuro/melhora. Laranja = hoje. */
+    --verde:#00E676;
     --preto:#0A0A0A;
     --carvao:#141414;
     --linha:#2A2A2A;
@@ -173,19 +176,37 @@
     margin-bottom:10px;
   }
   .res-frase{font-size:16px;line-height:1.6;font-weight:500}
+  .res-rotulo.laranja{color:var(--laranja)}
+  .res-rotulo.verde{color:var(--verde)}
   .res-num{font-size:30px;font-weight:900;letter-spacing:-.02em;display:block;margin:2px 0}
-  .res-num.laranja{color:var(--laranja)}
+  .res-num.verde{color:var(--verde)}
   .res-pace{font-size:14px;color:var(--texto-fraco);font-weight:600}
 
+  /* o "soco" era um retangulo laranja preenchido e parecia um botao, logo
+     acima de um botao laranja de verdade. Agora e um bloco igual aos outros:
+     quem destaca e o numero verde, nao o fundo. */
   .soco{
-    background:var(--laranja);
+    background:var(--carvao);
+    border:1px solid var(--linha);
     border-radius:14px;
     padding:26px 22px;
     text-align:center;
     margin-bottom:24px;
   }
-  .soco-num{font-size:clamp(30px,7.6vw,42px);font-weight:900;letter-spacing:-.02em;line-height:1.1}
-  .soco-txt{font-size:14px;font-weight:700;letter-spacing:.06em;margin-top:6px;opacity:.9}
+  .soco-num{
+    font-size:clamp(30px,7.6vw,42px);
+    font-weight:900;
+    letter-spacing:-.02em;
+    line-height:1.1;
+    color:var(--verde);
+  }
+  .soco-txt{
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.06em;
+    margin-top:6px;
+    color:var(--verde);
+  }
 
   .venda{
     font-size:15px;
@@ -281,7 +302,7 @@
   <!-- ===== TELA 5: RESULTADO ===== -->
   <section class="tela" id="tela-res">
     <div class="res-bloco">
-      <p class="res-rotulo">HOJE</p>
+      <p class="res-rotulo laranja">HOJE</p>
       <p class="res-frase">
         Você corre <b id="r-dist">10 km</b> em
         <span class="res-num" id="r-tempo-hoje">43:54</span>
@@ -290,10 +311,10 @@
     </div>
 
     <div class="res-bloco">
-      <p class="res-rotulo">DAQUI A 4 SEMANAS</p>
+      <p class="res-rotulo verde">DAQUI A 4 SEMANAS</p>
       <p class="res-frase">
         Seguindo o método Pace Baixo, você vai estar correndo em
-        <span class="res-num laranja" id="r-tempo-novo">43:00</span>
+        <span class="res-num verde" id="r-tempo-novo">43:00</span>
         <span class="res-pace">num pace de <b id="r-pace-novo">4:18</b> por km</span>
       </p>
     </div>
