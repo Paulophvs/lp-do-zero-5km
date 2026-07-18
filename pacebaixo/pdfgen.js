@@ -1,23 +1,26 @@
 /* ============================================================
    PACE BAIXO - GERADOR DE PDF (planilha de treino)
-   Layout de CARTOES, IGUAL a tela do site (tela-plano):
-   fundo preto, cartoes carvao, "SEMANA N" em laranja,
-   frases em linguagem simples, paces em laranja (verde na prova).
+   Mesmo layout de CARTOES do link (tela-plano), porem em tema
+   CLARO (fundo branco) por ser melhor pra imprimir: cartoes claros,
+   "SEMANA N" em laranja, frases em linguagem simples, paces em
+   laranja (verde na prova). Mesma estrutura e MESMO texto do link.
    O texto vem PRONTO da pagina (frasesTreino/montarPlano), entao
    o PDF nunca diverge do que o aluno ve no link. Precisa de jsPDF.
    ============================================================ */
 (function (root) {
   'use strict';
 
-  /* paleta identica ao CSS do index.html */
+  /* paleta CLARA (impressao). Mantem o laranja da marca; o verde
+     vira um tom mais escuro pra ter contraste no branco (o #00E676
+     da tela some no fundo claro). */
   var COR = {
-    bg:     [10, 10, 10],    // --preto
-    card:   [20, 20, 20],    // --carvao
-    linha:  [42, 42, 42],    // --linha
-    txt:    [255, 255, 255], // --texto
-    fraco:  [160, 160, 160], // --texto-fraco
-    laranja:[248, 104, 0],   // --laranja
-    verde:  [0, 230, 118]    // --verde
+    bg:     [255, 255, 255], // fundo branco
+    card:   [247, 248, 250], // cartao cinza bem claro
+    linha:  [224, 227, 232], // borda do cartao
+    txt:    [17, 18, 20],     // texto quase preto
+    fraco:  [108, 112, 120], // texto secundario (DIA, subtitulo, descanso)
+    laranja:[230, 92, 0],     // laranja da marca, levemente escurecido p/ legibilidade
+    verde:  [0, 150, 72]      // verde escuro (prova/previsao) legivel no branco
   };
 
   /* ---------- parser de HTML inline -> runs {text,bold,cor} ----------
