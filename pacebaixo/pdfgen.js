@@ -109,17 +109,20 @@
     }
     fundo();
 
-    /* titulo, com a logomarca pequena ao lado (some sem quebrar se nao carregou) */
-    var titX = mx;
+    /* titulo, com a logomarca grande ao lado (some sem quebrar se nao carregou) */
+    var titX = mx, logoBottom = 0;
     if (opts.logo) {
       try {
-        var lgH = 15.6, lgW = lgH * 659 / 383;   // proporcao do PNG (659x383), +50% sobre a base (pedido do Paulo 18/07)
-        doc.addImage(opts.logo, 'PNG', mx, y - 11, lgW, lgH);
+        var lgH = 22, lgW = lgH * 659 / 383;   // proporcao do PNG (659x383), grande e centrada no titulo (pedido do Paulo 18/07)
+        var logoTop = y - 13.5;                 // centra a logo no texto do titulo (baseline em y)
+        doc.addImage(opts.logo, 'PNG', mx, logoTop, lgW, lgH);
+        logoBottom = logoTop + lgH;
         titX = mx + lgW + 4;
       } catch (e) { titX = mx; }
     }
     setFont(doc, true, 20); doc.setTextColor(COR.txt[0], COR.txt[1], COR.txt[2]);
-    doc.text('Sua planilha completa', titX, y); y += 7;
+    doc.text('Sua planilha completa', titX, y);
+    y = Math.max(y + 7, logoBottom + 5);   // desce o subtitulo pra baixo da logo grande
 
     /* subtitulo (mesma frase da tela) */
     var subHtml = opts.distancia + ' km. Seu tempo hoje: <b>' + opts.tempoHoje +
