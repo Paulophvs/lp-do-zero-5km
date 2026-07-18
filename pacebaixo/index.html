@@ -364,7 +364,6 @@
 </div>
 
 <script src="/pacebaixo/jspdf.umd.min.js"></script>
-<script src="/pacebaixo/jspdf.autotable.min.js"></script>
 <script src="/pacebaixo/pdfgen.js"></script>
 <script>
 /* ============================================================
@@ -590,32 +589,36 @@ function verPlano(){
   irPara('tela-plano');
 }
 
-/* ---- PDF: planilha com a cara da do Paulo, gerada no navegador ---- */
-function carregarLogo(url, cb){
-  fetch(url).then(function(r){ return r.blob(); }).then(function(b){
-    var fr = new FileReader();
-    fr.onload = function(){ cb(fr.result); };
-    fr.onerror = function(){ cb(null); };
-    fr.readAsDataURL(b);
-  }).catch(function(){ cb(null); });
-}
+/* ---- PDF: mesma cara da tela (cartoes), gerado no navegador ----
+   Reusa montarPlano/frasesTreino/prever pra o PDF NUNCA divergir do link. */
 function baixarPDF(){
   var d = resp.distancia;
   var btn = event && event.target;
   if (btn){ btn.disabled = true; btn.textContent = 'Gerando PDF...'; }
-  carregarLogo('/pacebaixo/logo-planilha.png', function(logo){
-    try {
-      var doc = PaceBaixoPDF.construir({
-        jsPDF: window.jspdf.jsPDF,
-        distancia: d, min: resp.min, seg: resp.seg,
-        logoDataUri: logo
-      });
-      doc.save('pace-baixo-' + d + 'km.pdf');
-    } catch (e){
-      alert('Nao consegui gerar o PDF agora. Tenta de novo.');
-    }
-    if (btn){ btn.disabled = false; btn.textContent = 'BAIXAR MINHA PLANILHA (PDF)'; }
-  });
+  try {
+    var pl = montarPlano(d, resp.min, resp.seg);
+    var prev = prever(d, resp.min, resp.seg);
+    var semanas = pl.semanas.map(function(s){
+      return {
+        n: s.n,
+        descanso: s.descanso,
+        treinos: s.treinos.map(function(t){
+          return { dia: t.dia, html: frasesTreino(t), comp: t.tipo === 'competicao' };
+        })
+      };
+    });
+    var doc = PaceBaixoPDF.construir({
+      jsPDF: window.jspdf.jsPDF,
+      distancia: d,
+      tempoHoje: segParaTempo(prev.segHoje),
+      tempoNovo: segParaTempo(prev.segNovo),
+      semanas: semanas
+    });
+    doc.save('pace-baixo-' + d + 'km.pdf');
+  } catch (e){
+    alert('Nao consegui gerar o PDF agora. Tenta de novo.');
+  }
+  if (btn){ btn.disabled = false; btn.textContent = 'BAIXAR MINHA PLANILHA (PDF)'; }
 }
 
 function baixarPlano(){
