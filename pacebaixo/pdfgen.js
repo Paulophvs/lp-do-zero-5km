@@ -109,9 +109,17 @@
     }
     fundo();
 
-    /* titulo */
+    /* titulo, com a logomarca pequena ao lado (some sem quebrar se nao carregou) */
+    var titX = mx;
+    if (opts.logo) {
+      try {
+        var lgH = 9, lgW = lgH * 659 / 383;   // proporcao do PNG (659x383)
+        doc.addImage(opts.logo, 'PNG', mx, y - 6.5, lgW, lgH);
+        titX = mx + lgW + 4;
+      } catch (e) { titX = mx; }
+    }
     setFont(doc, true, 20); doc.setTextColor(COR.txt[0], COR.txt[1], COR.txt[2]);
-    doc.text('Sua planilha completa', mx, y); y += 7;
+    doc.text('Sua planilha completa', titX, y); y += 7;
 
     /* subtitulo (mesma frase da tela) */
     var subHtml = opts.distancia + ' km. Seu tempo hoje: <b>' + opts.tempoHoje +
