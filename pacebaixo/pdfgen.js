@@ -114,7 +114,7 @@
     if (opts.logo) {
       try {
         var lgH = 15.6, lgW = lgH * 659 / 383;   // proporcao do PNG (659x383), +50% sobre a base (pedido do Paulo 18/07)
-        doc.addImage(opts.logo, 'PNG', mx, y - 6.5, lgW, lgH);
+        doc.addImage(opts.logo, 'PNG', mx, y - 11, lgW, lgH);
         titX = mx + lgW + 4;
       } catch (e) { titX = mx; }
     }
