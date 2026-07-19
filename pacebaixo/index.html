@@ -143,6 +143,7 @@
   }
   .campo input:focus{outline:0;border-color:var(--laranja)}
   .dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tripla{display:grid;grid-template-columns:0.62fr 1fr 1fr;gap:10px}
 
   .erro{
     color:#FF6B6B;
@@ -285,15 +286,15 @@
     <div class="campos">
       <div class="campo">
         <label for="idade">Idade</label>
-        <input id="idade" type="number" inputmode="numeric" min="10" max="99" placeholder="42">
+        <input id="idade" type="number" inputmode="numeric" min="10" max="99" placeholder="00">
       </div>
       <div class="campo">
         <label for="altura">Altura (cm)</label>
-        <input id="altura" type="number" inputmode="numeric" min="120" max="230" placeholder="178">
+        <input id="altura" type="number" inputmode="numeric" min="120" max="230" placeholder="000">
       </div>
       <div class="campo">
         <label for="peso">Peso (kg)</label>
-        <input id="peso" type="number" inputmode="decimal" min="30" max="250" placeholder="82">
+        <input id="peso" type="number" inputmode="decimal" min="30" max="250" placeholder="00">
       </div>
     </div>
     <p class="erro" id="erro-q2"></p>
@@ -306,14 +307,19 @@
     <p class="passo">PERGUNTA 3 DE 3</p>
     <h2 class="pergunta" id="pergunta-tempo">Qual o seu tempo exato nos 10 km hoje?</h2>
     <p class="ajuda" id="ajuda-tempo">Use seu melhor tempo dos últimos 15 dias, ou o da última vez que você correu 10 km. Se você usar um recorde pessoal de meses atrás, o treino vai sair forte demais para você.</p>
-    <div class="dupla">
+    <div class="tripla">
+      <div class="campo">
+        <label for="hora">Horas</label>
+        <input id="hora" type="number" inputmode="numeric" min="1" max="2" placeholder="0"
+               oninput="this.value=this.value.replace(/[^12]/g,'').slice(0,1)">
+      </div>
       <div class="campo">
         <label for="min">Minutos</label>
-        <input id="min" type="number" inputmode="numeric" min="8" max="150" placeholder="43">
+        <input id="min" type="number" inputmode="numeric" min="0" max="59" placeholder="00">
       </div>
       <div class="campo">
         <label for="seg">Segundos</label>
-        <input id="seg" type="number" inputmode="numeric" min="0" max="59" placeholder="54">
+        <input id="seg" type="number" inputmode="numeric" min="0" max="59" placeholder="00">
       </div>
     </div>
     <p class="erro" id="erro-q3"></p>
@@ -445,7 +451,11 @@ function decParaMS(dec){
 }
 function ms(par){ return par[0] + ':' + String(par[1]).padStart(2,'0'); }
 function segParaTempo(t){
-  var m = Math.floor(t/60), s = t % 60;
+  t = Math.round(t);
+  var h = Math.floor(t/3600);
+  var m = Math.floor((t % 3600)/60);
+  var s = t % 60;
+  if (h > 0) return h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
   return m + ':' + String(s).padStart(2,'0');
 }
 function textoDelta(seg){
@@ -498,22 +508,29 @@ function validarQ2(){
 }
 
 function calcular(){
-  var mm = Number(document.getElementById('min').value);
+  var hh = Number(document.getElementById('hora').value || 0);
+  var minRaw = document.getElementById('min').value;
   var ss = Number(document.getElementById('seg').value || 0);
   var e  = document.getElementById('erro-q3');
   var d  = resp.distancia;
 
-  if (!mm || mm < 8 || mm > 150){ e.textContent = 'Coloque os minutos do seu tempo, tipo 43.'; return; }
+  if (hh !== 0 && hh !== 1 && hh !== 2){ e.textContent = 'A hora só pode ser 1 ou 2. Correu abaixo de 1 hora? Deixe a hora em branco.'; return; }
+  if (minRaw === ''){ e.textContent = 'Coloque os minutos do seu tempo, tipo 43.'; return; }
+  var mm = Number(minRaw);
+  if (isNaN(mm) || mm < 0 || mm > 59){ e.textContent = 'Os minutos vão de 0 a 59.'; return; }
   if (ss < 0 || ss > 59){ e.textContent = 'Os segundos vão de 0 a 59.'; return; }
 
+  var mmTotal = hh * 60 + mm;          // total em minutos, com a hora somada
+  if (mmTotal < 8){ e.textContent = 'Coloque o seu tempo real nessa distância.'; return; }
+
   // sanidade: pace fora do humanamente possivel
-  var paceDec = (mm + ss/60) / d;
+  var paceDec = (mmTotal + ss/60) / d;
   if (paceDec < 2.3){ e.textContent = 'Esse tempo é mais rápido que o recorde mundial. Confere aí.'; return; }
-  if (paceDec > 12){ e.textContent = 'Esse tempo parece de caminhada. Confere aí.'; return; }
+  if (paceDec > 15){ e.textContent = 'Esse tempo parece de caminhada. Confere aí.'; return; }
   e.textContent = '';
 
-  resp.min = mm; resp.seg = ss;   // guarda o input pra montar a planilha completa
-  var r = prever(d, mm, ss);
+  resp.min = mmTotal; resp.seg = ss;   // guarda o total (hora ja somada) pra montar a planilha
+  var r = prever(d, mmTotal, ss);
 
   document.getElementById('r-dist').textContent       = d + ' km';
   document.getElementById('r-tempo-hoje').textContent = segParaTempo(r.segHoje);
@@ -525,6 +542,7 @@ function calcular(){
 }
 
 function recomecar(){
+  document.getElementById('hora').value = '';
   document.getElementById('min').value = '';
   document.getElementById('seg').value = '';
   irPara('tela-q1');
