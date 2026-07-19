@@ -391,6 +391,17 @@ var MODALIDADES = {
   10: { boost: 0.165, pctCompeticao: 0.87 }
 };
 
+/* Coeficiente (boost) por faixa de tempo, SO no 5 km (decisao do Paulo 19/07).
+   No 10 km segue fixo o boost da modalidade. totMin = tempo total em minutos decimais. */
+function boostPara(distancia, totMin){
+  if (distancia !== 5) return MODALIDADES[distancia].boost;
+  if (totMin > 25) return 0.175;   // acima de 25 min
+  if (totMin >= 20) return 0.170;  // 20:00 a 25:00
+  if (totMin >= 18) return 0.150;  // 18:00 a 19:59
+  if (totMin >= 16) return 0.125;  // 16:00 a 17:59
+  return 0.105;                    // 14:00 a 15:59 (e mais rapido)
+}
+
 /* Parametros dos 4 treinos de cada uma das 4 semanas, por modalidade.
    Extraidos celula a celula da aba P2 dos .xlsx do Paulo (nao chutados).
    As FORMULAS sao as mesmas do resto do motor; aqui so entram os pcts,
@@ -428,7 +439,7 @@ function paceDoKmh(kmh){
 function prever(distancia, minutos, segundos){
   var p = MODALIDADES[distancia];
   var paceDec = (minutos + segundos/60) / distancia;   // P1!D10
-  var vo2max  = vo2maxDoPace(paceDec, p.boost);
+  var vo2max  = vo2maxDoPace(paceDec, boostPara(distancia, minutos + segundos/60));
   var pf      = paceDoKmh(kmhDoPct(p.pctCompeticao, vo2max));
   var totalNovo = (pf[0] + pf[1]/60) * distancia;      // P1!G12
   var segHoje = Math.round((minutos*60) + segundos);
@@ -559,7 +570,7 @@ function recomecar(){
 function montarPlano(distancia, minutos, segundos){
   var p = MODALIDADES[distancia];
   var paceDec = (minutos + segundos/60) / distancia;
-  var vo2 = vo2maxDoPace(paceDec, p.boost);
+  var vo2 = vo2maxDoPace(paceDec, boostPara(distancia, minutos + segundos/60));
   var semanas = PLANO[distancia].map(function(dias, wi){
     var descanso = ['02','05'];
     var treinos = [];
