@@ -294,7 +294,7 @@
       </div>
       <div class="campo">
         <label for="peso">Peso (kg)</label>
-        <input id="peso" type="number" inputmode="decimal" min="30" max="250" placeholder="00">
+        <input id="peso" type="number" inputmode="decimal" min="30" max="150" placeholder="00">
       </div>
     </div>
     <p class="erro" id="erro-q2"></p>
@@ -307,8 +307,8 @@
     <p class="passo">PERGUNTA 3 DE 3</p>
     <h2 class="pergunta" id="pergunta-tempo">Qual o seu tempo exato nos 10 km hoje?</h2>
     <p class="ajuda" id="ajuda-tempo">Use seu melhor tempo dos últimos 15 dias, ou o da última vez que você correu 10 km. Se você usar um recorde pessoal de meses atrás, o treino vai sair forte demais para você.</p>
-    <div class="tripla">
-      <div class="campo">
+    <div class="tripla" id="caixas-tempo">
+      <div class="campo" id="campo-hora">
         <label for="hora">Horas</label>
         <input id="hora" type="number" inputmode="numeric" min="1" max="2" placeholder="0"
                oninput="this.value=this.value.replace(/[^12]/g,'').slice(0,1)">
@@ -491,6 +491,11 @@ function escolherDistancia(d){
   document.getElementById('ajuda-tempo').textContent =
     'Use seu melhor tempo dos últimos 15 dias, ou o da última vez que você correu ' + d +
     ' km. Se você usar um recorde pessoal de meses atrás, o treino vai sair forte demais para você.';
+  // caixa de Horas so no 10 km (no 5 km ninguem passa de 1h correndo); 5 km fica com 2 caixas
+  var t10 = (d === 10);
+  document.getElementById('campo-hora').style.display = t10 ? '' : 'none';
+  document.getElementById('caixas-tempo').className = t10 ? 'tripla' : 'dupla';
+  if (!t10) document.getElementById('hora').value = '';
   setTimeout(function(){ irPara('tela-q2'); }, 180);
 }
 
@@ -501,18 +506,19 @@ function validarQ2(){
   var e = document.getElementById('erro-q2');
   if (!i || i < 10 || i > 99){ e.textContent = 'Coloque uma idade entre 10 e 99.'; return; }
   if (!a || a < 120 || a > 230){ e.textContent = 'Coloque uma altura em centímetros, tipo 178.'; return; }
-  if (!p || p < 30 || p > 250){ e.textContent = 'Coloque um peso em quilos, tipo 82.'; return; }
+  if (!p || p < 30){ e.textContent = 'Coloque um peso em quilos, tipo 82.'; return; }
+  if (p > 150){ e.textContent = 'Acima de 150 kg o começo seguro é caminhada, não esse plano de corrida. Confere o peso.'; return; }
   e.textContent = '';
   resp.idade = i; resp.altura = a; resp.peso = p;
   irPara('tela-q3');
 }
 
 function calcular(){
-  var hh = Number(document.getElementById('hora').value || 0);
+  var d  = resp.distancia;
+  var hh = (d === 5) ? 0 : Number(document.getElementById('hora').value || 0);
   var minRaw = document.getElementById('min').value;
   var ss = Number(document.getElementById('seg').value || 0);
   var e  = document.getElementById('erro-q3');
-  var d  = resp.distancia;
 
   if (hh !== 0 && hh !== 1 && hh !== 2){ e.textContent = 'A hora só pode ser 1 ou 2. Correu abaixo de 1 hora? Deixe a hora em branco.'; return; }
   if (minRaw === ''){ e.textContent = 'Coloque os minutos do seu tempo, tipo 43.'; return; }
