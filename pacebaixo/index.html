@@ -396,10 +396,12 @@ var MODALIDADES = {
 function boostPara(distancia, totMin){
   if (distancia !== 5) return MODALIDADES[distancia].boost;
   if (totMin > 25) return 0.175;   // acima de 25 min
-  if (totMin >= 20) return 0.170;  // 20:00 a 25:00
-  if (totMin >= 18) return 0.150;  // 18:00 a 19:59
-  if (totMin >= 16) return 0.125;  // 16:00 a 17:59
-  return 0.105;                    // 14:00 a 15:59 (e mais rapido)
+  if (totMin >= 21) return 0.170;  // 21:00 a 25:00
+  if (totMin >= 20) return 0.165;  // 20:00 a 20:59
+  if (totMin >= 19) return 0.160;  // 19:00 a 19:59
+  if (totMin >= 18) return 0.155;  // 18:00 a 18:59
+  if (totMin >= 17) return 0.150;  // 17:00 a 17:59
+  return 0.145;                    // abaixo de 17:00
 }
 
 /* Parametros dos 4 treinos de cada uma das 4 semanas, por modalidade.
