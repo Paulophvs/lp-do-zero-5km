@@ -122,6 +122,16 @@
   .opcao.marcada{border-color:var(--laranja);background:rgba(248,104,0,.08)}
 
   .campos{display:grid;gap:16px;margin-bottom:28px}
+  /* linha de 5 opcoes (dias de treino): mesma cara do .opcao, so que compacta */
+  .dias{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:28px}
+  .dias .opcao{padding:16px 0;text-align:center;font-size:18px}
+  .rotulo-bloco{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--texto-fraco);
+    margin-bottom:9px;
+  }
   .campo label{
     display:block;
     font-size:13px;
@@ -297,6 +307,14 @@
         <input id="peso" type="number" inputmode="decimal" min="30" max="150" placeholder="00">
       </div>
     </div>
+    <span class="rotulo-bloco">Quantos dias por semana você consegue treinar corrida?</span>
+    <div class="dias" id="opcoes-dias">
+      <button class="opcao" data-dias="2" onclick="escolherDias(2)">2x</button>
+      <button class="opcao" data-dias="3" onclick="escolherDias(3)">3x</button>
+      <button class="opcao" data-dias="4" onclick="escolherDias(4)">4x</button>
+      <button class="opcao" data-dias="5" onclick="escolherDias(5)">5x</button>
+      <button class="opcao" data-dias="6" onclick="escolherDias(6)">6x</button>
+    </div>
     <p class="erro" id="erro-q2"></p>
     <button class="btn" onclick="validarQ2()">CONTINUAR</button>
     <button class="voltar" onclick="irPara('tela-q1')">Voltar</button>
@@ -391,17 +409,33 @@ var MODALIDADES = {
   10: { boost: 0.170, pctCompeticao: 0.87 }
 };
 
-/* Coeficiente (boost) por faixa de tempo, SO no 5 km (decisao do Paulo 19/07).
-   No 10 km segue fixo o boost da modalidade. totMin = tempo total em minutos decimais. */
-function boostPara(distancia, totMin){
-  if (distancia !== 5) return MODALIDADES[distancia].boost;
-  if (totMin > 25) return 0.175;   // acima de 25 min
-  if (totMin >= 21) return 0.170;  // 21:00 a 25:00
-  if (totMin >= 20) return 0.165;  // 20:00 a 20:59
-  if (totMin >= 19) return 0.160;  // 19:00 a 19:59
-  if (totMin >= 18) return 0.155;  // 18:00 a 18:59
-  if (totMin >= 17) return 0.150;  // 17:00 a 17:59
-  return 0.145;                    // abaixo de 17:00
+/* Parametros por faixa de tempo. totMin = tempo total de prova em min decimais.
+   5 km (decisao do Paulo 19/07): so o coeficiente afunila; pct de prova fixo 0,88.
+   10 km (decisao do Paulo 20/07): coeficiente CAI e pct de prova SOBE juntos.
+   Os dois sao a mesma grandeza fisiologica (fracao da VAM que o corredor
+   sustenta na prova) vista duas vezes: o coef ancora a VAM a partir do tempo
+   de hoje, o pct volta da VAM pro tempo previsto. Corredor mais rapido segura
+   fracao MAIOR da VAM, entao coef menor e pct maior andam juntos.
+   A promessa da previsao e exatamente pct*(1+coef); em todas as faixas abaixo
+   ela fica acima de 1, senao a previsao empataria com o tempo atual. */
+function paramsPara(distancia, totMin){
+  if (distancia === 5){
+    var b;
+    if      (totMin > 25) b = 0.175;  // acima de 25 min
+    else if (totMin >= 21) b = 0.170; // 21:00 a 25:00
+    else if (totMin >= 20) b = 0.165; // 20:00 a 20:59
+    else if (totMin >= 19) b = 0.160; // 19:00 a 19:59
+    else if (totMin >= 18) b = 0.155; // 18:00 a 18:59
+    else if (totMin >= 17) b = 0.150; // 17:00 a 17:59
+    else                   b = 0.145; // abaixo de 17:00
+    return { boost: b, pct: MODALIDADES[5].pctCompeticao };
+  }
+  if (totMin >= 45) return { boost: 0.170, pct: 0.87 };  // acima de 45 min, igual antes
+  if (totMin >= 40) return { boost: 0.160, pct: 0.88 };  // 40:00 a 44:59
+  if (totMin >= 37) return { boost: 0.150, pct: 0.89 };  // 37:00 a 39:59
+  if (totMin >= 35) return { boost: 0.130, pct: 0.90 };  // 35:00 a 36:59
+  if (totMin >= 32) return { boost: 0.120, pct: 0.91 };  // 32:00 a 34:59
+  return { boost: 0.110, pct: 0.92 };                    // abaixo de 32:00
 }
 
 /* Parametros dos 4 treinos de cada uma das 4 semanas, por modalidade.
@@ -439,10 +473,10 @@ function paceDoKmh(kmh){
 /* Entra o tempo total de prova, sai tudo.
    tempo / distancia = pace decimal, que e exatamente o P1!D10. */
 function prever(distancia, minutos, segundos){
-  var p = MODALIDADES[distancia];
+  var par = paramsPara(distancia, minutos + segundos/60);
   var paceDec = (minutos + segundos/60) / distancia;   // P1!D10
-  var vo2max  = vo2maxDoPace(paceDec, boostPara(distancia, minutos + segundos/60));
-  var pf      = paceDoKmh(kmhDoPct(p.pctCompeticao, vo2max));
+  var vo2max  = vo2maxDoPace(paceDec, par.boost);
+  var pf      = paceDoKmh(kmhDoPct(par.pct, vo2max));
   var totalNovo = (pf[0] + pf[1]/60) * distancia;      // P1!G12
   var segHoje = Math.round((minutos*60) + segundos);
   var segNovo = Math.round(totalNovo * 60);
@@ -481,7 +515,7 @@ function textoDelta(seg){
 }
 
 /* ---------------- estado + navegacao ---------------- */
-var resp = { distancia:null, idade:null, altura:null, peso:null };
+var resp = { distancia:null, idade:null, altura:null, peso:null, dias:null };
 
 function irPara(id){
   var telas = document.querySelectorAll('.tela');
@@ -494,7 +528,8 @@ function irPara(id){
 
 function escolherDistancia(d){
   resp.distancia = d;
-  var ops = document.querySelectorAll('.opcao');
+  // so os botoes de DISTANCIA: os de dias tambem sao .opcao e nao podem ser limpos aqui
+  var ops = document.querySelectorAll('.opcao[data-dist]');
   for (var i=0;i<ops.length;i++){
     ops[i].classList.toggle('marcada', Number(ops[i].dataset.dist) === d);
   }
@@ -512,6 +547,18 @@ function escolherDistancia(d){
   setTimeout(function(){ irPara('tela-q2'); }, 180);
 }
 
+/* Dias de treino que o lead consegue cumprir. NAO entra no calculo: o plano
+   segue com 4 treinos + 2 descansos (decisao do Paulo 20/07, as planilhas de
+   outros volumes vem depois). O dado fica guardado pra segmentar o lead. */
+function escolherDias(n){
+  resp.dias = n;
+  var ops = document.querySelectorAll('.opcao[data-dias]');
+  for (var i=0;i<ops.length;i++){
+    ops[i].classList.toggle('marcada', Number(ops[i].dataset.dias) === n);
+  }
+  document.getElementById('erro-q2').textContent = '';
+}
+
 function validarQ2(){
   var i = Number(document.getElementById('idade').value);
   var a = Number(document.getElementById('altura').value);
@@ -521,6 +568,7 @@ function validarQ2(){
   if (!a || a < 120 || a > 230){ e.textContent = 'Coloque uma altura em centímetros, tipo 178.'; return; }
   if (!p || p < 30){ e.textContent = 'Coloque um peso em quilos, tipo 82.'; return; }
   if (p > 150){ e.textContent = 'Acima de 150 kg o começo seguro é caminhada, não esse plano de corrida. Confere o peso.'; return; }
+  if (!resp.dias){ e.textContent = 'Escolha quantos dias por semana você consegue treinar.'; return; }
   e.textContent = '';
   resp.idade = i; resp.altura = a; resp.peso = p;
   irPara('tela-q3');
@@ -570,9 +618,9 @@ function recomecar(){
 /* ---------------- planilha completa ---------------- */
 /* Monta o plano das 4 semanas personalizado pelo pace do lead. */
 function montarPlano(distancia, minutos, segundos){
-  var p = MODALIDADES[distancia];
+  var par = paramsPara(distancia, minutos + segundos/60);
   var paceDec = (minutos + segundos/60) / distancia;
-  var vo2 = vo2maxDoPace(paceDec, boostPara(distancia, minutos + segundos/60));
+  var vo2 = vo2maxDoPace(paceDec, par.boost);
   var semanas = PLANO[distancia].map(function(dias, wi){
     var descanso = ['02','05'];
     var treinos = [];
@@ -582,7 +630,9 @@ function montarPlano(distancia, minutos, segundos){
         treinos.push({ dia:d.dia, tipo:'intervalado', min:d.min,
           paceForte: paceDoPct(d.pctForte, vo2), durForte:d.durForte, durLeve:d.durLeve });
       } else if (d.tipo === 'competicao'){
-        var pa = paceDoPct(d.pctA, vo2);
+        /* o pace do dia de prova TEM que sair do mesmo pct da previsao,
+           senao a planilha mostra um alvo diferente do numero da tela. */
+        var pa = paceDoPct(par.pct, vo2);
         var seg = paceParaSeg(pa) * d.km;
         treinos.push({ dia:d.dia, tipo:'competicao', km:d.km, paceAlvo:pa, tempoPrevisto:segParaTempo(seg) });
       } else {
