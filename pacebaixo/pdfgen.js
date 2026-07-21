@@ -137,6 +137,24 @@
       setFont(doc, true, 11); doc.setTextColor(COR.laranja[0], COR.laranja[1], COR.laranja[2]);
       doc.text(('Semana ' + s.n).toUpperCase(), mx, y); y += 5.5;
 
+      /* card de aquecimento (borda laranja) no topo da semana */
+      if ((s.aquecimento || []).length) {
+        var aqLays = s.aquecimento.map(function (h) {
+          return layoutRich(doc, parseRuns(h, COR.txt, COR.laranja), maxW - 12, 9.5);
+        });
+        var aqPadTop = 5, aqPadBot = 5;
+        var aqBodyH = aqLays.reduce(function (a, l) { return a + l.lines.length * l.lineH; }, 0);
+        var aqCardH = aqPadTop + aqBodyH + aqPadBot;
+        quebra(aqCardH + 3);
+        doc.setFillColor(255, 244, 235);
+        doc.setDrawColor(COR.laranja[0], COR.laranja[1], COR.laranja[2]);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(mx, y, maxW, aqCardH, 3, 3, 'FD');
+        var aqY = y + aqPadTop + aqLays[0].size * 0.3528;
+        aqLays.forEach(function (l) { aqY = drawLines(doc, l, mx + 6, aqY); });
+        y += aqCardH + 3;
+      }
+
       (s.treinos || []).forEach(function (t) {
         var corPc = t.comp ? COR.verde : COR.laranja;
         var corDia = t.comp ? COR.verde : COR.fraco;

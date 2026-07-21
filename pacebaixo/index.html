@@ -260,6 +260,12 @@
   .treino.competicao .pc{color:var(--verde)}
   .treino.livre{border-style:dashed;opacity:.9}
   .descanso-nota{font-size:13px;color:var(--texto-fraco);margin:2px 0 0;font-style:italic}
+  .aquecimento{
+    background:rgba(248,104,0,.08);border:1px solid var(--laranja);
+    border-radius:12px;padding:12px 16px;margin-bottom:10px;
+    font-size:14px;font-weight:600;line-height:1.5;
+  }
+  .aquecimento .pc{color:var(--laranja);font-weight:800}
 </style>
 </head>
 <body>
@@ -701,9 +707,22 @@ function montarPlano(distancia, minutos, segundos, qtdDias){
     var descanso = (qtdDias === 4) ? ['02','05'] : [];
     return { n: wi+1, treinos: treinos, descanso: descanso };
   });
-  return { vo2:vo2, semanas:semanas, qtdDias:(DIAS_POR_QTD[qtdDias]?qtdDias:4) };
+  return { vo2:vo2, semanas:semanas, qtdDias:(DIAS_POR_QTD[qtdDias]?qtdDias:4),
+           aqPace: paceDoPct(0.60, vo2) };
 }
 function paceParaSeg(t){ var q=t.split(':'); return Number(q[0])*60 + Number(q[1]); }
+
+/* Card de aquecimento no topo de cada semana. O "leve" e 60% do VO2max
+   (momento diferente da recuperacao 57,5% do intervalado). Metodo igual
+   nos 5 e 10 km. Retorna as 3 linhas em HTML (pace em laranja). */
+function aquecimentoLinhasHTML(pace){
+  var p = '<b class="pc">' + pace + '/km</b>';
+  return [
+    '<b class="pc">ATENÇÃO!</b> Sempre faça antes dos treinos 10 a 20 min de aquecimento, e 5 min de desaquecimento no final do treino.',
+    'Recomendação de aquecimento: 5 min leve (a ' + p + ') + 6 min de mobilidade e educativos + 2 tiros de 20 seg.',
+    'Recomendação de desaquecimento: 5 min leve (a ' + p + ').'
+  ];
+}
 
 function frasesTreino(t){
   if (t.tipo === 'livre')
@@ -742,6 +761,7 @@ function verPlano(){
   var html = '';
   pl.semanas.forEach(function(s){
     html += '<div class="semana"><div class="semana-tit">Semana ' + s.n + '</div>';
+    html += '<div class="aquecimento">' + aquecimentoLinhasHTML(pl.aqPace).join('<br>') + '</div>';
     s.treinos.forEach(function(t){
       var cls = t.tipo==='competicao' ? ' competicao' : (t.tipo==='livre' ? ' livre' : '');
       html += '<div class="treino' + cls + '">' +
@@ -774,6 +794,7 @@ function baixarPDF(){
       return {
         n: s.n,
         descanso: s.descanso,
+        aquecimento: aquecimentoLinhasHTML(pl.aqPace),
         treinos: s.treinos.map(function(t){
           return { dia: t.dia, html: frasesTreino(t), comp: t.tipo === 'competicao' };
         })
@@ -804,7 +825,9 @@ function baixarPlano(){
   linhas.push('Previsao em 4 semanas' + sep + segParaTempo(prev.segNovo));
   linhas.push('');
   linhas.push(['Semana','Dia','Treino','Tempo/Distancia','Pace'].join(sep));
+  var aqTxt = aquecimentoLinhasHTML(pl.aqPace).map(function(h){ return h.replace(/<[^>]+>/g,''); });
   pl.semanas.forEach(function(s){
+    linhas.push(['Semana '+s.n,'Aquecimento',aqTxt.join(' '),'',''].join(sep));
     s.treinos.forEach(function(t){
       var td, pace, tipo;
       if (t.tipo === 'intervalado'){
