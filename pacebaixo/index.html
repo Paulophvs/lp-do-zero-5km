@@ -463,10 +463,14 @@ function vo2maxDoPace(paceDec, boost){
   return (vmax * 3.3) + 3.8;            // P1!D3
 }
 
-/* P2 linhas "VO2 TREINO" e "KM//H" */
+/* P2 linhas "VO2 TREINO" e "KM//H".
+   ⚠️ O Excel do Paulo tinha um SE(vo2t<=27,5; CAMINHADA; CORRIDA) que colava a
+   equacao de caminhada na de corrida. Elas nao se encontram em 27,5 (so em ~33,74),
+   e o degrau invertia a zona do corredor lento. Como a planilha e de CORRIDA,
+   apagamos o SE e deixamos so o ramo de corrida (ordem do Paulo 21/07). Zera as
+   62 inversoes; muda so o lado leve do dia 03 no rabo lento, nada no miolo. */
 function kmhDoPct(pct, vo2max){
   var vo2t = pct * (vo2max - 3.5) + 3.5;
-  if (vo2t <= 27.5) return (1.8182 + 0.2266 * vo2t) - 0.3;
   return (vo2t - 3.5) / 3.3;
 }
 /* pace (m:ss por km) direto de um pct de VO2max */
