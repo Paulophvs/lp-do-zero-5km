@@ -258,6 +258,7 @@
   .treino.competicao{border-color:var(--verde)}
   .treino.competicao .treino-dia{color:var(--verde)}
   .treino.competicao .pc{color:var(--verde)}
+  .treino.livre{border-style:dashed;opacity:.9}
   .descanso-nota{font-size:13px;color:var(--texto-fraco);margin:2px 0 0;font-style:italic}
 </style>
 </head>
@@ -438,12 +439,13 @@ function paramsPara(distancia, totMin){
   return { boost: 0.110, pct: 0.92 };                    // abaixo de 32:00
 }
 
-/* Parametros dos 4 treinos de cada uma das 4 semanas, por modalidade.
-   Extraidos celula a celula da aba P2 dos .xlsx do Paulo (nao chutados).
-   As FORMULAS sao as mesmas do resto do motor; aqui so entram os pcts,
-   tempos e distancias fixos de cada dia. Dias 02 e 05 sao descanso.
-   Na semana 4 o dia 04 tambem e descanso e o dia 06 e a COMPETICAO. */
-var PLANO = {"5": [[{"dia": "01", "tipo": "intervalado", "min": 24, "pctForte": 0.91, "durForte": "2min", "durLeve": "2min"}, {"dia": "03", "tipo": "distancia", "km": 7, "pctA": 0.8, "pctB": 0.9, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 28, "pctForte": 0.93, "durForte": "1min", "durLeve": "3min"}, {"dia": "06", "tipo": "distancia", "km": 5, "pctA": 0.82, "pctB": 0.87, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 32, "pctForte": 0.96, "durForte": "4min", "durLeve": "4min"}, {"dia": "03", "tipo": "distancia", "km": 5, "pctA": 0.84, "pctB": 0.94, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 30, "pctForte": 1.03, "durForte": "2min", "durLeve": "3min"}, {"dia": "06", "tipo": "distancia", "km": 8, "pctA": 0.83, "pctB": 0.88, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 27, "pctForte": 1.07, "durForte": "1min", "durLeve": "2min"}, {"dia": "03", "tipo": "distancia", "km": 3, "pctA": 0.88, "pctB": 0.98, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 36, "pctForte": 1.04, "durForte": "3min", "durLeve": "3min"}, {"dia": "06", "tipo": "distancia", "km": 7, "pctA": 0.86, "pctB": 0.91, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 25, "pctForte": 0.95, "durForte": "2min", "durLeve": "3min"}, {"dia": "03", "tipo": "distancia", "km": 4, "pctA": 0.8, "pctB": 0.9, "leve": true}, {"dia": "04", "tipo": "descanso"}, {"dia": "06", "tipo": "competicao", "km": 5, "pctA": 0.88, "pctB": 0.93, "leve": false}]], "10": [[{"dia": "01", "tipo": "intervalado", "min": 27, "pctForte": 0.92, "durForte": "1min", "durLeve": "2min"}, {"dia": "03", "tipo": "distancia", "km": 8, "pctA": 0.8, "pctB": 0.9, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 32, "pctForte": 0.94, "durForte": "2min", "durLeve": "2min"}, {"dia": "06", "tipo": "distancia", "km": 12, "pctA": 0.82, "pctB": 0.87, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 32, "pctForte": 0.96, "durForte": "4min", "durLeve": "4min"}, {"dia": "03", "tipo": "distancia", "km": 7, "pctA": 0.84, "pctB": 0.94, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 42, "pctForte": 1, "durForte": "3min", "durLeve": "3min"}, {"dia": "06", "tipo": "distancia", "km": 14, "pctA": 0.83, "pctB": 0.88, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 35, "pctForte": 1.04, "durForte": "2min", "durLeve": "3min"}, {"dia": "03", "tipo": "distancia", "km": 5, "pctA": 0.88, "pctB": 0.98, "leve": false}, {"dia": "04", "tipo": "intervalado", "min": 40, "pctForte": 0.97, "durForte": "5min", "durLeve": "5min"}, {"dia": "06", "tipo": "distancia", "km": 11, "pctA": 0.86, "pctB": 0.91, "leve": false}], [{"dia": "01", "tipo": "intervalado", "min": 30, "pctForte": 0.95, "durForte": "2min", "durLeve": "3min"}, {"dia": "03", "tipo": "distancia", "km": 5, "pctA": 0.8, "pctB": 0.9, "leve": true}, {"dia": "04", "tipo": "descanso"}, {"dia": "06", "tipo": "competicao", "km": 10, "pctA": 0.87, "pctB": 0.97, "leve": false}]]};
+/* Parametros dos 5 treinos de cada semana, por modalidade (dias 01,02,03,04,06).
+   Extraidos celula a celula da aba P2 dos .xlsx do Paulo (nao chutados), inclusive
+   o dia 02 (aerobico leve) das planilhas 5D de 20/07. Dia 05 e o dia livre (so 6x).
+   As FORMULAS sao as mesmas do resto do motor; aqui so entram os pcts, tempos e
+   distancias fixos. Na semana 4 o dia 04 e descanso e o dia 06 e a COMPETICAO.
+   Quais dias aparecem depende da qtd de treinos: ver DIAS_POR_QTD. */
+var PLANO = {"5":[[{"dia":"01","tipo":"intervalado","min":24,"pctForte":0.91,"durForte":"2min","durLeve":"2min"},{"dia":"02","tipo":"distancia","km":7,"pctA":0.61,"pctB":0.71,"leve":true},{"dia":"03","tipo":"distancia","km":7,"pctA":0.8,"pctB":0.9,"leve":false},{"dia":"04","tipo":"intervalado","min":28,"pctForte":0.93,"durForte":"1min","durLeve":"3min"},{"dia":"06","tipo":"distancia","km":5,"pctA":0.82,"pctB":0.87,"leve":false}],[{"dia":"01","tipo":"intervalado","min":32,"pctForte":0.96,"durForte":"4min","durLeve":"4min"},{"dia":"02","tipo":"distancia","km":6,"pctA":0.62,"pctB":0.72,"leve":true},{"dia":"03","tipo":"distancia","km":5,"pctA":0.84,"pctB":0.94,"leve":false},{"dia":"04","tipo":"intervalado","min":30,"pctForte":1.03,"durForte":"2min","durLeve":"3min"},{"dia":"06","tipo":"distancia","km":8,"pctA":0.83,"pctB":0.88,"leve":false}],[{"dia":"01","tipo":"intervalado","min":27,"pctForte":1.07,"durForte":"1min","durLeve":"2min"},{"dia":"02","tipo":"distancia","km":5,"pctA":0.63,"pctB":0.73,"leve":true},{"dia":"03","tipo":"distancia","km":3,"pctA":0.88,"pctB":0.98,"leve":false},{"dia":"04","tipo":"intervalado","min":36,"pctForte":1.04,"durForte":"3min","durLeve":"3min"},{"dia":"06","tipo":"distancia","km":7,"pctA":0.86,"pctB":0.91,"leve":false}],[{"dia":"01","tipo":"intervalado","min":25,"pctForte":0.95,"durForte":"2min","durLeve":"3min"},{"dia":"02","tipo":"distancia","km":7,"pctA":0.64,"pctB":0.74,"leve":true},{"dia":"03","tipo":"distancia","km":4,"pctA":0.8,"pctB":0.9,"leve":true},{"dia":"04","tipo":"descanso"},{"dia":"06","tipo":"competicao","km":5,"pctA":0.88,"pctB":0.93,"leve":false}]],"10":[[{"dia":"01","tipo":"intervalado","min":27,"pctForte":0.92,"durForte":"1min","durLeve":"2min"},{"dia":"02","tipo":"distancia","km":7,"pctA":0.61,"pctB":0.71,"leve":true},{"dia":"03","tipo":"distancia","km":8,"pctA":0.8,"pctB":0.9,"leve":false},{"dia":"04","tipo":"intervalado","min":32,"pctForte":0.94,"durForte":"2min","durLeve":"2min"},{"dia":"06","tipo":"distancia","km":12,"pctA":0.82,"pctB":0.87,"leve":false}],[{"dia":"01","tipo":"intervalado","min":32,"pctForte":0.96,"durForte":"4min","durLeve":"4min"},{"dia":"02","tipo":"distancia","km":8,"pctA":0.62,"pctB":0.72,"leve":true},{"dia":"03","tipo":"distancia","km":7,"pctA":0.84,"pctB":0.94,"leve":false},{"dia":"04","tipo":"intervalado","min":42,"pctForte":1,"durForte":"3min","durLeve":"3min"},{"dia":"06","tipo":"distancia","km":14,"pctA":0.83,"pctB":0.88,"leve":false}],[{"dia":"01","tipo":"intervalado","min":35,"pctForte":1.04,"durForte":"2min","durLeve":"3min"},{"dia":"02","tipo":"distancia","km":9,"pctA":0.63,"pctB":0.73,"leve":true},{"dia":"03","tipo":"distancia","km":5,"pctA":0.88,"pctB":0.98,"leve":false},{"dia":"04","tipo":"intervalado","min":40,"pctForte":0.97,"durForte":"5min","durLeve":"5min"},{"dia":"06","tipo":"distancia","km":11,"pctA":0.86,"pctB":0.91,"leve":false}],[{"dia":"01","tipo":"intervalado","min":30,"pctForte":0.95,"durForte":"2min","durLeve":"3min"},{"dia":"02","tipo":"distancia","km":10,"pctA":0.64,"pctB":0.74,"leve":true},{"dia":"03","tipo":"distancia","km":5,"pctA":0.8,"pctB":0.9,"leve":true},{"dia":"04","tipo":"descanso"},{"dia":"06","tipo":"competicao","km":10,"pctA":0.87,"pctB":0.97,"leve":false}]]};
 
 /* P1!D2 -> P1!D3. Entra o pace decimal (min/km), sai o VO2max. */
 function vo2maxDoPace(paceDec, boost){
@@ -547,9 +549,9 @@ function escolherDistancia(d){
   setTimeout(function(){ irPara('tela-q2'); }, 180);
 }
 
-/* Dias de treino que o lead consegue cumprir. NAO entra no calculo: o plano
-   segue com 4 treinos + 2 descansos (decisao do Paulo 20/07, as planilhas de
-   outros volumes vem depois). O dado fica guardado pra segmentar o lead. */
+/* Dias de treino que o lead consegue cumprir. ENTRA no calculo: define quantos
+   treinos a planilha mostra (2 a 6), via montarPlano/DIAS_POR_QTD (decisao do
+   Paulo 21/07). resp.dias guardado e usado em verPlano/baixarPDF/baixarPlano. */
 function escolherDias(n){
   resp.dias = n;
   var ops = document.querySelectorAll('.opcao[data-dias]');
@@ -617,15 +619,36 @@ function recomecar(){
 
 /* ---------------- planilha completa ---------------- */
 /* Monta o plano das 4 semanas personalizado pelo pace do lead. */
-function montarPlano(distancia, minutos, segundos){
+/* Quais dias da planilha (01..06) entram conforme quantos dias o lead treina.
+   O plano-base tem 5 treinos reais: 01 e 04 intervalados, 02/03/06 de zona
+   (06 vira COMPETICAO na semana 4). Decisao do Paulo 20/07:
+   6x = os 5 treinos + dia 05 LIVRE com recomendacao de trote;
+   5x = os 5 treinos, dia 05 some da tela e da planilha;
+   4x = como sempre foi (sem o dia 02);
+   3x = dias 01, 04 e 06, renumerados 01/02/03 na tela;
+   2x = dias 04 e 06, renumerados 01/02 na tela. */
+var DIAS_POR_QTD = {
+  2: { usa:['04','06'],                relabel:true,  livre:false },
+  3: { usa:['01','04','06'],           relabel:true,  livre:false },
+  4: { usa:['01','03','04','06'],      relabel:false, livre:false },
+  5: { usa:['01','02','03','04','06'], relabel:false, livre:false },
+  6: { usa:['01','02','03','04','06'], relabel:false, livre:true  }
+};
+/* recomendacao do dia livre (so no 6x), por modalidade. */
+var TROTE_LIVRE = { 5:'20 a 30 min de trote, corrida leve.', 10:'25 a 40 min de trote, corrida leve.' };
+
+function montarPlano(distancia, minutos, segundos, qtdDias){
   var par = paramsPara(distancia, minutos + segundos/60);
   var paceDec = (minutos + segundos/60) / distancia;
   var vo2 = vo2maxDoPace(paceDec, par.boost);
+  var cfg = DIAS_POR_QTD[qtdDias] || DIAS_POR_QTD[4];   // 4x e o padrao seguro
+
   var semanas = PLANO[distancia].map(function(dias, wi){
-    var descanso = ['02','05'];
+    // monta so os treinos dos dias escolhidos, na ordem da planilha
     var treinos = [];
-    dias.forEach(function(d){
-      if (d.tipo === 'descanso'){ descanso.push(d.dia); return; }
+    cfg.usa.forEach(function(codigo){
+      var d = dias.find(function(x){ return x.dia === codigo; });
+      if (!d || d.tipo === 'descanso') return;   // dia 04 da semana 4 e descanso
       if (d.tipo === 'intervalado'){
         treinos.push({ dia:d.dia, tipo:'intervalado', min:d.min,
           paceForte: paceDoPct(d.pctForte, vo2), durForte:d.durForte, durLeve:d.durLeve });
@@ -640,14 +663,25 @@ function montarPlano(distancia, minutos, segundos){
           paceIni: paceDoPct(d.pctA, vo2), paceFim: paceDoPct(d.pctB, vo2), leve:d.leve });
       }
     });
-    descanso.sort();
+    // 6x: dia 05 vira card LIVRE, inserido na ordem (entre o 04 e o 06)
+    if (cfg.livre){
+      var idx = treinos.length;
+      for (var k=0;k<treinos.length;k++){ if (treinos[k].dia > '05'){ idx = k; break; } }
+      treinos.splice(idx, 0, { dia:'05', tipo:'livre', texto: TROTE_LIVRE[distancia] });
+    }
+    // 2x/3x: renumera os dias na tela (Dia 01, 02, 03...)
+    if (cfg.relabel) treinos.forEach(function(t,i){ t.dia = String(i+1).padStart(2,'0'); });
+    // descanso so aparece no 4x (o unico caso com dias vazios rotulados)
+    var descanso = (qtdDias === 4) ? ['02','05'] : [];
     return { n: wi+1, treinos: treinos, descanso: descanso };
   });
-  return { vo2:vo2, semanas:semanas };
+  return { vo2:vo2, semanas:semanas, qtdDias:(DIAS_POR_QTD[qtdDias]?qtdDias:4) };
 }
 function paceParaSeg(t){ var q=t.split(':'); return Number(q[0])*60 + Number(q[1]); }
 
 function frasesTreino(t){
+  if (t.tipo === 'livre')
+    return 'Dia de treino livre. Recomendação: ' + t.texto;
   if (t.tipo === 'intervalado')
     return 'Intervalado, ' + t.min + ' min. ' + t.durForte + ' forte a <b class="pc">' +
            t.paceForte + '/km</b>, ' + t.durLeve + ' leve. Repetir até fechar o tempo.';
@@ -660,22 +694,36 @@ function frasesTreino(t){
   return t.km + ' km ' + (t.leve ? 'leve, ' : 'contínuo, ') + 'pace ' + zona + '.';
 }
 
-function verPlano(){
-  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg);
-  var prev = prever(d, resp.min, resp.seg);
-  document.getElementById('plano-sub').innerHTML =
-    d + ' km. Seu tempo hoje: <b>' + segParaTempo(prev.segHoje) +
+/* frase de volume por quantidade de dias, usada na tela e no PDF (mesma fonte). */
+function frasePlano(qtd){
+  if (qtd === 6) return 'São 5 treinos e 1 dia livre por semana. O dia livre faz parte do método.';
+  if (qtd === 5) return 'São 5 treinos por semana.';
+  if (qtd === 3) return 'São 3 treinos por semana.';
+  if (qtd === 2) return 'São 2 treinos por semana.';
+  return 'São 4 treinos por semana, o resto é descanso, que faz parte do método.';
+}
+function subtituloPlano(d, prev, qtd){
+  return d + ' km. Seu tempo hoje: <b>' + segParaTempo(prev.segHoje) +
     '</b>. Previsão em 4 semanas: <b class="prev">' + segParaTempo(prev.segNovo) +
-    '</b>. São 4 treinos por semana, o resto é descanso, que faz parte do método.';
+    '</b>. ' + frasePlano(qtd);
+}
+
+function verPlano(){
+  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg, resp.dias);
+  var prev = prever(d, resp.min, resp.seg);
+  document.getElementById('plano-sub').innerHTML = subtituloPlano(d, prev, pl.qtdDias);
   var html = '';
   pl.semanas.forEach(function(s){
     html += '<div class="semana"><div class="semana-tit">Semana ' + s.n + '</div>';
     s.treinos.forEach(function(t){
-      html += '<div class="treino' + (t.tipo==='competicao'?' competicao':'') + '">' +
+      var cls = t.tipo==='competicao' ? ' competicao' : (t.tipo==='livre' ? ' livre' : '');
+      html += '<div class="treino' + cls + '">' +
               '<div class="treino-dia">DIA ' + t.dia + '</div>' +
               '<div class="treino-corpo">' + frasesTreino(t) + '</div></div>';
     });
-    html += '<p class="descanso-nota">Dias ' + s.descanso.join(', ') + ': descanso.</p></div>';
+    if (s.descanso.length)
+      html += '<p class="descanso-nota">Dias ' + s.descanso.join(', ') + ': descanso.</p>';
+    html += '</div>';
   });
   document.getElementById('plano-corpo').innerHTML = html;
   irPara('tela-plano');
@@ -693,7 +741,7 @@ function baixarPDF(){
   var btn = event && event.target;
   if (btn){ btn.disabled = true; btn.textContent = 'Gerando PDF...'; }
   try {
-    var pl = montarPlano(d, resp.min, resp.seg);
+    var pl = montarPlano(d, resp.min, resp.seg, resp.dias);
     var prev = prever(d, resp.min, resp.seg);
     var semanas = pl.semanas.map(function(s){
       return {
@@ -710,6 +758,7 @@ function baixarPDF(){
       distancia: d,
       tempoHoje: segParaTempo(prev.segHoje),
       tempoNovo: segParaTempo(prev.segNovo),
+      subtitulo: frasePlano(pl.qtdDias),
       semanas: semanas
     });
     doc.save('pace-baixo-' + d + 'km.pdf');
@@ -720,7 +769,7 @@ function baixarPDF(){
 }
 
 function baixarPlano(){
-  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg);
+  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg, resp.dias);
   var prev = prever(d, resp.min, resp.seg);
   var sep = ';', nl = '\r\n', linhas = [];
   linhas.push('Pace Baixo - Planilha ' + d + ' km');
@@ -736,6 +785,8 @@ function baixarPlano(){
         pace=t.durForte+' forte a '+t.paceForte+'/km, '+t.durLeve+' leve';
       } else if (t.tipo === 'competicao'){
         tipo='Competicao'; td=t.km+' km'; pace='alvo '+t.paceAlvo+'/km (previsto '+t.tempoPrevisto+')';
+      } else if (t.tipo === 'livre'){
+        tipo='Treino livre'; td=''; pace=t.texto;
       } else {
         tipo = t.leve ? 'Corrida leve' : 'Corrida na zona'; td=t.km+' km';
         pace = (t.paceIni===t.paceFim) ? t.paceIni+'/km' : t.paceIni+' a '+t.paceFim+'/km';

@@ -127,7 +127,7 @@
     /* subtitulo (mesma frase da tela) */
     var subHtml = opts.distancia + ' km. Seu tempo hoje: <b>' + opts.tempoHoje +
       '</b>. Previsão em 4 semanas: <b class="prev">' + opts.tempoNovo +
-      '</b>. São 4 treinos por semana, o resto é descanso, que faz parte do método.';
+      '</b>. ' + (opts.subtitulo || 'São 4 treinos por semana, o resto é descanso, que faz parte do método.');
     var subLay = layoutRich(doc, parseRuns(subHtml, COR.fraco, COR.laranja), maxW, 10.5);
     y = drawLines(doc, subLay, mx, y + 3.5) + 5;
 
@@ -157,10 +157,14 @@
         y += cardH + 2.5;
       });
 
-      quebra(8);
-      setFont(doc, false, 9); doc.setTextColor(COR.fraco[0], COR.fraco[1], COR.fraco[2]);
-      doc.text('Dias ' + (s.descanso || []).join(', ') + ': descanso.', mx, y + 3);
-      y += 10;
+      if ((s.descanso || []).length){
+        quebra(8);
+        setFont(doc, false, 9); doc.setTextColor(COR.fraco[0], COR.fraco[1], COR.fraco[2]);
+        doc.text('Dias ' + s.descanso.join(', ') + ': descanso.', mx, y + 3);
+        y += 10;
+      } else {
+        y += 4;
+      }
     });
 
     return doc;
