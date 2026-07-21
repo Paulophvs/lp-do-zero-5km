@@ -279,7 +279,7 @@
 
   <!-- ===== TELA 2: PERGUNTA 1 ===== -->
   <section class="tela" id="tela-q1">
-    <p class="passo">PERGUNTA 1 DE 3</p>
+    <p class="passo">PERGUNTA 1 DE 4</p>
     <h2 class="pergunta">Qual corrida você deseja baixar o seu tempo?</h2>
     <p class="ajuda">&nbsp;</p>
     <div class="opcoes">
@@ -291,7 +291,7 @@
 
   <!-- ===== TELA 3: PERGUNTA 2 ===== -->
   <section class="tela" id="tela-q2">
-    <p class="passo">PERGUNTA 2 DE 3</p>
+    <p class="passo">PERGUNTA 2 DE 4</p>
     <h2 class="pergunta">Agora me conta sobre você.</h2>
     <p class="ajuda">São dados da sua ficha de avaliação.</p>
     <div class="campos">
@@ -308,7 +308,16 @@
         <input id="peso" type="number" inputmode="decimal" min="30" max="150" placeholder="00">
       </div>
     </div>
-    <span class="rotulo-bloco">Quantos dias por semana você consegue treinar corrida?</span>
+    <p class="erro" id="erro-q2"></p>
+    <button class="btn" onclick="validarQ2()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-q1')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 3: PERGUNTA 3 (dias de treino, tela propria) ===== -->
+  <section class="tela" id="tela-dias">
+    <p class="passo">PERGUNTA 3 DE 4</p>
+    <h2 class="pergunta">Quantos dias por semana você consegue treinar corrida?</h2>
+    <p class="ajuda">Monto a semana em cima da rotina que você aguenta manter, não a ideal.</p>
     <div class="dias" id="opcoes-dias">
       <button class="opcao" data-dias="2" onclick="escolherDias(2)">2x</button>
       <button class="opcao" data-dias="3" onclick="escolherDias(3)">3x</button>
@@ -316,14 +325,14 @@
       <button class="opcao" data-dias="5" onclick="escolherDias(5)">5x</button>
       <button class="opcao" data-dias="6" onclick="escolherDias(6)">6x</button>
     </div>
-    <p class="erro" id="erro-q2"></p>
-    <button class="btn" onclick="validarQ2()">CONTINUAR</button>
-    <button class="voltar" onclick="irPara('tela-q1')">Voltar</button>
+    <p class="erro" id="erro-dias"></p>
+    <button class="btn" onclick="validarDias()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-q2')">Voltar</button>
   </section>
 
-  <!-- ===== TELA 4: PERGUNTA 3 ===== -->
+  <!-- ===== TELA 4: PERGUNTA 4 (tempo) ===== -->
   <section class="tela" id="tela-q3">
-    <p class="passo">PERGUNTA 3 DE 3</p>
+    <p class="passo">PERGUNTA 4 DE 4</p>
     <h2 class="pergunta" id="pergunta-tempo">Qual o seu tempo exato nos 10 km hoje?</h2>
     <p class="ajuda" id="ajuda-tempo">Use seu melhor tempo dos últimos 15 dias, ou o da última vez que você correu 10 km. Se você usar um recorde pessoal de meses atrás, o treino vai sair forte demais para você.</p>
     <div class="tripla" id="caixas-tempo">
@@ -343,7 +352,7 @@
     </div>
     <p class="erro" id="erro-q3"></p>
     <button class="btn" onclick="calcular()">VER MEU TEMPO</button>
-    <button class="voltar" onclick="irPara('tela-q2')">Voltar</button>
+    <button class="voltar" onclick="irPara('tela-dias')">Voltar</button>
   </section>
 
   <!-- ===== TELA 5: RESULTADO ===== -->
@@ -558,7 +567,7 @@ function escolherDias(n){
   for (var i=0;i<ops.length;i++){
     ops[i].classList.toggle('marcada', Number(ops[i].dataset.dias) === n);
   }
-  document.getElementById('erro-q2').textContent = '';
+  document.getElementById('erro-dias').textContent = '';
 }
 
 function validarQ2(){
@@ -570,9 +579,16 @@ function validarQ2(){
   if (!a || a < 120 || a > 230){ e.textContent = 'Coloque uma altura em centímetros, tipo 178.'; return; }
   if (!p || p < 30){ e.textContent = 'Coloque um peso em quilos, tipo 82.'; return; }
   if (p > 150){ e.textContent = 'Acima de 150 kg o começo seguro é caminhada, não esse plano de corrida. Confere o peso.'; return; }
-  if (!resp.dias){ e.textContent = 'Escolha quantos dias por semana você consegue treinar.'; return; }
   e.textContent = '';
   resp.idade = i; resp.altura = a; resp.peso = p;
+  irPara('tela-dias');
+}
+
+/* Tela propria dos dias de treino (form virou 4 perguntas, decisao do Paulo 21/07). */
+function validarDias(){
+  var e = document.getElementById('erro-dias');
+  if (!resp.dias){ e.textContent = 'Escolha quantos dias por semana você consegue treinar.'; return; }
+  e.textContent = '';
   irPara('tela-q3');
 }
 
