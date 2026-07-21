@@ -317,7 +317,7 @@
   <section class="tela" id="tela-dias">
     <p class="passo">PERGUNTA 3 DE 4</p>
     <h2 class="pergunta">Quantos dias por semana você consegue treinar corrida?</h2>
-    <p class="ajuda">Monto a semana em cima da rotina que você aguenta manter, não a ideal.</p>
+    <p class="ajuda">Monto a semana de treinos em cima da rotina que você aguenta manter.</p>
     <div class="dias" id="opcoes-dias">
       <button class="opcao" data-dias="2" onclick="escolherDias(2)">2x</button>
       <button class="opcao" data-dias="3" onclick="escolherDias(3)">3x</button>
@@ -709,7 +709,7 @@ function frasesTreino(t){
            t.paceForte + '/km</b>, ' + t.durLeve + ' leve a <b class="pc">' + t.paceLeve +
            '/km</b>. Repetir até fechar o tempo.';
   if (t.tipo === 'competicao')
-    return 'Prova, ' + t.km + ' km no pace alvo <b class="pc">' + t.paceAlvo +
+    return 'Ritmo de prova, ' + t.km + ' km no pace alvo <b class="pc">' + t.paceAlvo +
            '/km</b>. Tempo previsto: <b>' + t.tempoPrevisto + '</b>.';
   var zona = (t.paceIni === t.paceFim)
     ? '<b class="pc">' + t.paceIni + '/km</b>'
