@@ -1276,7 +1276,7 @@
 
     // CTA: leva direto pro checkout da Hotmart (sem formulario de cadastro).
     // Dispara o evento InitiateCheckout no Pixel antes de navegar, pra manter o funil medido.
-    const CHECKOUT_URL = 'https://pay.hotmart.com/U105416596Q';
+    const CHECKOUT_URL = 'https://pay.hotmart.com/U105416596Q?checkoutMode=10';
     document.querySelectorAll('[data-checkout]').forEach(b => {
       b.addEventListener('click', () => {
         if (window.fbq) fbq('track', 'InitiateCheckout', { content_name: 'LP 5km do Zero', currency: 'BRL', value: 197 });
