@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Abrindo o WhatsApp...</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background: #0f1115;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+    .box { max-width: 340px; }
+    .zap {
+      width: 64px; height: 64px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: #25D366;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .zap svg { width: 36px; height: 36px; fill: #fff; }
+    h1 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+    p { font-size: 14px; color: #9aa0a6; line-height: 1.5; }
+    a.btn {
+      display: inline-block;
+      margin-top: 18px;
+      background: #25D366;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 12px 22px;
+      border-radius: 999px;
+    }
+    .dots::after {
+      content: '';
+      animation: d 1.2s steps(4, end) infinite;
+    }
+    @keyframes d { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="zap">
+      <svg viewBox="0 0 24 24"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.03c-.24.68-1.4 1.3-1.94 1.34-.5.04-.97.22-3.28-.68-2.77-1.09-4.53-3.92-4.67-4.1-.14-.18-1.12-1.49-1.12-2.84s.71-2.02.96-2.29c.25-.27.55-.34.73-.34.18 0 .37 0 .53.01.17.01.4-.06.62.48.24.56.8 1.94.87 2.08.07.14.12.31.02.49-.09.18-.14.29-.28.45-.14.16-.29.35-.42.47-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.07.95 1.97 1.25 2.25 1.39.28.14.44.12.6-.07.16-.18.69-.8.87-1.08.18-.28.37-.23.62-.14.25.09 1.6.75 1.87.89.28.14.46.21.53.32.07.12.07.65-.17 1.33z"/></svg>
+    </div>
+    <h1>Abrindo o WhatsApp<span class="dots"></span></h1>
+    <p>Se não abrir sozinho em alguns segundos, toque no botão.</p>
+    <a class="btn" id="manual" href="#" rel="nofollow">Abrir conversa</a>
+  </div>
+
+  <script>
+    (function () {
+      var NUMERO = '5571994102328';
+
+      // Texto pré-preenchido por canal de origem: /whats?c=bio, ?c=story, ?c=ads
+      var TEXTOS = {
+        bio:   'Olá Paulo! Vim pelo link da bio. Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___',
+        story: 'Olá Paulo! Vim pelo story. Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___',
+        ads:   'Olá Paulo! Vim pelo anúncio. Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___',
+        site:  'Olá Paulo! Vim pelo site. Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___'
+      };
+      var PADRAO = 'Olá Paulo! Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___';
+
+      var canal = (new URLSearchParams(window.location.search).get('c') || '').toLowerCase();
+      var texto = TEXTOS[canal] || PADRAO;
+      var destino = 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(texto);
+
+      document.getElementById('manual').href = destino;
+
+      // Pixel: mede quantos cliques de fato chegam no WhatsApp
+      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+      document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      try {
+        fbq('init', '1803401826472530');
+        fbq('track', 'PageView');
+        fbq('track', 'Contact', { content_name: 'clique-whatsapp', source: canal || 'direto' });
+      } catch (e) {}
+
+      // Redireciona sozinho. O atraso curto é só pro pixel conseguir disparar.
+      setTimeout(function () { window.location.replace(destino); }, 700);
+    })();
+  </script>
+</body>
+</html>
