@@ -40,10 +40,7 @@
       padding: 12px 22px;
       border-radius: 999px;
     }
-    .dots::after {
-      content: '';
-      animation: d 1.2s steps(4, end) infinite;
-    }
+    .dots::after { content: ''; animation: d 1.2s steps(4, end) infinite; }
     @keyframes d { 0% { content: ''; } 25% { content: '.'; } 50% { content: '..'; } 75% { content: '...'; } }
   </style>
 </head>
@@ -59,36 +56,105 @@
 
   <script>
     (function () {
-      var NUMERO = '5571994102328';
+      var NUMERO   = '5571994102328';
+      var PIXEL_ID = '1803401826472530';
 
-      // Texto pré-preenchido por canal de origem: /whats?c=bio, ?c=story, ?c=ads
-      var TEXTOS = {
-        bio:   'Olá Paulo! Vim pelo link da bio. Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___',
-        story: 'Olá Paulo! Vim pelo story. Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___',
-        ads:   'Olá Paulo! Vim pelo anúncio. Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___',
-        site:  'Olá Paulo! Vim pelo site. Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___'
+      // ------------------------------------------------------------------
+      // MENSAGENS PRONTAS. Pra trocar a mensagem NAO precisa mexer no site:
+      // basta mudar o final do link que voce publica.
+      //   /whats                    -> mensagem padrao
+      //   /whats?m=diagnostico      -> pede o diagnostico
+      //   /whats?m=5km              -> quem quer sair do zero aos 5km
+      //   /whats?m=preco            -> quer valor da assessoria
+      //   /whats?m=planilha         -> quer a planilha
+      //   /whats?t=Texto+livre      -> qualquer texto na hora, sem deploy
+      // E o canal de origem (aparece pra voce e no relatorio do Pixel):
+      //   /whats?c=bio  ?c=story  ?c=ads  ?c=site
+      // Da pra combinar: /whats?c=story&m=diagnostico
+      // ------------------------------------------------------------------
+      var ABERTURA = 'Olá Paulo! ';
+      var ASSUNTOS = {
+        padrao:      'Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___',
+        diagnostico: 'Quero fazer o diagnóstico da minha corrida. Hoje eu corro ___ vezes por semana, meu melhor tempo é ___ e meu objetivo é ___',
+        '5km':       'Quero sair do zero aos 5 km. Hoje eu corro ___ vezes por semana.',
+        preco:       'Quero saber o valor da assessoria Km3 Corridas e como funciona.',
+        planilha:    'Quero a planilha de treino. Hoje eu corro ___ vezes por semana e meu objetivo é ___',
+        duvida:      'Tenho uma dúvida sobre a assessoria Km3 Corridas.'
       };
-      var PADRAO = 'Olá Paulo! Quero saber sobre a assessoria Km3 Corridas. Hoje eu corro ___ vezes por semana e meu objetivo é ___';
+      var CANAIS = {
+        bio:   'Vim pelo link da bio. ',
+        story: 'Vim pelo story. ',
+        ads:   'Vim pelo anúncio. ',
+        site:  'Vim pelo site. '
+      };
 
-      var canal = (new URLSearchParams(window.location.search).get('c') || '').toLowerCase();
-      var texto = TEXTOS[canal] || PADRAO;
+      var q       = new URLSearchParams(window.location.search);
+      var canal   = (q.get('c') || '').toLowerCase().slice(0, 20);
+      var assunto = (q.get('m') || '').toLowerCase().slice(0, 20);
+      var livre   = (q.get('t') || '').slice(0, 300);
+
+      var corpo = livre || ASSUNTOS[assunto] || ASSUNTOS.padrao;
+      var texto = livre ? corpo : (ABERTURA + (CANAIS[canal] || '') + corpo);
+
       var destino = 'https://wa.me/' + NUMERO + '?text=' + encodeURIComponent(texto);
-
       document.getElementById('manual').href = destino;
 
-      // Pixel: mede quantos cliques de fato chegam no WhatsApp
+      // ------------------------------------------------------------------
+      // Medicao. O mesmo event_id vai no Pixel (browser) e na CAPI (servidor),
+      // entao a Meta deduplica e conta 1 evento so, com o dobro de chance de chegar.
+      // ------------------------------------------------------------------
+      var eventId = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : String(Date.now()) + '-' + Math.random().toString(16).slice(2);
+
+      function cookie(nome) {
+        var m = document.cookie.match('(^|;)\\s*' + nome + '\\s*=\\s*([^;]+)');
+        return m ? m.pop() : undefined;
+      }
+
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
       n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
       t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
       document,'script','https://connect.facebook.net/en_US/fbevents.js');
       try {
-        fbq('init', '1803401826472530');
+        fbq('init', PIXEL_ID);
         fbq('track', 'PageView');
-        fbq('track', 'Contact', { content_name: 'clique-whatsapp', source: canal || 'direto' });
+        fbq('track', 'Contact',
+          { content_name: 'clique-whatsapp', canal: canal || 'direto', assunto: assunto || 'padrao' },
+          { eventID: eventId });
       } catch (e) {}
 
-      // Redireciona sozinho. O atraso curto é só pro pixel conseguir disparar.
+      // fbc: se a pessoa veio de anuncio, a URL traz fbclid. Melhora o match na Meta.
+      var fbclid = q.get('fbclid');
+      var fbc = cookie('_fbc') || (fbclid ? 'fb.1.' + Date.now() + '.' + fbclid : undefined);
+
+      var dados = JSON.stringify({
+        event_id: eventId,
+        canal: canal || 'direto',
+        assunto: livre ? 'texto-livre' : (assunto || 'padrao'),
+        source_url: window.location.href,
+        fbp: cookie('_fbp'),
+        fbc: fbc
+      });
+
+      // sendBeacon sobrevive ao redirect (fetch normal seria cortado no meio).
+      try {
+        var enviou = false;
+        if (navigator.sendBeacon) {
+          enviou = navigator.sendBeacon('/api/contact', new Blob([dados], { type: 'application/json' }));
+        }
+        if (!enviou) {
+          fetch('/api/contact', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: dados,
+            keepalive: true
+          }).catch(function () {});
+        }
+      } catch (e) {}
+
+      // Redireciona sozinho. O atraso curto e so pro pixel do browser disparar.
       setTimeout(function () { window.location.replace(destino); }, 700);
     })();
   </script>
