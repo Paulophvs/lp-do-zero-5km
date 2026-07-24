@@ -889,13 +889,15 @@
 
     <!-- VIDEO DE APRESENTAÇÃO -->
     <div class="video-wrapper" id="videoPlaceholder">
-      <iframe
-        src="https://www.youtube.com/embed/b28rfV0sI7o"
+      <video
+        controls
+        playsinline
+        preload="metadata"
         title="Vídeo de apresentação"
-        style="width:100%; height:100%; border:0;"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allowfullscreen></iframe>
+        style="width:100%; height:100%; border:0; object-fit:cover;">
+        <source src="https://assets.cdn.filesafe.space/sVzQ1MyiOqQn2e6Yuzu1/media/6a63a60bfaf3b5c12c6f0245.mp4" type="video/mp4" />
+        Seu navegador não suporta a reprodução de vídeo.
+      </video>
     </div>
 
     <button type="button" data-checkout class="cta-btn laranja">QUERO COMEÇAR AGORA →</button>
