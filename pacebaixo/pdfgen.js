@@ -131,6 +131,20 @@
     var subLay = layoutRich(doc, parseRuns(subHtml, COR.fraco, COR.laranja), maxW, 10.5);
     y = drawLines(doc, subLay, mx, y + 3.5) + 5;
 
+    /* aviso dos dias colados (trava mole). Vem junto pro PDF por ordem do
+       Paulo 30/07: na tela ele some ao avancar, no papel a pessoa relê. */
+    if (opts.observacao) {
+      var obLay = layoutRich(doc, parseRuns(opts.observacao, COR.txt, COR.laranja), maxW - 12, 9.5);
+      var obH = 5 + obLay.lines.length * obLay.lineH + 5;
+      quebra(obH + 3);
+      doc.setFillColor(255, 244, 235);
+      doc.setDrawColor(COR.laranja[0], COR.laranja[1], COR.laranja[2]);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(mx, y, maxW, obH, 3, 3, 'FD');
+      drawLines(doc, obLay, mx + 6, y + 5 + obLay.size * 0.3528);
+      y += obH + 5;
+    }
+
     /* semanas */
     (opts.semanas || []).forEach(function (s) {
       quebra(16);
@@ -170,19 +184,14 @@
         doc.roundedRect(mx, y, maxW, cardH, 3, 3, 'FD');
 
         setFont(doc, true, 8.5); doc.setTextColor(corDia[0], corDia[1], corDia[2]);
-        doc.text('DIA ' + t.dia, mx + 6, y + padTop + diaH);
+        /* rotulo do card: o nome do dia da semana que a pessoa escolheu.
+           Cai no "DIA XX" antigo se o plano vier sem os dias marcados. */
+        doc.text((t.rotulo || ('DIA ' + t.dia)).toUpperCase(), mx + 6, y + padTop + diaH);
         drawLines(doc, lay, mx + 6, y + padTop + diaH + gap + lay.size * 0.3528);
         y += cardH + 2.5;
       });
 
-      if ((s.descanso || []).length){
-        quebra(8);
-        setFont(doc, false, 9); doc.setTextColor(COR.fraco[0], COR.fraco[1], COR.fraco[2]);
-        doc.text('Dias ' + s.descanso.join(', ') + ': descanso.', mx, y + 3);
-        y += 10;
-      } else {
-        y += 4;
-      }
+      y += 4;
     });
 
     return doc;

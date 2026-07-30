@@ -123,8 +123,12 @@
 
   .campos{display:grid;gap:16px;margin-bottom:28px}
   /* linha de 5 opcoes (dias de treino): mesma cara do .opcao, so que compacta */
-  .dias{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:28px}
-  .dias .opcao{padding:16px 0;text-align:center;font-size:18px}
+  .dias{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+  .dias .opcao{padding:14px 2px;text-align:center;font-size:15px}
+  /* observacao da trava mole: aviso, nao erro. Laranja, nao vermelho. */
+  .obs-dias{font-size:14px;line-height:1.45;color:var(--texto);background:rgba(248,104,0,.10);
+    border:1px solid var(--laranja);border-radius:10px;padding:12px 14px;margin:0 0 14px;display:none}
+  .obs-dias.on{display:block}
   .rotulo-bloco{
     display:block;
     font-size:13px;
@@ -259,7 +263,13 @@
   .treino.competicao .treino-dia{color:var(--verde)}
   .treino.competicao .pc{color:var(--verde)}
   .treino.livre{border-style:dashed;opacity:.9}
-  .descanso-nota{font-size:13px;color:var(--texto-fraco);margin:2px 0 0;font-style:italic}
+  /* card de DESCANSO na semana 4: o dia marcado que ficou sem treino aparece
+     escrito, nao some da tela (ordem do Paulo 30/07). */
+  .treino.descanso{border-style:dashed;opacity:.75}
+  .treino.descanso .treino-corpo{font-weight:600;color:var(--texto-fraco)}
+  /* aviso dos dias colados, repetido no resultado e na planilha */
+  .obs-plano{font-size:13.5px;line-height:1.45;background:rgba(248,104,0,.10);
+    border:1px solid var(--laranja);border-radius:10px;padding:11px 14px;margin:0 0 14px}
   .aquecimento{
     background:rgba(248,104,0,.08);border:1px solid var(--laranja);
     border-radius:12px;padding:12px 16px;margin-bottom:10px;
@@ -322,17 +332,20 @@
   <!-- ===== TELA 3: PERGUNTA 3 (dias de treino, tela propria) ===== -->
   <section class="tela" id="tela-dias">
     <p class="passo">PERGUNTA 3 DE 4</p>
-    <h2 class="pergunta">Quantos dias por semana você consegue treinar corrida?</h2>
+    <h2 class="pergunta">Quais dias da semana você consegue treinar?</h2>
     <p class="ajuda">Monto a semana de treinos em cima da rotina que você aguenta manter.</p>
     <div class="dias" id="opcoes-dias">
-      <button class="opcao" data-dias="2" onclick="escolherDias(2)">2x</button>
-      <button class="opcao" data-dias="3" onclick="escolherDias(3)">3x</button>
-      <button class="opcao" data-dias="4" onclick="escolherDias(4)">4x</button>
-      <button class="opcao" data-dias="5" onclick="escolherDias(5)">5x</button>
-      <button class="opcao" data-dias="6" onclick="escolherDias(6)">6x</button>
+      <button class="opcao" data-dia="1" onclick="alternarDia(1)">Segunda</button>
+      <button class="opcao" data-dia="2" onclick="alternarDia(2)">Terça</button>
+      <button class="opcao" data-dia="3" onclick="alternarDia(3)">Quarta</button>
+      <button class="opcao" data-dia="4" onclick="alternarDia(4)">Quinta</button>
+      <button class="opcao" data-dia="5" onclick="alternarDia(5)">Sexta</button>
+      <button class="opcao" data-dia="6" onclick="alternarDia(6)">Sábado</button>
+      <button class="opcao" data-dia="7" onclick="alternarDia(7)">Domingo</button>
     </div>
+    <p class="obs-dias" id="obs-dias"></p>
     <p class="erro" id="erro-dias"></p>
-    <button class="btn" onclick="validarDias()">CONTINUAR</button>
+    <button class="btn" id="btn-dias" onclick="validarDias()">CONTINUAR</button>
     <button class="voltar" onclick="irPara('tela-q2')">Voltar</button>
   </section>
 
@@ -388,6 +401,8 @@
 
     <p class="venda">Esse número não vem de sorte. Vem de <b>4 semanas de treinos feitos sob medida pra você</b>, com o tempo, a velocidade, a distância e o pace exato de cada treino.</p>
 
+    <p class="obs-plano" id="obs-res" style="display:none"></p>
+
     <button class="btn" onclick="verPlano()">VER E BAIXAR MINHA PLANILHA</button>
     <button class="voltar" onclick="recomecar()">Calcular de novo</button>
   </section>
@@ -401,6 +416,7 @@
       </div>
       <p id="plano-sub"></p>
     </div>
+    <p class="obs-plano" id="obs-plano" style="display:none"></p>
     <div id="plano-corpo"></div>
     <button class="btn" onclick="baixarPDF()">BAIXAR MINHA PLANILHA (PDF)</button>
     <button class="voltar" onclick="irPara('tela-res')">Voltar ao resultado</button>
@@ -409,7 +425,7 @@
 </div>
 
 <script src="/pacebaixo/jspdf.umd.min.js"></script>
-<script src="/pacebaixo/pdfgen.js?v=3"></script>
+<script src="/pacebaixo/pdfgen.js?v=4"></script>
 <script>
 /* ============================================================
    MOTOR PACE BAIXO
@@ -536,7 +552,8 @@ function textoDelta(seg){
 }
 
 /* ---------------- estado + navegacao ---------------- */
-var resp = { distancia:null, idade:null, altura:null, peso:null, dias:null };
+var resp = { distancia:null, idade:null, altura:null, peso:null, dias:null,
+             diasSemana:[], obsDias:'', obsVista:false };
 
 function irPara(id){
   var telas = document.querySelectorAll('.tela');
@@ -568,16 +585,76 @@ function escolherDistancia(d){
   setTimeout(function(){ irPara('tela-q2'); }, 180);
 }
 
-/* Dias de treino que o lead consegue cumprir. ENTRA no calculo: define quantos
-   treinos a planilha mostra (2 a 6), via montarPlano/DIAS_POR_QTD (decisao do
-   Paulo 21/07). resp.dias guardado e usado em verPlano/baixarPDF/baixarPlano. */
-function escolherDias(n){
-  resp.dias = n;
-  var ops = document.querySelectorAll('.opcao[data-dias]');
-  for (var i=0;i<ops.length;i++){
-    ops[i].classList.toggle('marcada', Number(ops[i].dataset.dias) === n);
+/* ---------------- dias da semana (pergunta 3) ----------------
+   Decisao do Paulo 29-30/07: a pergunta de QUANTIDADE virou a pergunta de
+   QUAIS DIAS. A quantidade passa a sair da contagem dos dias marcados, e o
+   rotulo do card deixa de ser "DIA 01" e vira o nome do dia que a pessoa
+   escolheu. O dia da semana muda o CALENDARIO, nao o treino. */
+var NOMES_DIAS = {1:'Segunda',2:'Terça',3:'Quarta',4:'Quinta',5:'Sexta',6:'Sábado',7:'Domingo'};
+
+/* Maior sequencia de dias colados, CIRCULAR: a semana vira, entao domingo
+   emenda com segunda (senao o longão de domingo + o intervalado de segunda
+   passariam batido). */
+function maxSeguidos(dias){
+  var n = dias.length;
+  if (n === 0) return 0;
+  if (n === 7) return 7;
+  var mk = {}; dias.forEach(function(d){ mk[d] = true; });
+  var melhor = 0;
+  dias.forEach(function(ini){
+    var c = 0, d = ini;
+    while (mk[d] && c < 7){ c++; d = (d % 7) + 1; }
+    if (c > melhor) melhor = c;
+  });
+  return melhor;
+}
+
+/* Observacao da trava mole. Gatilho por quantidade, decidido pelo Paulo:
+   so avisa do que a pessoa CONSEGUE evitar.
+   2x avisa se os 2 colarem | 3x se 2 quaisquer colarem | 4x com 3+ seguidos |
+   5x SO com os 5 seguidos | 6x nunca.
+   O 5x mudou em 30/07: 3 seguidos nao sao problema porque o 2o treino da
+   semana da pessoa e sempre o dia 02, que e o regenerativo. */
+function obsDias(dias){
+  var n = dias.length, m = maxSeguidos(dias);
+  if (n === 2 && m >= 2)
+    return 'Quem treina dois dias por semana, o ideal é treinar dia sim, dia não, ou dia sim, dois dias não.';
+  if (n === 3 && m >= 2)
+    return 'Quem treina três dias por semana, o ideal é treinar dia sim, dia não, ou dia sim, dois dias não.';
+  if (n === 4 && m >= 3)
+    return 'O ideal é treinar segunda, quarta, quinta e sábado, ou terça, quinta, sexta e domingo.';
+  if (n === 5 && m >= 5)
+    return 'Evite os cinco dias de treino seguidos. O ideal é deixar um dia de descanso antes do último treino da semana, que é o mais importante dela.';
+  return '';
+}
+
+/* Marca e desmarca dia. No 7o dia e TRAVA DE MARCAR (nao deixa clicar),
+   diferente da trava do botao Avancar, que e mole. */
+function alternarDia(n){
+  var i = resp.diasSemana.indexOf(n);
+  if (i >= 0){
+    resp.diasSemana.splice(i, 1);
+  } else {
+    if (resp.diasSemana.length >= 6){
+      document.getElementById('erro-dias').textContent =
+        'Um dia de descanso geral na semana faz parte do método pra sua evolução na corrida.';
+      return;
+    }
+    resp.diasSemana.push(n);
+  }
+  resp.diasSemana.sort(function(a,b){ return a-b; });
+  resp.dias = resp.diasSemana.length;
+  var ops = document.querySelectorAll('.opcao[data-dia]');
+  for (var k=0;k<ops.length;k++){
+    ops[k].classList.toggle('marcada', resp.diasSemana.indexOf(Number(ops[k].dataset.dia)) >= 0);
   }
   document.getElementById('erro-dias').textContent = '';
+  // mexeu na marcacao, a trava mole rearma e a observacao velha sai da tela
+  resp.obsVista = false;
+  resp.obsDias  = '';
+  var o = document.getElementById('obs-dias');
+  o.textContent = ''; o.classList.remove('on');
+  document.getElementById('btn-dias').textContent = 'CONTINUAR';
 }
 
 function validarQ2(){
@@ -594,11 +671,26 @@ function validarQ2(){
   irPara('tela-dias');
 }
 
-/* Tela propria dos dias de treino (form virou 4 perguntas, decisao do Paulo 21/07). */
+/* Tela propria dos dias de treino (form virou 4 perguntas, decisao do Paulo 21/07).
+   TRAVA MOLE (decisao do Paulo 29/07): no 1o clique o botao NAO avanca, abre a
+   observacao e vira "Seguir assim mesmo"; o 2o clique passa. Barrar de vez
+   perderia o lead que so tem sabado e domingo, que e publico dele. */
 function validarDias(){
   var e = document.getElementById('erro-dias');
-  if (!resp.dias){ e.textContent = 'Escolha quantos dias por semana você consegue treinar.'; return; }
+  var o = document.getElementById('obs-dias');
+  var b = document.getElementById('btn-dias');
+  if (resp.diasSemana.length < 2){
+    e.textContent = 'Marque pelo menos 2 dias da semana.'; return;
+  }
   e.textContent = '';
+  var obs = obsDias(resp.diasSemana);
+  if (obs && !resp.obsVista){
+    o.textContent = obs; o.classList.add('on');
+    b.textContent = 'SEGUIR ASSIM MESMO';
+    resp.obsVista = true;
+    return;                       // 1o clique nao passa
+  }
+  resp.obsDias = obs;             // vai junto pro resultado e pro PDF
   irPara('tela-q3');
 }
 
@@ -633,6 +725,7 @@ function calcular(){
   document.getElementById('r-tempo-novo').textContent = segParaTempo(r.segNovo);
   document.getElementById('r-pace-novo').textContent  = ms(r.paceNovo);
   document.getElementById('r-delta').textContent      = textoDelta(r.delta);
+  mostrarObs('obs-res');
   irPara('tela-res');
 }
 
@@ -660,6 +753,17 @@ var DIAS_POR_QTD = {
   5: { usa:['01','02','03','04','06'], relabel:false, livre:false },
   6: { usa:['01','02','03','04','06'], relabel:false, livre:true  }
 };
+
+/* SEMANA 4 e EXCECAO (decisao do Paulo 30/07). Na semana da prova o dia 04 e
+   descanso no metodo, o que deixava o 2x com um treino so e o 3x com dois.
+   Em vez de inventar treino, ele remapeou QUAIS dias da planilha entram:
+   2x passa a usar 01 e 06, e 3x usa 01, 03 e 06. As outras quantidades ficam
+   com o mesmo mapeamento das semanas 1 a 3, e o dia sem treino vira card de
+   DESCANSO escrito. Quem nao esta aqui usa o DIAS_POR_QTD normal. */
+var DIAS_SEMANA4 = {
+  2: ['01','06'],
+  3: ['01','03','06']
+};
 /* recomendacao do dia livre (so no 6x), por modalidade. */
 var TROTE_LIVRE = { 5:'20 a 30 min de trote, corrida leve.', 10:'25 a 40 min de trote, corrida leve.' };
 
@@ -668,18 +772,28 @@ var TROTE_LIVRE = { 5:'20 a 30 min de trote, corrida leve.', 10:'25 a 40 min de 
    um pace de trote leve, abaixo do dia facil, so pra limpar sem somar cansaco). */
 var REC_PCT = 0.575;
 
-function montarPlano(distancia, minutos, segundos, qtdDias){
+function montarPlano(distancia, minutos, segundos, qtdDias, diasSemana){
   var par = paramsPara(distancia, minutos + segundos/60);
   var paceDec = (minutos + segundos/60) / distancia;
   var vo2 = vo2maxDoPace(paceDec, par.boost);
   var cfg = DIAS_POR_QTD[qtdDias] || DIAS_POR_QTD[4];   // 4x e o padrao seguro
+  var marcados = (diasSemana && diasSemana.length) ? diasSemana : null;
 
   var semanas = PLANO[distancia].map(function(dias, wi){
-    // monta so os treinos dos dias escolhidos, na ordem da planilha
+    var sem4 = (wi === 3);
+    // na semana 4 o 2x e o 3x usam outros dias da planilha (ver DIAS_SEMANA4)
+    var usa = (sem4 && DIAS_SEMANA4[qtdDias]) ? DIAS_SEMANA4[qtdDias] : cfg.usa;
+    // monta os treinos dos dias escolhidos, na ordem da planilha
     var treinos = [];
-    cfg.usa.forEach(function(codigo){
+    usa.forEach(function(codigo){
       var d = dias.find(function(x){ return x.dia === codigo; });
-      if (!d || d.tipo === 'descanso') return;   // dia 04 da semana 4 e descanso
+      /* dia sem treino (o 04 na semana 4) NAO some: vira card escrito DESCANSO,
+         pro aluno nao sentir falta de um dia e nao entender o que aconteceu
+         (ordem do Paulo 30/07). Fora da semana 4 isso nunca acontece. */
+      if (!d || d.tipo === 'descanso'){
+        treinos.push({ dia:codigo, tipo:'descanso' });
+        return;
+      }
       if (d.tipo === 'intervalado'){
         treinos.push({ dia:d.dia, tipo:'intervalado', min:d.min,
           paceForte: paceDoPct(d.pctForte, vo2), paceLeve: paceDoPct(REC_PCT, vo2),
@@ -695,17 +809,27 @@ function montarPlano(distancia, minutos, segundos, qtdDias){
           paceIni: paceDoPct(d.pctA, vo2), paceFim: paceDoPct(d.pctB, vo2), leve:d.leve });
       }
     });
-    // 6x: dia 05 vira card LIVRE, inserido na ordem (entre o 04 e o 06)
+    /* 6x: dia 05 vira card LIVRE, inserido na ordem (entre o 04 e o 06).
+       Na SEMANA 4 o dia livre nao existe: vira o 2o descanso da semana da
+       prova (ordem do Paulo 30/07). */
     if (cfg.livre){
       var idx = treinos.length;
       for (var k=0;k<treinos.length;k++){ if (treinos[k].dia > '05'){ idx = k; break; } }
-      treinos.splice(idx, 0, { dia:'05', tipo:'livre', texto: TROTE_LIVRE[distancia] });
+      treinos.splice(idx, 0, sem4
+        ? { dia:'05', tipo:'descanso' }
+        : { dia:'05', tipo:'livre', texto: TROTE_LIVRE[distancia] });
     }
-    // 2x/3x: renumera os dias na tela (Dia 01, 02, 03...)
-    if (cfg.relabel) treinos.forEach(function(t,i){ t.dia = String(i+1).padStart(2,'0'); });
-    // descanso so aparece no 4x (o unico caso com dias vazios rotulados)
-    var descanso = (qtdDias === 4) ? ['02','05'] : [];
-    return { n: wi+1, treinos: treinos, descanso: descanso };
+    /* rotulo do card. Com os dias da semana escolhidos, cada card leva o NOME
+       do dia: ordena os marcados de segunda a domingo e encaixa os treinos na
+       ordem deles (1o marcado pega o 1o treino da lista). Sem os dias (harness
+       antigo), cai no rotulo velho, e o 2x/3x seguem renumerados 01/02/03. */
+    if (marcados){
+      treinos.forEach(function(t,i){ t.rotulo = NOMES_DIAS[marcados[i]] || ('DIA ' + t.dia); });
+    } else {
+      if (cfg.relabel) treinos.forEach(function(t,i){ t.dia = String(i+1).padStart(2,'0'); });
+      treinos.forEach(function(t){ t.rotulo = 'DIA ' + t.dia; });
+    }
+    return { n: wi+1, treinos: treinos };
   });
   return { vo2:vo2, semanas:semanas, qtdDias:(DIAS_POR_QTD[qtdDias]?qtdDias:4),
            aqPace: paceDoPct(0.60, vo2) };
@@ -725,6 +849,8 @@ function aquecimentoLinhasHTML(pace){
 }
 
 function frasesTreino(t){
+  if (t.tipo === 'descanso')
+    return 'Descanso. Nesse dia o corpo absorve o treino da semana.';
   if (t.tipo === 'livre')
     return 'Dia de treino livre. Recomendação: ' + t.texto;
   if (t.tipo === 'intervalado')
@@ -755,25 +881,34 @@ function subtituloPlano(d, prev, qtd){
 }
 
 function verPlano(){
-  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg, resp.dias);
+  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg, resp.dias, resp.diasSemana);
   var prev = prever(d, resp.min, resp.seg);
   document.getElementById('plano-sub').innerHTML = subtituloPlano(d, prev, pl.qtdDias);
+  mostrarObs('obs-plano');
   var html = '';
   pl.semanas.forEach(function(s){
     html += '<div class="semana"><div class="semana-tit">Semana ' + s.n + '</div>';
     html += '<div class="aquecimento">' + aquecimentoLinhasHTML(pl.aqPace).join('<br>') + '</div>';
     s.treinos.forEach(function(t){
-      var cls = t.tipo==='competicao' ? ' competicao' : (t.tipo==='livre' ? ' livre' : '');
+      var cls = t.tipo==='competicao' ? ' competicao'
+              : (t.tipo==='livre' ? ' livre' : (t.tipo==='descanso' ? ' descanso' : ''));
       html += '<div class="treino' + cls + '">' +
-              '<div class="treino-dia">DIA ' + t.dia + '</div>' +
+              '<div class="treino-dia">' + (t.rotulo || ('DIA ' + t.dia)) + '</div>' +
               '<div class="treino-corpo">' + frasesTreino(t) + '</div></div>';
     });
-    if (s.descanso.length)
-      html += '<p class="descanso-nota">Dias ' + s.descanso.join(', ') + ': descanso.</p>';
     html += '</div>';
   });
   document.getElementById('plano-corpo').innerHTML = html;
   irPara('tela-plano');
+}
+
+/* o aviso dos dias colados acompanha o resultado e a planilha (decisao do
+   Paulo 30/07): se some ao avancar, a pessoa nao lembra na hora de treinar. */
+function mostrarObs(id){
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = resp.obsDias || '';
+  el.style.display = resp.obsDias ? '' : 'none';
 }
 
 /* logomarca pequena (texto preto) pro PDF em fundo branco; pre-carregada
@@ -788,15 +923,15 @@ function baixarPDF(){
   var btn = event && event.target;
   if (btn){ btn.disabled = true; btn.textContent = 'Gerando PDF...'; }
   try {
-    var pl = montarPlano(d, resp.min, resp.seg, resp.dias);
+    var pl = montarPlano(d, resp.min, resp.seg, resp.dias, resp.diasSemana);
     var prev = prever(d, resp.min, resp.seg);
     var semanas = pl.semanas.map(function(s){
       return {
         n: s.n,
-        descanso: s.descanso,
         aquecimento: aquecimentoLinhasHTML(pl.aqPace),
         treinos: s.treinos.map(function(t){
-          return { dia: t.dia, html: frasesTreino(t), comp: t.tipo === 'competicao' };
+          return { dia: t.dia, rotulo: t.rotulo, html: frasesTreino(t),
+                   comp: t.tipo === 'competicao' };
         })
       };
     });
@@ -807,6 +942,7 @@ function baixarPDF(){
       tempoHoje: segParaTempo(prev.segHoje),
       tempoNovo: segParaTempo(prev.segNovo),
       subtitulo: frasePlano(pl.qtdDias),
+      observacao: resp.obsDias || '',
       semanas: semanas
     });
     doc.save('pace-baixo-' + d + 'km.pdf');
@@ -817,7 +953,7 @@ function baixarPDF(){
 }
 
 function baixarPlano(){
-  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg, resp.dias);
+  var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg, resp.dias, resp.diasSemana);
   var prev = prever(d, resp.min, resp.seg);
   var sep = ';', nl = '\r\n', linhas = [];
   linhas.push('Pace Baixo - Planilha ' + d + ' km');
@@ -830,7 +966,9 @@ function baixarPlano(){
     linhas.push(['Semana '+s.n,'Aquecimento',aqTxt.join(' '),'',''].join(sep));
     s.treinos.forEach(function(t){
       var td, pace, tipo;
-      if (t.tipo === 'intervalado'){
+      if (t.tipo === 'descanso'){
+        tipo='Descanso'; td=''; pace='';
+      } else if (t.tipo === 'intervalado'){
         tipo='Intervalado'; td=t.min+' min';
         pace=t.durForte+' forte a '+t.paceForte+'/km, '+t.durLeve+' leve a '+t.paceLeve+'/km';
       } else if (t.tipo === 'competicao'){
@@ -841,9 +979,8 @@ function baixarPlano(){
         tipo = t.leve ? 'Corrida leve' : 'Corrida na zona'; td=t.km+' km';
         pace = (t.paceIni===t.paceFim) ? t.paceIni+'/km' : t.paceIni+' a '+t.paceFim+'/km';
       }
-      linhas.push(['Semana '+s.n,'Dia '+t.dia,tipo,td,pace].join(sep));
+      linhas.push(['Semana '+s.n,(t.rotulo || ('Dia '+t.dia)),tipo,td,pace].join(sep));
     });
-    linhas.push(['Semana '+s.n,'Descanso',s.descanso.join('/'),'',''].join(sep));
   });
   var csv = '﻿' + linhas.join(nl);   // BOM pra acento abrir certo no Excel
   var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
