@@ -146,19 +146,44 @@
     }
 
     /* semanas */
+    var utilH = (ph - 14) - 20;   // altura util de uma pagina (mesmo topo e rodape do quebra())
+
     (opts.semanas || []).forEach(function (s) {
-      quebra(16);
+      /* Ordem do Paulo 30/07: a semana nunca sai partida entre duas paginas.
+         Por isso a altura do bloco inteiro (titulo + aquecimento + todos os
+         cards) e medida ANTES de desenhar qualquer coisa, e a semana inteira
+         desce pra proxima pagina se nao couber no que sobrou.
+         Se a semana for mais alta que a pagina util ela quebra como antes,
+         senao o quebra() empurraria pra sempre e o PDF nunca fecharia. */
+      var aqPadTop = 5, aqPadBot = 5;
+      var aqLays = null, aqCardH = 0;
+      if ((s.aquecimento || []).length) {
+        aqLays = s.aquecimento.map(function (h) {
+          return layoutRich(doc, parseRuns(h, COR.txt, COR.laranja), maxW - 12, 9.5);
+        });
+        var aqBodyH = aqLays.reduce(function (a, l) { return a + l.lines.length * l.lineH; }, 0);
+        aqCardH = aqPadTop + aqBodyH + aqPadBot;
+      }
+
+      var cards = (s.treinos || []).map(function (t) {
+        var lay = layoutRich(doc, parseRuns(t.html, COR.txt, t.comp ? COR.verde : COR.laranja), maxW - 12, 10.5);
+        var padTop = 5, diaH = 3, gap = 3.5, padBot = 5;
+        return {
+          t: t, lay: lay, padTop: padTop, diaH: diaH, gap: gap,
+          h: padTop + diaH + gap + lay.lines.length * lay.lineH + padBot
+        };
+      });
+
+      var blocoH = 5.5 + (aqLays ? aqCardH + 3 : 0) +
+        cards.reduce(function (a, c) { return a + c.h + 2.5; }, 0);
+
+      quebra(blocoH <= utilH ? blocoH : 16);
+
       setFont(doc, true, 11); doc.setTextColor(COR.laranja[0], COR.laranja[1], COR.laranja[2]);
       doc.text(('Semana ' + s.n).toUpperCase(), mx, y); y += 5.5;
 
       /* card de aquecimento (borda laranja) no topo da semana */
-      if ((s.aquecimento || []).length) {
-        var aqLays = s.aquecimento.map(function (h) {
-          return layoutRich(doc, parseRuns(h, COR.txt, COR.laranja), maxW - 12, 9.5);
-        });
-        var aqPadTop = 5, aqPadBot = 5;
-        var aqBodyH = aqLays.reduce(function (a, l) { return a + l.lines.length * l.lineH; }, 0);
-        var aqCardH = aqPadTop + aqBodyH + aqPadBot;
+      if (aqLays) {
         quebra(aqCardH + 3);
         doc.setFillColor(255, 244, 235);
         doc.setDrawColor(COR.laranja[0], COR.laranja[1], COR.laranja[2]);
@@ -169,26 +194,22 @@
         y += aqCardH + 3;
       }
 
-      (s.treinos || []).forEach(function (t) {
-        var corPc = t.comp ? COR.verde : COR.laranja;
+      cards.forEach(function (c) {
+        var t = c.t;
         var corDia = t.comp ? COR.verde : COR.fraco;
-        var lay = layoutRich(doc, parseRuns(t.html, COR.txt, corPc), maxW - 12, 10.5);
-        var padTop = 5, diaH = 3, gap = 3.5, padBot = 5;
-        var bodyH = lay.lines.length * lay.lineH;
-        var cardH = padTop + diaH + gap + bodyH + padBot;
-        quebra(cardH + 3);
+        quebra(c.h + 3);
 
         doc.setFillColor(COR.card[0], COR.card[1], COR.card[2]);
         doc.setDrawColor.apply(doc, t.comp ? COR.verde : COR.linha);
         doc.setLineWidth(0.3);
-        doc.roundedRect(mx, y, maxW, cardH, 3, 3, 'FD');
+        doc.roundedRect(mx, y, maxW, c.h, 3, 3, 'FD');
 
         setFont(doc, true, 8.5); doc.setTextColor(corDia[0], corDia[1], corDia[2]);
         /* rotulo do card: o nome do dia da semana que a pessoa escolheu.
            Cai no "DIA XX" antigo se o plano vier sem os dias marcados. */
-        doc.text((t.rotulo || ('DIA ' + t.dia)).toUpperCase(), mx + 6, y + padTop + diaH);
-        drawLines(doc, lay, mx + 6, y + padTop + diaH + gap + lay.size * 0.3528);
-        y += cardH + 2.5;
+        doc.text((t.rotulo || ('DIA ' + t.dia)).toUpperCase(), mx + 6, y + c.padTop + c.diaH);
+        drawLines(doc, c.lay, mx + 6, y + c.padTop + c.diaH + c.gap + c.lay.size * 0.3528);
+        y += c.h + 2.5;
       });
 
       y += 4;
