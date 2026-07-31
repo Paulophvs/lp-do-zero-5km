@@ -772,6 +772,31 @@ var TROTE_LIVRE = { 5:'20 a 30 min de trote, corrida leve.', 10:'25 a 40 min de 
    um pace de trote leve, abaixo do dia facil, so pra limpar sem somar cansaco). */
 var REC_PCT = 0.575;
 
+/* TETO DE DURACAO DO DIA 02 (o regenerativo), por modalidade. Ordem do Paulo
+   31/07: 50 min no 5 km, 55 min no 10 km.
+   POR QUE EXISTE: o dia 02 e prescrito em KM, e km fixo vira duracao MUITO
+   diferente conforme o pace da pessoa. Os mesmos 9 km sao 33 min pra quem corre
+   5 km em 14 min e 1h03 pra quem corre em 28. Acima de ~50 min a sessao deixa de
+   regenerar (soma carga mecanica e depleta glicogenio) e vira rodagem de base,
+   ou seja, para de cumprir a funcao que tem o nome na planilha.
+   ⚠️ E REGRA INTERNA: o aluno NUNCA ve isso. Recebe so a distancia ja ajustada,
+   sem aviso, sem asterisco e sem explicacao (ordem do Paulo 31/07). */
+var TETO_DIA02 = { 5: 50*60, 10: 55*60 };
+var PISO_DIA02 = 3;   // nunca cortar abaixo disso, senao o dia perde sentido
+
+/* Corta km do dia 02 ate a sessao caber no teto. ⚠️ EM LACO, nao 1 km fixo:
+   pro corredor de 28:26 nos 5 km, 8 km dao 58 min e 7 km ainda dao 51, so o 6
+   cabe. Tirar 1 km so nao resolve.
+   Mede pelo LADO LENTO da zona (paceIni), o unico que garante o teto mesmo se a
+   pessoa correr na ponta de baixo da faixa. */
+function kmDoDia02(distancia, km, paceIni){
+  var teto = TETO_DIA02[distancia];
+  if (!teto) return km;
+  var seg = paceParaSeg(paceIni);
+  while (km > PISO_DIA02 && km * seg > teto) km--;
+  return km;
+}
+
 function montarPlano(distancia, minutos, segundos, qtdDias, diasSemana){
   var par = paramsPara(distancia, minutos + segundos/60);
   var paceDec = (minutos + segundos/60) / distancia;
@@ -805,8 +830,12 @@ function montarPlano(distancia, minutos, segundos, qtdDias, diasSemana){
         var seg = paceParaSeg(pa) * d.km;
         treinos.push({ dia:d.dia, tipo:'competicao', km:d.km, paceAlvo:pa, tempoPrevisto:segParaTempo(seg) });
       } else {
-        treinos.push({ dia:d.dia, tipo:'distancia', km:d.km,
-          paceIni: paceDoPct(d.pctA, vo2), paceFim: paceDoPct(d.pctB, vo2), leve:d.leve });
+        var pIni = paceDoPct(d.pctA, vo2);
+        /* so o dia 02 (regenerativo) tem teto de duracao. Os outros dias por
+           distancia (03 e 06) seguem intactos. */
+        var kmDia = (d.dia === '02') ? kmDoDia02(distancia, d.km, pIni) : d.km;
+        treinos.push({ dia:d.dia, tipo:'distancia', km:kmDia,
+          paceIni: pIni, paceFim: paceDoPct(d.pctB, vo2), leve:d.leve });
       }
     });
     /* 6x: dia 05 vira card LIVRE, inserido na ordem (entre o 04 e o 06).
