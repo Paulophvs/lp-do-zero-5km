@@ -784,17 +784,34 @@ var REC_PCT = 0.575;
 var TETO_DIA02 = { 5: 50*60, 10: 55*60 };
 var PISO_DIA02 = 3;   // nunca cortar abaixo disso, senao o dia perde sentido
 
-/* Corta km do dia 02 ate a sessao caber no teto. ⚠️ EM LACO, nao 1 km fixo:
-   pro corredor de 28:26 nos 5 km, 8 km dao 58 min e 7 km ainda dao 51, so o 6
-   cabe. Tirar 1 km so nao resolve.
+/* TETO DO DIA 06 (o longao). Mesma mecanica do dia 02, motivo diferente: la o
+   problema e a sessao deixar de regenerar, aqui e TEMPO EM PE, que e o que
+   causa lesao no corredor lento. O longao de 8 km da semana 2 vai de 33 min
+   (quem corre 5 km em 20:00) a 1h18 (quem corre em 48:00); no 10 km o de 14 km
+   chega a 2h15. Numeros escolhidos pelo Paulo em 31/07: 70 min e 90 min.
+   ⚠️ REGRA INTERNA, igual a do dia 02: o aluno nao ve nada disso, recebe a
+   distancia ja ajustada, sem aviso e sem asterisco. */
+var TETO_DIA06 = { 5: 70*60, 10: 90*60 };
+var PISO_DIA06 = 4;   // rede de seguranca: no pior corredor medido o corte para em 9 km
+
+/* Corta km ate a sessao caber no teto. ⚠️ EM LACO, nao 1 km fixo: pro corredor
+   de 28:26 nos 5 km, 8 km dao 58 min e 7 km ainda dao 51, so o 6 cabe. Tirar
+   1 km so nao resolve.
    Mede pelo LADO LENTO da zona (paceIni), o unico que garante o teto mesmo se a
    pessoa correr na ponta de baixo da faixa. */
+function cortaAteCaber(km, segPorKm, teto, piso){
+  while (km > piso && km * segPorKm > teto) km--;
+  return km;
+}
 function kmDoDia02(distancia, km, paceIni){
   var teto = TETO_DIA02[distancia];
   if (!teto) return km;
-  var seg = paceParaSeg(paceIni);
-  while (km > PISO_DIA02 && km * seg > teto) km--;
-  return km;
+  return cortaAteCaber(km, paceParaSeg(paceIni), teto, PISO_DIA02);
+}
+function kmDoDia06(distancia, km, paceIni){
+  var teto = TETO_DIA06[distancia];
+  if (!teto) return km;
+  return cortaAteCaber(km, paceParaSeg(paceIni), teto, PISO_DIA06);
 }
 
 function montarPlano(distancia, minutos, segundos, qtdDias, diasSemana){
@@ -831,9 +848,17 @@ function montarPlano(distancia, minutos, segundos, qtdDias, diasSemana){
         treinos.push({ dia:d.dia, tipo:'competicao', km:d.km, paceAlvo:pa, tempoPrevisto:segParaTempo(seg) });
       } else {
         var pIni = paceDoPct(d.pctA, vo2);
-        /* so o dia 02 (regenerativo) tem teto de duracao. Os outros dias por
-           distancia (03 e 06) seguem intactos. */
-        var kmDia = (d.dia === '02') ? kmDoDia02(distancia, d.km, pIni) : d.km;
+        /* teto de duracao: dia 02 (regenerativo) e dia 06 (longao). O dia 03 e
+           o dia de qualidade continua (80-98% do VO2max) e fica INTACTO de
+           proposito: cortar ali tira estimulo, nao tira desgaste inutil.
+           🚨 A PROVA NUNCA E CORTADA. Ela e o dia 06 da semana 4, tipo
+           'competicao', e por isso ja nao cai neste ramo; o `&& !sem4` esta
+           escrito assim mesmo para a excecao ser explicita e nao depender de
+           efeito colateral. Se o motor cortasse a prova, o tempo que a tela
+           promete deixaria de existir. */
+        var kmDia = d.km;
+        if (d.dia === '02') kmDia = kmDoDia02(distancia, d.km, pIni);
+        else if (d.dia === '06' && !sem4) kmDia = kmDoDia06(distancia, d.km, pIni);
         treinos.push({ dia:d.dia, tipo:'distancia', km:kmDia,
           paceIni: pIni, paceFim: paceDoPct(d.pctB, vo2), leve:d.leve });
       }
