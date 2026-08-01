@@ -1028,7 +1028,7 @@ function baixarPlano(){
       } else if (t.tipo === 'competicao'){
         tipo='Competicao'; td=t.km+' km'; pace='alvo '+t.paceAlvo+'/km (previsto '+t.tempoPrevisto+')';
       } else if (t.tipo === 'livre'){
-        tipo='Treino livre'; td=''; pace=t.texto;
+        tipo='Treino regenerativo livre'; td=''; pace=t.texto;
       } else {
         tipo = t.leve ? 'Corrida leve' : 'Corrida na zona'; td=t.km+' km';
         pace = (t.paceIni===t.paceFim) ? t.paceIni+'/km' : t.paceIni+' a '+t.paceFim+'/km';
