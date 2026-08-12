@@ -240,6 +240,35 @@
     color:var(--texto-fraco);
     margin-bottom:22px;
   }
+
+  /* selo de nivel: mostra a escada INTEIRA (5 degraus) com o atual destacado,
+     nunca so a nota isolada. Copy muda por posicao em renderSeloNivel().
+     So aparece no 5 km (10 km nao tem nivelDoTempo ainda). */
+  .selo-nivel{ margin-bottom:22px; }
+  .selo-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px; }
+  .selo-titulo{ font-size:16px; font-weight:800; }
+  .selo-titulo .nivel-nome{ color:var(--laranja); }
+  .selo-badge{
+    font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    background:rgba(248,104,0,.12); color:var(--laranja-claro);
+    border-radius:999px; padding:4px 10px; white-space:nowrap;
+  }
+  .escada{ display:flex; gap:5px; margin:14px 0 8px; }
+  .degrau{ flex:1; height:8px; border-radius:6px; background:var(--linha); position:relative; }
+  .degrau.preenchido{ background:var(--laranja); }
+  .degrau.atual::after{
+    content:''; position:absolute; top:-5px; left:50%; transform:translateX(-50%);
+    width:8px; height:8px; border-radius:50%; background:var(--texto);
+    box-shadow:0 0 0 3px var(--carvao);
+  }
+  .escada-labels{ display:flex; gap:5px; margin-bottom:16px; }
+  .escada-labels span{
+    flex:1; text-align:center; font-size:9px; color:var(--texto-fraco);
+    letter-spacing:.02em;
+  }
+  .escada-labels span.atual{ color:var(--texto); font-weight:700; }
+  .selo-frase{ font-size:14px; line-height:1.55; color:var(--texto); margin:0; }
+  .selo-frase .prev{ color:var(--verde); font-weight:700; }
   .venda b{color:var(--texto);font-weight:700}
 
   /* ----- planilha completa (tela-plano) ----- */
@@ -404,6 +433,8 @@
 
     <p class="venda">Esse número não vem de sorte. Vem de <b>4 semanas de treinos feitos sob medida pra você</b>, com o tempo, a velocidade, a distância e o pace exato de cada treino.</p>
 
+    <div class="selo-nivel res-bloco" id="bloco-nivel" style="display:none"></div>
+
     <p class="obs-plano" id="obs-res" style="display:none"></p>
 
     <button class="btn" onclick="verPlano()">VER E BAIXAR MINHA PLANILHA</button>
@@ -515,6 +546,42 @@ function nivelDoTempo(distancia, totMin){
   if (totMin >= 20) return 'avancado';
   if (totMin >= 15) return 'competitivo';
   return 'elite';
+}
+
+/* Selo de nivel na tela de resultado (pedido do Paulo 12/08): mostra a escada
+   INTEIRA (5 degraus) com o atual destacado, nunca so a nota isolada, pra nao
+   soar como classificacao fria. Copy muda de tom pela posicao: acolhimento
+   embaixo, distancia pro proximo no meio, conquista rara no topo (nunca "fim
+   de linha"). So aparece no 5 km, ainda nao existe regua pro 10 km. */
+var NIVEL_ORDEM = ['iniciante','intermediario','avancado','competitivo','elite'];
+var NIVEL_NOME  = { iniciante:'Iniciante', intermediario:'Intermediário', avancado:'Avançado', competitivo:'Competitivo', elite:'Elite' };
+var NIVEL_LABEL = { iniciante:'INIC', intermediario:'INTER', avancado:'AVANÇ', competitivo:'COMPET', elite:'ELITE' };
+var NIVEL_FRASE = {
+  iniciante:     'Todo corredor começa por aqui. Seu plano de 4 semanas já mira o <span class="prev">próximo degrau</span>.',
+  intermediario: 'Você já saiu da largada. No ritmo desse plano, o degrau <span class="prev">Avançado</span> é o próximo horizonte.',
+  avancado:      'Nível de quem já treina com consistência. Falta pouco pro degrau <span class="prev">Competitivo</span>.',
+  competitivo:   'Você está entre os corredores mais rápidos da régua. O último degrau, <span class="prev">Elite</span>, está no radar.',
+  elite:         'Você está no topo da régua Pace Baixo. <span class="prev">Poucos corredores chegam até aqui.</span>'
+};
+function renderSeloNivel(nivel){
+  var bloco = document.getElementById('bloco-nivel');
+  if (!bloco) return;
+  if (!nivel){ bloco.style.display = 'none'; return; }
+  var idx = NIVEL_ORDEM.indexOf(nivel);
+  var escada = NIVEL_ORDEM.map(function(n, i){
+    var cls = 'degrau' + (i <= idx ? ' preenchido' : '') + (i === idx ? ' atual' : '');
+    return '<div class="' + cls + '"></div>';
+  }).join('');
+  var labels = NIVEL_ORDEM.map(function(n, i){
+    return '<span class="' + (i === idx ? 'atual' : '') + '">' + NIVEL_LABEL[n] + '</span>';
+  }).join('');
+  bloco.innerHTML =
+    '<div class="selo-head"><span class="selo-titulo">Seu nível: <span class="nivel-nome">' + NIVEL_NOME[nivel] + '</span></span>' +
+    '<span class="selo-badge">degrau ' + (idx + 1) + ' de 5</span></div>' +
+    '<div class="escada">' + escada + '</div>' +
+    '<div class="escada-labels">' + labels + '</div>' +
+    '<p class="selo-frase">' + NIVEL_FRASE[nivel] + '</p>';
+  bloco.style.display = '';
 }
 
 /* P1!D2 -> P1!D3. Entra o pace decimal (min/km), sai o VO2max. */
@@ -764,6 +831,7 @@ function calcular(){
   document.getElementById('r-tempo-novo').textContent = segParaTempo(r.segNovo);
   document.getElementById('r-pace-novo').textContent  = ms(r.paceNovo);
   document.getElementById('r-delta').textContent      = textoDelta(r.delta);
+  renderSeloNivel(nivelDoTempo(d, mmTotal + ss/60));
   mostrarObs('obs-res');
   irPara('tela-res');
 }
