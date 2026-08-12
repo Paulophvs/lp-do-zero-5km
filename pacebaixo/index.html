@@ -982,8 +982,8 @@ function frasesTreino(t){
     return 'Ritmo de prova, ' + t.km + ' km no pace alvo <b class="pc">' + t.paceAlvo +
            '/km</b>. Tempo previsto: <b>' + t.tempoPrevisto + '</b>.';
   if (t.tipo === 'tiro')
-    return 'Tiro em subida, <b class="pc">' + t.reps + ' x ' + t.distM + 'm</b> em esforço máximo. ' +
-           t.descanso + ' de descanso entre as repetições.';
+    return 'Tiros em subida de ladeira, <b class="pc">' + t.reps + ' x ' + t.distM + 'm</b> em esforço máximo. ' +
+           t.descanso + ' de descanso.';
   var zona = (t.paceIni === t.paceFim)
     ? '<b class="pc">' + t.paceIni + '/km</b>'
     : 'entre <b class="pc">' + t.paceIni + '</b> e <b class="pc">' + t.paceFim + '/km</b>';
@@ -1102,7 +1102,7 @@ function baixarPlano(){
       } else if (t.tipo === 'livre'){
         tipo='Treino regenerativo livre'; td=''; pace=t.texto;
       } else if (t.tipo === 'tiro'){
-        tipo='Tiro'; td=t.reps+'x'+t.distM+'m'; pace='esforco maximo, subida, '+t.descanso+' descanso';
+        tipo='Tiros em subida de ladeira'; td=t.reps+'x'+t.distM+'m'; pace='esforco maximo, '+t.descanso+' descanso';
       } else {
         tipo = t.leve ? 'Corrida leve' : 'Corrida na zona'; td=t.km+' km';
         pace = (t.paceIni===t.paceFim) ? t.paceIni+'/km' : t.paceIni+' a '+t.paceFim+'/km';
