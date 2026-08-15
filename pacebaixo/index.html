@@ -149,8 +149,16 @@
     <p class="ajuda">Manda pro seu e-mail o link com a planilha das 4 semanas, com botão pra baixar em PDF.</p>
     <div class="campos">
       <div class="campo">
+        <label for="preco-nome">Seu nome</label>
+        <input id="preco-nome" type="text" autocomplete="name" placeholder="Nome completo">
+      </div>
+      <div class="campo">
         <label for="preco-email">Seu e-mail</label>
         <input id="preco-email" type="email" inputmode="email" placeholder="seuemail@exemplo.com">
+      </div>
+      <div class="campo">
+        <label for="preco-whatsapp">Seu WhatsApp (com DDD)</label>
+        <input id="preco-whatsapp" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(11) 99999-9999">
       </div>
     </div>
     <p class="erro" id="erro-preco"></p>

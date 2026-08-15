@@ -655,12 +655,30 @@ function emailValido(v){
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v || '');
 }
 
+function telefoneValido(v){
+  var d = String(v || '').replace(/\D/g, '');
+  return d.length === 10 || d.length === 11; // DDD + numero, com ou sem 9
+}
+
 function irCheckout(plano){
+  var campoNome = document.getElementById('preco-nome');
   var campoEmail = document.getElementById('preco-email');
+  var campoWhats = document.getElementById('preco-whatsapp');
+  var nome = (campoNome && campoNome.value || '').trim();
   var email = (campoEmail && campoEmail.value || '').trim();
+  var whatsapp = (campoWhats && campoWhats.value || '').trim();
   var erro = document.getElementById('erro-preco');
+
+  if (!nome){
+    if (erro) erro.textContent = 'Digita seu nome.';
+    return;
+  }
   if (!emailValido(email)){
     if (erro) erro.textContent = 'Digita um e-mail válido pra gente mandar sua planilha.';
+    return;
+  }
+  if (!telefoneValido(whatsapp)){
+    if (erro) erro.textContent = 'Digita seu WhatsApp com DDD, ex: (11) 99999-9999.';
     return;
   }
   if (erro) erro.textContent = '';
@@ -671,7 +689,9 @@ function irCheckout(plano){
   if (btnAnual) btnAnual.disabled = true;
 
   var pedido = {
+    nome: nome,
     email: email,
+    whatsapp: whatsapp.replace(/\D/g, ''),
     distancia: resp.distancia,
     minutos: resp.min,
     segundos: resp.seg,

@@ -23,7 +23,9 @@ module.exports = async (req, res) => {
   }
 
   const pedido = {
+    nome: String(body.nome || '').trim(),
     email,
+    whatsapp: String(body.whatsapp || '').replace(/\D/g, ''),
     distancia: body.distancia,
     minutos: body.minutos,
     segundos: body.segundos,
