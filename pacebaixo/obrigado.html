@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pace Baixo | Sua planilha</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/pacebaixo/estilo.css?v=1">
+<style>
+  .espera{ text-align:center; padding:40px 0; }
+  .espera .spinner{
+    width:36px; height:36px; margin:0 auto 20px;
+    border:4px solid #2A2A2A; border-top-color:var(--laranja);
+    border-radius:50%; animation:girar 0.9s linear infinite;
+  }
+  @keyframes girar{ to{ transform:rotate(360deg); } }
+  .busca-campo{ max-width:360px; margin:0 auto; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <img class="logo" src="/pacebaixo/logo-pace-baixo.png" alt="Pace Baixo">
+
+  <!-- ===== ESPERANDO CONFIRMACAO ===== -->
+  <section class="tela ativa" id="tela-espera">
+    <div class="espera">
+      <div class="spinner"></div>
+      <h2 class="pergunta">Confirmando seu pagamento...</h2>
+      <p class="ajuda" id="espera-msg">Isso leva só alguns segundos.</p>
+    </div>
+  </section>
+
+  <!-- ===== NAO ACHOU O PEDIDO (outro aparelho, cache limpo etc) ===== -->
+  <section class="tela" id="tela-buscar">
+    <h2 class="pergunta">Digita o e-mail que você usou na compra</h2>
+    <p class="ajuda">Não achamos seu pedido neste aparelho. Com o e-mail a gente busca de novo.</p>
+    <div class="campos busca-campo">
+      <div class="campo">
+        <label for="buscar-email">Seu e-mail</label>
+        <input id="buscar-email" type="email" inputmode="email" placeholder="seuemail@exemplo.com">
+      </div>
+    </div>
+    <p class="erro" id="erro-buscar"></p>
+    <button class="btn" onclick="buscarPorEmail()">BUSCAR MINHA PLANILHA</button>
+  </section>
+
+  <!-- ===== PAGAMENTO NAO CONFIRMADO AINDA (timeout) ===== -->
+  <section class="tela" id="tela-demorando">
+    <h2 class="pergunta">Seu pagamento ainda não foi confirmado</h2>
+    <p class="ajuda">Às vezes a confirmação demora um pouco mais. Se você já pagou, espera mais um minuto e atualiza a página. Se preferir, chama a gente no WhatsApp que já resolvemos.</p>
+    <button class="btn" onclick="location.reload()">ATUALIZAR PÁGINA</button>
+  </section>
+
+  <!-- ===== PLANILHA COMPLETA (mesma estrutura do index.html, nao duplicar logica) ===== -->
+  <section class="tela" id="tela-plano">
+    <div class="plano-topo">
+      <div class="plano-head">
+        <img class="plano-logo" src="/pacebaixo/logo-pace-baixo.png" alt="Pace Baixo">
+        <h2>Sua planilha completa</h2>
+      </div>
+      <p id="plano-sub"></p>
+    </div>
+    <div class="ciclo-teste" id="bloco-ciclo" style="display:none">
+      <p class="ciclo-label">Ciclo (teste interno, escolhe qual dos 4 meses ver):</p>
+      <div class="dias" id="opcoes-ciclo">
+        <button class="opcao marcada" data-ciclo="1" onclick="escolherCiclo(1)">M1</button>
+        <button class="opcao" data-ciclo="2" onclick="escolherCiclo(2)">M2</button>
+        <button class="opcao" data-ciclo="3" onclick="escolherCiclo(3)">M3</button>
+        <button class="opcao" data-ciclo="4" onclick="escolherCiclo(4)">M4</button>
+      </div>
+    </div>
+    <p class="obs-plano" id="obs-plano" style="display:none"></p>
+    <div id="plano-corpo"></div>
+    <button class="btn" onclick="baixarPDF()">BAIXAR MINHA PLANILHA (PDF)</button>
+  </section>
+
+</div>
+
+<script src="/pacebaixo/jspdf.umd.min.js"></script>
+<script src="/pacebaixo/pdfgen.js?v=5"></script>
+<script src="/pacebaixo/motor.js?v=1"></script>
+<script>
+/* ============================================================
+   PAGINA DE OBRIGADO: pega o pedido (localStorage ou email digitado),
+   consulta o status no servidor e so mostra a planilha quando o
+   webhook da Hotmart confirmou o pagamento. Reaproveita resp/verPlano
+   do motor.js, nao duplica a logica de montar o plano.
+   ============================================================ */
+var CHAVE_PEDIDO_LOCAL = 'pacebaixo_pedido';
+var TENTATIVAS_MAX = 20;   // ~1 min de polling (3s cada)
+var tentativas = 0;
+
+function preencherRespComPedido(p){
+  resp.distancia = p.distancia;
+  resp.min = p.minutos;
+  resp.seg = p.segundos;
+  resp.dias = p.qtdDias;
+  resp.diasSemana = p.diasSemana || [];
+  resp.obsDias = '';
+  resp.ciclo = 1;
+}
+
+function mostrarTela(id){
+  var telas = document.querySelectorAll('.tela');
+  for (var i=0;i<telas.length;i++) telas[i].classList.remove('ativa');
+  document.getElementById(id).classList.add('ativa');
+}
+
+function consultarEEsperar(email){
+  fetch('/api/consultar-pedido?email=' + encodeURIComponent(email))
+    .then(function(r){
+      if (r.status === 404) { mostrarTela('tela-buscar'); return null; }
+      return r.json();
+    })
+    .then(function(out){
+      if (!out) return;
+      if (!out.ok) { mostrarTela('tela-buscar'); return; }
+      var pedido = out.pedido;
+      if (pedido.status === 'pago'){
+        preencherRespComPedido(pedido);
+        verPlano();
+        mostrarTela('tela-plano');
+        return;
+      }
+      // ainda pendente: tenta de novo em 3s, ate um limite
+      tentativas++;
+      if (tentativas >= TENTATIVAS_MAX){
+        mostrarTela('tela-demorando');
+        return;
+      }
+      setTimeout(function(){ consultarEEsperar(email); }, 3000);
+    })
+    .catch(function(){
+      tentativas++;
+      if (tentativas >= TENTATIVAS_MAX){ mostrarTela('tela-demorando'); return; }
+      setTimeout(function(){ consultarEEsperar(email); }, 3000);
+    });
+}
+
+function buscarPorEmail(){
+  var campo = document.getElementById('buscar-email');
+  var email = (campo && campo.value || '').trim();
+  var erro = document.getElementById('erro-buscar');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    if (erro) erro.textContent = 'Digita um e-mail válido.';
+    return;
+  }
+  if (erro) erro.textContent = '';
+  try { localStorage.setItem(CHAVE_PEDIDO_LOCAL, JSON.stringify({ email: email })); } catch(e){}
+  tentativas = 0;
+  mostrarTela('tela-espera');
+  consultarEEsperar(email);
+}
+
+(function iniciar(){
+  var salvo = null;
+  try { salvo = JSON.parse(localStorage.getItem(CHAVE_PEDIDO_LOCAL) || 'null'); } catch(e){}
+  var params = new URLSearchParams(window.location.search);
+  var emailUrl = params.get('email');
+  var email = (salvo && salvo.email) || emailUrl;
+  if (!email){
+    mostrarTela('tela-buscar');
+    return;
+  }
+  consultarEEsperar(email);
+})();
+</script>
+</body>
+</html>
