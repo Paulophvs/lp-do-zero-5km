@@ -123,6 +123,10 @@ function consultarEEsperar(email){
       if (pedido.status === 'pago'){
         preencherRespComPedido(pedido);
         verPlano();
+        // o seletor de ciclo (M1-M4) e ferramenta interna de teste do Paulo;
+        // quem pagou ve so o mes 1, nao faz sentido mostrar isso pro aluno.
+        var blocoCiclo = document.getElementById('bloco-ciclo');
+        if (blocoCiclo) blocoCiclo.style.display = 'none';
         mostrarTela('tela-plano');
         return;
       }
