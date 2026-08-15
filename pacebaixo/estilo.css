@@ -1,0 +1,298 @@
+  :root{
+    --laranja:#F86800;
+    --laranja-claro:#FF8124;
+    /* verde do "ganho": 11:1 de contraste sobre os blocos, contra 6:1 do laranja.
+       So aparece no que e futuro/melhora. Laranja = hoje. */
+    --verde:#00E676;
+    --preto:#0A0A0A;
+    --carvao:#141414;
+    --linha:#2A2A2A;
+    --texto:#FFFFFF;
+    --texto-fraco:#A0A0A0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--preto);
+    color:var(--texto);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:24px 20px 48px;
+  }
+  .wrap{width:100%;max-width:560px}
+  .logo{display:block;width:100%;max-width:450px;margin:0 auto 40px;height:auto}
+  /* Na tela do resultado a logo sai: ela custa ~206px de altura e nao faz
+     trabalho nenhum ali (o cara chegou por 4 telas, ja sabe onde esta).
+     Sem ela o botao de compra termina em ~612px e aparece sem rolagem
+     ate no celular pequeno. Com ela, ~818px, e o botao morria embaixo. */
+  body.tela-resultado .logo{display:none}
+
+  .tela{display:none;animation:entra .35s ease}
+  .tela.ativa{display:block}
+  @keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  h1{
+    font-size:clamp(26px,6.4vw,38px);
+    font-weight:800;
+    line-height:1.2;
+    letter-spacing:-.02em;
+    margin-bottom:20px;
+  }
+  h1 .destaque{color:var(--laranja)}
+  .apoio{
+    font-size:clamp(19px,4.4vw,24px);
+    font-weight:700;
+    margin-bottom:14px;
+  }
+  .sub{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--texto-fraco);
+    margin-bottom:32px;
+  }
+
+  .btn{
+    display:block;
+    width:100%;
+    background:var(--laranja);
+    color:#fff;
+    border:0;
+    border-radius:12px;
+    padding:18px 20px;
+    font-family:inherit;
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:.04em;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .btn:hover{background:var(--laranja-claro)}
+  .btn:disabled{background:#3A3A3A;color:#777;cursor:not-allowed}
+
+  .passo{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.14em;
+    color:var(--laranja);
+    margin-bottom:14px;
+  }
+  .pergunta{
+    font-size:clamp(21px,4.8vw,26px);
+    font-weight:800;
+    line-height:1.3;
+    margin-bottom:8px;
+  }
+  .ajuda{
+    font-size:13px;
+    line-height:1.6;
+    color:var(--texto-fraco);
+    margin-bottom:24px;
+  }
+
+  .opcoes{display:grid;gap:12px;margin-bottom:28px}
+  .opcao{
+    background:var(--carvao);
+    border:2px solid var(--linha);
+    border-radius:12px;
+    padding:22px;
+    font-family:inherit;
+    font-size:20px;
+    font-weight:800;
+    color:var(--texto);
+    cursor:pointer;
+    text-align:left;
+    transition:border-color .15s,background .15s;
+  }
+  .opcao:hover{border-color:#4A4A4A}
+  .opcao.marcada{border-color:var(--laranja);background:rgba(248,104,0,.08)}
+
+  .campos{display:grid;gap:16px;margin-bottom:28px}
+  /* linha de 5 opcoes (dias de treino): mesma cara do .opcao, so que compacta */
+  .dias{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+  .dias .opcao{padding:14px 2px;text-align:center;font-size:15px}
+  /* seletor de ciclo M1-M4: so pra teste interno, ver escolherCiclo() */
+  .ciclo-teste{margin-bottom:18px}
+  .ciclo-label{font-size:12px;color:var(--texto-fraco);margin-bottom:6px}
+  /* observacao da trava mole: aviso, nao erro. Laranja, nao vermelho. */
+  .obs-dias{font-size:14px;line-height:1.45;color:var(--texto);background:rgba(248,104,0,.10);
+    border:1px solid var(--laranja);border-radius:10px;padding:12px 14px;margin:0 0 14px;display:none}
+  .obs-dias.on{display:block}
+  .rotulo-bloco{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--texto-fraco);
+    margin-bottom:9px;
+  }
+  .campo label{
+    display:block;
+    font-size:13px;
+    font-weight:600;
+    color:var(--texto-fraco);
+    margin-bottom:7px;
+  }
+  .campo input{
+    width:100%;
+    background:var(--carvao);
+    border:2px solid var(--linha);
+    border-radius:10px;
+    padding:15px;
+    font-family:inherit;
+    font-size:17px;
+    font-weight:600;
+    color:var(--texto);
+    transition:border-color .15s;
+  }
+  .campo input:focus{outline:0;border-color:var(--laranja)}
+  .dupla{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .tripla{display:grid;grid-template-columns:0.62fr 1fr 1fr;gap:10px}
+
+  .erro{
+    color:#FF6B6B;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:16px;
+    min-height:18px;
+  }
+
+  .voltar{
+    background:0;
+    border:0;
+    color:var(--texto-fraco);
+    font-family:inherit;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    padding:14px 0 0;
+    width:100%;
+  }
+  .voltar:hover{color:var(--texto)}
+
+  /* resultado */
+  /* Os 3 blocos foram encolhidos ~10% em altura (pedido do Paulo, 17/07).
+     O corte saiu todo do ar (padding + respiro), NUNCA do tamanho dos
+     numeros: o tempo e o "X segundos a menos" sao o produto da pagina. */
+  .res-bloco{
+    background:var(--carvao);
+    border:1px solid var(--linha);
+    border-radius:14px;
+    padding:16px 22px;
+    margin-bottom:10px;
+  }
+  .res-rotulo{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.12em;
+    color:var(--texto-fraco);
+    margin-bottom:6px;
+  }
+  .res-frase{font-size:16px;line-height:1.6;font-weight:500}
+  .res-rotulo.laranja{color:var(--laranja)}
+  .res-rotulo.verde{color:var(--verde)}
+  .res-num{font-size:30px;font-weight:900;letter-spacing:-.02em;display:block;margin:1px 0}
+  .res-num.verde{color:var(--verde)}
+  .res-pace{font-size:14px;color:var(--texto-fraco);font-weight:600}
+
+  /* o "soco" era um retangulo laranja preenchido e parecia um botao, logo
+     acima de um botao laranja de verdade. Agora e um bloco igual aos outros:
+     quem destaca e o numero verde, nao o fundo. */
+  .soco{
+    background:var(--carvao);
+    border:1px solid var(--linha);
+    border-radius:14px;
+    padding:20px 22px;
+    text-align:center;
+    margin-bottom:20px;
+  }
+  .soco-num{
+    font-size:clamp(30px,7.6vw,42px);
+    font-weight:900;
+    letter-spacing:-.02em;
+    line-height:1.1;
+    color:var(--verde);
+  }
+  .soco-txt{
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.06em;
+    margin-top:6px;
+    color:var(--verde);
+  }
+
+  .venda{
+    font-size:15px;
+    line-height:1.65;
+    color:var(--texto-fraco);
+    margin-bottom:22px;
+  }
+
+  /* selo de nivel: mostra a escada INTEIRA (5 degraus) com o atual destacado,
+     nunca so a nota isolada. Copy muda por posicao em renderSeloNivel().
+     So aparece no 5 km (10 km nao tem nivelDoTempo ainda). */
+  .selo-nivel{ margin-bottom:22px; }
+  .selo-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:14px; }
+  .selo-titulo{ font-size:16px; font-weight:800; }
+  .selo-titulo .nivel-nome{ color:var(--laranja); }
+  .selo-badge{
+    font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
+    background:rgba(248,104,0,.12); color:var(--laranja-claro);
+    border-radius:999px; padding:4px 10px; white-space:nowrap;
+  }
+  .escada{ display:flex; gap:5px; margin:14px 0 8px; }
+  .degrau{ flex:1; height:8px; border-radius:6px; background:var(--linha); position:relative; }
+  .degrau.preenchido{ background:var(--laranja); }
+  .degrau.atual::after{
+    content:''; position:absolute; top:-5px; left:50%; transform:translateX(-50%);
+    width:8px; height:8px; border-radius:50%; background:var(--texto);
+    box-shadow:0 0 0 3px var(--carvao);
+  }
+  .escada-labels{ display:flex; gap:5px; margin-bottom:16px; }
+  .escada-labels span{
+    flex:1; text-align:center; font-size:9px; color:var(--texto-fraco);
+    letter-spacing:.02em;
+  }
+  .escada-labels span.atual{ color:var(--texto); font-weight:700; }
+  .selo-frase{ font-size:14px; line-height:1.55; color:var(--texto); margin:0; }
+  .selo-frase .prev{ color:var(--verde); font-weight:700; }
+  .venda b{color:var(--texto);font-weight:700}
+
+  /* ----- planilha completa (tela-plano) ----- */
+  .plano-topo{margin-bottom:20px}
+  .plano-head{display:flex;align-items:flex-end;gap:10px;margin-bottom:6px}
+  .plano-topo h2{font-size:clamp(22px,5.2vw,28px);font-weight:800;letter-spacing:-.02em;margin-bottom:0}
+  .plano-logo{height:59px;width:auto;flex:0 0 auto}
+  .plano-topo p{font-size:14px;color:var(--texto-fraco);line-height:1.5}
+  .plano-topo .prev{color:var(--verde);font-weight:700}
+  .semana{margin-bottom:22px}
+  .semana-tit{
+    font-size:13px;font-weight:800;letter-spacing:.1em;
+    color:var(--laranja);margin-bottom:10px;text-transform:uppercase;
+  }
+  .treino{
+    background:var(--carvao);border:1px solid var(--linha);
+    border-radius:12px;padding:14px 16px;margin-bottom:8px;
+  }
+  .treino-dia{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--texto-fraco);margin-bottom:4px}
+  .treino-corpo{font-size:15px;font-weight:600;line-height:1.45}
+  .treino-corpo b{font-weight:800}
+  .treino .pc{color:var(--laranja)}
+  .treino.competicao{border-color:var(--verde)}
+  .treino.competicao .treino-dia{color:var(--verde)}
+  .treino.competicao .pc{color:var(--verde)}
+  .treino.livre{border-style:dashed;opacity:.9}
+  /* card de DESCANSO na semana 4: o dia marcado que ficou sem treino aparece
+     escrito, nao some da tela (ordem do Paulo 30/07). */
+  .treino.descanso{border-style:dashed;opacity:.75}
+  .treino.descanso .treino-corpo{font-weight:600;color:var(--texto-fraco)}
+  /* aviso dos dias colados, repetido no resultado e na planilha */
+  .obs-plano{font-size:13.5px;line-height:1.45;background:rgba(248,104,0,.10);
+    border:1px solid var(--laranja);border-radius:10px;padding:11px 14px;margin:0 0 14px}
+  .aquecimento{
+    background:rgba(248,104,0,.08);border:1px solid var(--laranja);
+    border-radius:12px;padding:12px 16px;margin-bottom:10px;
+    font-size:14px;font-weight:600;line-height:1.5;
+  }
+  .aquecimento .pc{color:var(--laranja);font-weight:800}

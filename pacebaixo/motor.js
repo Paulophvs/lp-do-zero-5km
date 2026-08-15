@@ -638,6 +638,64 @@ function verPlano(){
   irPara('tela-plano');
 }
 
+/* ---------------- checkout (Hotmart) ---------------- */
+var HOTMART_LINKS = {
+  mensal: 'https://pay.hotmart.com/H107169811Q?bid=1786758589399',
+  anual:  'https://pay.hotmart.com/H107169811Q?off=3ww7ii10',
+};
+var CHAVE_PEDIDO_LOCAL = 'pacebaixo_pedido';
+
+function abrirTelaPreco(){
+  var erro = document.getElementById('erro-preco');
+  if (erro) erro.textContent = '';
+  irPara('tela-preco');
+}
+
+function emailValido(v){
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v || '');
+}
+
+function irCheckout(plano){
+  var campoEmail = document.getElementById('preco-email');
+  var email = (campoEmail && campoEmail.value || '').trim();
+  var erro = document.getElementById('erro-preco');
+  if (!emailValido(email)){
+    if (erro) erro.textContent = 'Digita um e-mail válido pra gente mandar sua planilha.';
+    return;
+  }
+  if (erro) erro.textContent = '';
+
+  var btnMensal = document.getElementById('btn-mensal');
+  var btnAnual = document.getElementById('btn-anual');
+  if (btnMensal) btnMensal.disabled = true;
+  if (btnAnual) btnAnual.disabled = true;
+
+  var pedido = {
+    email: email,
+    distancia: resp.distancia,
+    minutos: resp.min,
+    segundos: resp.seg,
+    qtdDias: resp.dias,
+    diasSemana: resp.diasSemana,
+    plano: plano,
+  };
+
+  // guarda local pra pagina de obrigado montar a planilha quando a pessoa voltar
+  try { localStorage.setItem(CHAVE_PEDIDO_LOCAL, JSON.stringify(pedido)); } catch(e){}
+
+  fetch('/api/salvar-pedido', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(pedido),
+    keepalive: true,
+  }).catch(function(){ /* segue pro checkout mesmo se essa chamada falhar; a
+    pagina de obrigado tenta de novo consultando o pedido */ }).finally(function(){
+    var base = HOTMART_LINKS[plano] || HOTMART_LINKS.mensal;
+    var sep = base.indexOf('?') === -1 ? '?' : '&';
+    window.location.href = base + sep + 'email=' + encodeURIComponent(email);
+  });
+}
+
 /* o aviso dos dias colados acompanha o resultado e a planilha (decisao do
    Paulo 30/07): se some ao avancar, a pessoa nao lembra na hora de treinar. */
 function mostrarObs(id){
