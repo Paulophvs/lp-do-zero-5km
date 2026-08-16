@@ -896,7 +896,7 @@
     <h1>Depois dos 40, seu corpo <span>não travou</span>. Seu treino que não acompanhou.</h1>
 
     <p class="sub">
-      Assessoria de corrida 100% individualizada para quem já não tem 20 anos, mas ainda quer evoluir de verdade: bater recorde, completar uma prova nova, correr forte do início ao fim, treinando do jeito certo, com um método específico para sua idade.
+      Assessoria de corrida individualizada para pessoas com mais de 40 anos que ainda querem evoluir de verdade: bater recorde, completar uma prova nova, correr forte do início ao fim, treinando do jeito certo, com um método específico para sua idade.
     </p>
 
     <!-- TODO: Paulo vai enviar o vídeo de vendas (se decidir gravar um). Até lá, placeholder. -->
@@ -907,7 +907,7 @@
       <p class="video-label">[espaço reservado pro vídeo de vendas, se o Paulo decidir gravar um explicando a assessoria]</p>
     </div>
 
-    <button type="button" data-open-modal class="cta-btn laranja">QUERO CONHECER A ASSESSORIA →</button>
+    <a href="#oferta" class="cta-btn laranja">QUERO CONHECER A ASSESSORIA →</a>
 
     <p class="hero-meta">✓ Atendimento 100% individual &nbsp;·&nbsp; ✓ Direto com o treinador no WhatsApp &nbsp;·&nbsp; ✓ Sem planilha genérica</p>
   </section>
@@ -1093,11 +1093,7 @@
       <h2>Quem vai calibrar seu treino <span>para sua fase de vida</span></h2>
 
       <div class="paulo-grid">
-        <!-- TODO: foto do Paulo para essa página específica (pode reaproveitar a foto do site principal se ele preferir, mas deixando espaço reservado até ele confirmar) -->
-        <div class="img-placeholder retrato">
-          <div class="ph-icon">🖼️</div>
-          <p class="ph-label">[espaço reservado para foto do Paulo]</p>
-        </div>
+        <img src="/assessoria/img-paulo-40mais.jpg" alt="Paulo Henrique Viana" class="img-placeholder retrato" style="object-fit: cover; border-style: solid;" />
 
         <div>
           <p class="paulo-nome">Paulo Henrique Viana</p>
@@ -1108,7 +1104,7 @@
           <ul class="paulo-bullets">
             <li>
               <span class="p-check">✓</span>
-              <span><strong>+ de 7 anos</strong> treinando corredores — do iniciante que nunca fechou 5 km ao atleta amador brigando por títulos em maratonas.</span>
+              <span><strong>+ de 7 anos</strong> treinando corredores, do iniciante que nunca fechou 5 km ao atleta amador brigando por títulos em maratonas.</span>
             </li>
             <li>
               <span class="p-check">✓</span>
@@ -1116,7 +1112,7 @@
             </li>
             <li>
               <span class="p-check">✓</span>
-              <span>Criador do <strong>Método Baixa Pace</strong> — periodização inteligente, intensidade na dose certa, zero achismo.</span>
+              <span>Criador do <strong>Método Baixa Pace</strong>: periodização inteligente, intensidade na dose certa, zero achismo.</span>
             </li>
             <li>
               <span class="p-check">✓</span>
@@ -1406,16 +1402,6 @@
     </div>
   </div>
 
-  <!-- ===== STICKY CTA ===== -->
-  <div class="sticky-cta" id="stickyCta">
-    <div class="price-inline">
-      A partir de <strong>R$ 667</strong>
-    </div>
-    <button type="button" data-open-modal class="cta-btn laranja" style="font-size: 0.95rem; padding: 14px 28px;">
-      CONHECER A ASSESSORIA →
-    </button>
-  </div>
-
   <script>
     // TODO: preencher com o número real do WhatsApp Business do Paulo.
     // Formato: DDI 55 + DDD + número, só dígitos, sem espaço/símbolo. Ex: '5571999999999'.
@@ -1425,19 +1411,6 @@
       const msg = 'Oi Paulo! Vim da página da assessoria de corrida e quero saber mais' + (nome ? ', me chamo ' + nome + '.' : '.');
       return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
     }
-
-    // Sticky CTA on scroll
-    const stickyCta = document.getElementById('stickyCta');
-    const hero = document.querySelector('.hero');
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        stickyCta.classList.toggle('visible', !entry.isIntersecting);
-      },
-      { threshold: 0.2 }
-    );
-
-    observer.observe(hero);
 
     // Smooth scroll
     document.querySelectorAll('a[href^="#"]').forEach(a => {
