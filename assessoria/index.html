@@ -524,6 +524,17 @@
       margin: 40px auto 0;
     }
 
+    .oferta-box .bonus-banner {
+      background: rgba(234,88,12,0.12);
+      border: 1px solid rgba(234,88,12,0.35);
+      color: #fdba74;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 10px;
+      padding: 10px 16px;
+      margin-bottom: 20px;
+    }
+
     .oferta-box .preco-riscado {
       font-size: 1.2rem;
       font-weight: 600;
@@ -595,6 +606,30 @@
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 20px;
       margin-top: 40px;
+    }
+
+    .depoimentos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .depoimento-card .video-wrapper {
+      max-width: none;
+      margin-bottom: 14px;
+      aspect-ratio: 9/16;
+    }
+
+    .depoimento-nome {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--branco);
+    }
+
+    .depoimento-contexto {
+      font-size: 0.82rem;
+      color: var(--cinza-claro);
     }
 
     .stat {
@@ -1242,19 +1277,74 @@
     </div>
   </section>
 
+  <!-- ===== DEPOIMENTOS EM VIDEO ===== -->
+  <section class="depoimentos">
+    <div class="container">
+      <p class="section-label">Quem já treina comigo</p>
+      <h2>O que dizem os alunos <span>que já vivem isso</span></h2>
+
+      <div class="depoimentos-grid">
+        <!-- TODO: Paulo vai enviar 4 vídeos de depoimento de alunos. Substituir cada placeholder pelo vídeo real + nome/contexto do aluno. -->
+        <div class="depoimento-card">
+          <div class="video-wrapper">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <p class="video-label">[espaço reservado pro depoimento em vídeo 1]</p>
+          </div>
+          <p class="depoimento-nome">[Nome do aluno]</p>
+          <p class="depoimento-contexto">[contexto: idade, resultado alcançado]</p>
+        </div>
+        <div class="depoimento-card">
+          <div class="video-wrapper">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <p class="video-label">[espaço reservado pro depoimento em vídeo 2]</p>
+          </div>
+          <p class="depoimento-nome">[Nome do aluno]</p>
+          <p class="depoimento-contexto">[contexto: idade, resultado alcançado]</p>
+        </div>
+        <div class="depoimento-card">
+          <div class="video-wrapper">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <p class="video-label">[espaço reservado pro depoimento em vídeo 3]</p>
+          </div>
+          <p class="depoimento-nome">[Nome do aluno]</p>
+          <p class="depoimento-contexto">[contexto: idade, resultado alcançado]</p>
+        </div>
+        <div class="depoimento-card">
+          <div class="video-wrapper">
+            <div class="play-icon">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+            <p class="video-label">[espaço reservado pro depoimento em vídeo 4]</p>
+          </div>
+          <p class="depoimento-nome">[Nome do aluno]</p>
+          <p class="depoimento-contexto">[contexto: idade, resultado alcançado]</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== OFERTA ===== -->
   <section class="oferta" id="oferta">
     <div class="container">
       <p class="section-label" style="text-align:center;">Investimento</p>
-      <h2 style="text-align:center;">Assessoria Individual de Corrida</h2>
-      <p style="text-align:center; color: var(--cinza-claro); font-size: 0.95rem; line-height: 1.7;">Acompanhamento contínuo, não é um curso fechado. Você conversa comigo antes de qualquer cobrança, para ver se faz sentido para sua fase de treino.</p>
+      <h2 style="text-align:center;">Assessoria Individual de Corrida · 12 meses</h2>
+      <p style="text-align:center; color: var(--cinza-claro); font-size: 0.95rem; line-height: 1.7;">Acompanhamento contínuo por 12 meses, não é um curso fechado nem um plano avulso. Você conversa comigo antes de qualquer cobrança, para ver se faz sentido para sua fase de treino.</p>
 
       <div class="oferta-box">
+        <p class="bonus-banner">🎁 Bônus por tempo limitado: +3 meses de assessoria de graça, são 15 meses de acompanhamento pelo preço de 12</p>
+
         <div class="preco-riscado">R$ 1.297</div>
         <div class="preco">12x de R$ 69</div>
         <p class="preco-pix">no cartão, ou <strong>R$ 667 à vista</strong></p>
 
         <ul class="oferta-bonus">
+          <li><span class="b-check">✅</span> 12 meses de acompanhamento contínuo + 3 meses de bônus, 15 meses no total</li>
           <li><span class="b-check">✅</span> Avaliação inicial completa</li>
           <li><span class="b-check">✅</span> Planilha individual, revisada todo mês</li>
           <li><span class="b-check">✅</span> Protocolo de fortalecimento incluso</li>
