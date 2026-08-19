@@ -42,7 +42,8 @@ const ALIMENTOS = [
   { id:'mandioca', nome:'Mandioca/aipim cozida', cat:'paes', porcao:'1 punho fechado', kcal:125, prot:0.6 },
 
   // ---- OVOS E LATICÍNIOS ----
-  { id:'ovo', nome:'Ovo cozido ou frito', cat:'ovos', porcao:'1 unidade', kcal:74, prot:6.5 },
+  { id:'ovo', nome:'Ovo cozido', cat:'ovos', porcao:'1 unidade', kcal:74, prot:6.5 },
+  { id:'ovo-frito', nome:'Ovo frito', cat:'ovos', porcao:'1 unidade', kcal:100, prot:6.3 }, // AUDITORIA 19/08: cozido e frito estavam com o MESMO valor (74kcal), errado, frito ganha caloria do oleo. TACO frito 240kcal/15,6g por 100g; unidade de ~65g (ovo + oleo absorvido) e faixa de consenso (Vitat/FatSecret/Yazio, 90-107kcal por unidade) confirmam ~100kcal, nao 74
   { id:'iogurte', nome:'Iogurte natural', cat:'ovos', porcao:'1 copo (170g)', kcal:100, prot:6.0 },
   { id:'leite', nome:'Leite integral', cat:'ovos', porcao:'1 copo (200ml)', kcal:122, prot:6.4 },
   { id:'queijo', nome:'Queijo (minas, muçarela)', cat:'ovos', tamanhos:[
@@ -61,7 +62,7 @@ const ALIMENTOS = [
   { id:'frango-peito-cozido', nome:'Peito de frango cozido (frango)', cat:'carnes', porcao:'1 filé (palma da mão)', kcal:196, prot:37.8 }, // TACO: frango peito s/pele cozido 163kcal/31,5g por 100g
   { id:'frango-frito', nome:'Filé de frango frito à milanesa (frango)', cat:'carnes', porcao:'1 filé (palma da mão)', kcal:288, prot:24.0 }, // ESTIMATIVA: grelhado + empanado/óleo, TACO não tem entrada direta de filé frito
   { id:'frango-coxa', nome:'Coxa/sobrecoxa assada (frango)', cat:'carnes', porcao:'1 unidade', kcal:215, prot:26.0 },
-  { id:'carne-bife', nome:'Bife bovino magro grelhado (boi, carne bovina)', cat:'carnes', porcao:'1 bife (palma da mão)', kcal:218, prot:38.0 },
+  { id:'carne-bife', nome:'Bife bovino magro grelhado (boi, carne bovina)', cat:'carnes', porcao:'1 bife (palma da mão)', kcal:233, prot:43.1 }, // AUDITORIA 19/08: recalibrado, TACO contra-file sem gordura grelhado real e 194kcal/35,9g por 100g (nao 194/31,2 que era o valor de "musculo cozido" usado antes por engano), em porcao de 120g da 233/43,1
   { id:'carne-bovina-cozida', nome:'Carne bovina cozida (boi)', cat:'carnes', porcao:'1 porção (palma da mão)', kcal:233, prot:37.4 }, // TACO: musculo s/gordura cozido 194kcal/31,2g por 100g
   { id:'carne-bovina-frita', nome:'Carne bovina frita (boi)', cat:'carnes', porcao:'1 bife (palma da mão)', kcal:270, prot:36.0 }, // ESTIMATIVA: grelhado + acrescimo de oleo da fritura, TACO nao tem "bovina frita" direto
   { id:'carne-bovina-assada', nome:'Carne bovina assada (boi)', cat:'carnes', porcao:'1 porção (palma da mão)', kcal:245, prot:36.0 }, // TACO: paleta s/gordura cozida como referencia mais proxima
