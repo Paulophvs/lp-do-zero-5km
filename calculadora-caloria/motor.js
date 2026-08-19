@@ -201,10 +201,26 @@ function totaisRefeicaoAtiva(){
   });
   return {kcal,prot};
 }
+function refeicoesPreenchidas(){
+  let n=0;
+  for(let i=1;i<=estado.numRefeicoes;i++){
+    const itens = estado.itens[i]||{};
+    if(Object.values(itens).some(q=>q>0)) n++;
+  }
+  return n;
+}
 function renderResumoFixo(){
   const t = totaisRefeicaoAtiva();
   document.getElementById('resumo-fixo-txt').innerHTML =
     'Refeição '+estado.refeicaoAtiva+': <b>'+Math.round(t.kcal)+' kcal</b> · <b>'+t.prot.toFixed(1)+'g proteína</b>';
+
+  const feitas = refeicoesPreenchidas();
+  const completo = feitas>=estado.numRefeicoes;
+  const btn = document.getElementById('btn-ver-resultado');
+  const aviso = document.getElementById('aviso-refeicoes-pendentes');
+  btn.disabled = !completo;
+  aviso.textContent = completo ? '' :
+    'Preenche pelo menos 1 alimento em cada refeição pra liberar o resultado ('+feitas+' de '+estado.numRefeicoes+' feitas).';
 }
 
 // ---------- cálculo final ----------

@@ -7,7 +7,7 @@
    kcal e proteina(g) já são o TOTAL da porção, não por 100g. */
 
 const CATEGORIAS = [
-  { id: 'paes',    nome: 'Pães, cereais e raízes' },
+  { id: 'paes',    nome: 'Arroz, macarrão, pães e raízes' },
   { id: 'ovos',    nome: 'Ovos e laticínios' },
   { id: 'carnes',  nome: 'Carnes, aves, peixes e ovos' },
   { id: 'leg',     nome: 'Feijões e leguminosas' },
@@ -126,7 +126,33 @@ const ALIMENTOS = [
   // ---- BEBIDAS ----
   { id:'suco', nome:'Suco natural', cat:'bebida', porcao:'1 copo (200ml)', kcal:90, prot:0.5 },
   { id:'refri', nome:'Refrigerante', cat:'bebida', porcao:'1 copo (200ml)', kcal:85, prot:0 },
+  { id:'cafe-puro', nome:'Café puro (sem leite, sem açúcar)', cat:'bebida', porcao:'1 xícara (150ml)', kcal:2, prot:0.2 },
   { id:'cafe', nome:'Café com leite e açúcar', cat:'bebida', porcao:'1 xícara (150ml)', kcal:60, prot:2.0 },
   { id:'cerveja', nome:'Cerveja', cat:'bebida', porcao:'1 lata (350ml)', kcal:150, prot:1.6 },
   { id:'whey', nome:'Whey protein', cat:'bebida', porcao:'1 dose (30g)', kcal:120, prot:24.0 },
 ];
+
+/* "Outros" por categoria: item de resgate pra quem não achar o alimento
+   específico na lista. NÃO é dado de tabela, é a MÉDIA calculada em runtime
+   dos itens já cadastrados na mesma categoria (pra item com "tamanhos", usa
+   o tamanho do meio como representativo). Existe pra nunca contar 0 caloria
+   quando a pessoa realmente comeu algo que não está na lista. */
+CATEGORIAS.forEach(function(cat){
+  const itensCat = ALIMENTOS.filter(function(a){ return a.cat===cat.id; });
+  let somaKcal=0, somaProt=0, n=0;
+  itensCat.forEach(function(a){
+    if(a.tamanhos){
+      const meio = a.tamanhos[Math.floor(a.tamanhos.length/2)];
+      somaKcal+=meio.kcal; somaProt+=meio.prot;
+    } else {
+      somaKcal+=a.kcal; somaProt+=a.prot;
+    }
+    n++;
+  });
+  if(n===0) return;
+  ALIMENTOS.push({
+    id:'outros-'+cat.id, nome:'Outro alimento (não listado aqui)', cat:cat.id,
+    porcao:'1 porção média (estimativa)',
+    kcal:Math.round(somaKcal/n), prot:Math.round((somaProt/n)*10)/10,
+  });
+});
