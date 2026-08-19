@@ -132,15 +132,26 @@
     color:#fff;font-size:10px;font-weight:800;line-height:16px;text-align:center;margin-left:5px;padding:0 3px;
   }
 
-  .categoria{margin-bottom:10px;border:1px solid var(--linha);border-radius:12px;overflow:hidden}
-  .categoria-head{
-    padding:14px 16px;background:var(--carvao);cursor:pointer;display:flex;
-    align-items:center;justify-content:space-between;font-size:14px;font-weight:700;
+  .busca-alimento{margin-bottom:14px;position:relative}
+  .busca-alimento input{
+    width:100%;background:var(--carvao);border:2px solid var(--linha);border-radius:10px;
+    padding:14px;font-family:inherit;font-size:15px;font-weight:600;color:var(--texto);
   }
-  .categoria-head .seta{color:var(--texto-fraco);transition:transform .15s}
-  .categoria.aberta .categoria-head .seta{transform:rotate(180deg)}
-  .categoria-lista{display:none;padding:4px 12px 12px}
-  .categoria.aberta .categoria-lista{display:block}
+  .busca-alimento input:focus{outline:0;border-color:var(--laranja)}
+  #sugestoes-busca{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+  .sugestao-item{
+    display:flex;justify-content:space-between;align-items:center;width:100%;
+    background:var(--carvao);border:1px solid var(--linha);border-radius:10px;padding:12px 14px;
+    font-family:inherit;font-size:14px;font-weight:600;color:var(--texto);cursor:pointer;text-align:left;
+  }
+  .sugestao-item:hover{border-color:var(--laranja)}
+  .sugestao-porcao{font-size:11.5px;color:var(--texto-fraco);font-weight:500;white-space:nowrap;margin-left:10px}
+  .sem-resultado,.sem-item{font-size:13px;color:var(--texto-fraco);padding:8px 2px}
+  .seletor-tamanho{background:var(--carvao);border:1px solid var(--linha);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:6px}
+  .seletor-tamanho-titulo{font-size:13px;font-weight:700;margin-bottom:4px}
+  .voltar-tamanho{background:0;border:0;color:var(--texto-fraco);font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;padding:6px 0 0;text-align:left}
+  .voltar-tamanho:hover{color:var(--texto)}
+  #itens-refeicao{margin-bottom:10px}
 
   .alimento{
     display:flex;align-items:center;justify-content:space-between;padding:10px 4px;
@@ -155,14 +166,6 @@
     color:var(--texto);font-size:16px;font-weight:800;cursor:pointer;line-height:1;
   }
   .stepper .qtd-val{min-width:16px;text-align:center;font-size:14px;font-weight:800}
-
-  .tamanhos-lista{display:flex;flex-direction:column;gap:6px;width:100%}
-  .tamanho-btn{
-    display:flex;justify-content:space-between;align-items:center;
-    background:var(--preto);border:1px solid var(--linha);border-radius:8px;padding:9px 12px;
-    font-size:13px;font-weight:600;cursor:pointer;color:var(--texto);
-  }
-  .tamanho-btn .qtd-val{font-weight:800;color:var(--laranja)}
 
   .resumo-fixo{
     position:sticky;bottom:0;background:var(--preto);padding:14px 0 4px;

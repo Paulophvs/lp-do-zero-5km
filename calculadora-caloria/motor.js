@@ -23,7 +23,8 @@ const estado = {
   numRefeicoes:3,
   refeicaoAtiva:1,
   itens:{},
-  categoriasAbertas:new Set(),
+  buscaQuery:'',
+  tamanhoAberto:null,
 };
 
 function irPara(id){
@@ -99,10 +100,11 @@ function irParaAnamnese(){
   if(!estado.numRefeicoes){ document.getElementById('erro-refeicoes').textContent='Escolhe quantas refeições.'; return; }
   document.getElementById('erro-refeicoes').textContent='';
   estado.refeicaoAtiva = 1;
-  estado.categoriasAbertas.clear();
+  estado.buscaQuery=''; estado.tamanhoAberto=null;
   for(let i=1;i<=estado.numRefeicoes;i++){ if(!estado.itens[i]) estado.itens[i]={}; }
   renderRefeicaoTabs();
-  renderAlimentos();
+  renderSugestoes();
+  renderItensRefeicao();
   renderResumoFixo();
   irPara('tela-anamnese');
 }
@@ -116,84 +118,151 @@ function renderRefeicaoTabs(){
     const btn = document.createElement('button');
     btn.className='refeicao-tab'+(estado.refeicaoAtiva===i?' ativa':'');
     btn.innerHTML='Refeição '+i+(qtdItens>0?'<span class="qtd">'+qtdItens+'</span>':'');
-    btn.onclick=()=>{ estado.refeicaoAtiva=i; estado.categoriasAbertas.clear(); renderRefeicaoTabs(); renderAlimentos(); };
+    btn.onclick=()=>{
+      estado.refeicaoAtiva=i;
+      estado.buscaQuery=''; estado.tamanhoAberto=null;
+      const input = document.getElementById('input-busca');
+      if(input) input.value='';
+      renderRefeicaoTabs(); renderSugestoes(); renderItensRefeicao();
+    };
     box.appendChild(btn);
   }
 }
 
-// ---------- anamnese: lista de alimentos por categoria ----------
-function toggleCategoria(catId){
-  // sanfona: só 1 categoria aberta por vez dentro da refeição ativa
-  if(estado.categoriasAbertas.has(catId)){
-    estado.categoriasAbertas.delete(catId);
-  } else {
-    estado.categoriasAbertas.clear();
-    estado.categoriasAbertas.add(catId);
-  }
-  renderAlimentos();
+// ---------- anamnese: busca de alimento por nome/categoria ----------
+function normalizarTexto(s){
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+function buscarAlimentos(query){
+  const q = normalizarTexto(query.trim());
+  if(!q) return [];
+  // nome do item bate primeiro (score 2), categoria só desempata (score 1).
+  // sem isso, categoria "Arroz, macarrão, pães e raízes" faz busca por "arroz"
+  // trazer pão/tapioca/aveia antes do arroz de verdade, porque a palavra
+  // "arroz" está no NOME da categoria inteira, não só no item certo.
+  const pontuados = ALIMENTOS.map(a=>{
+    const nome = normalizarTexto(a.nome);
+    const catNome = normalizarTexto((CATEGORIAS.find(c=>c.id===a.cat)||{}).nome||'');
+    let score = 0;
+    if(nome.indexOf(q)>-1) score = 2;
+    else if(catNome.indexOf(q)>-1) score = 1;
+    return {a, score};
+  }).filter(p=>p.score>0);
+  pontuados.sort((x,y)=>y.score-x.score);
+  return pontuados.slice(0,8).map(p=>p.a);
 }
 function chaveAlimento(id, idxTamanho){ return idxTamanho===undefined ? id : id+'#'+idxTamanho; }
 function getQtd(chave){ return (estado.itens[estado.refeicaoAtiva] && estado.itens[estado.refeicaoAtiva][chave]) || 0; }
 function setQtd(chave, val){
   if(!estado.itens[estado.refeicaoAtiva]) estado.itens[estado.refeicaoAtiva]={};
   estado.itens[estado.refeicaoAtiva][chave] = Math.max(0, val);
-  renderAlimentos();
+  renderItensRefeicao();
   renderResumoFixo();
   renderRefeicaoTabs();
 }
 
-function renderAlimentos(){
-  const box = document.getElementById('lista-categorias');
+function onBuscaInput(valor){
+  estado.buscaQuery = valor;
+  estado.tamanhoAberto = null;
+  renderSugestoes();
+}
+
+function renderSugestoes(){
+  const box = document.getElementById('sugestoes-busca');
+  if(!box) return;
   box.innerHTML='';
-  CATEGORIAS.forEach(cat=>{
-    const itensCat = ALIMENTOS.filter(a=>a.cat===cat.id);
-    const aberta = estado.categoriasAbertas.has(cat.id);
-    const div = document.createElement('div');
-    div.className='categoria'+(aberta?' aberta':'');
+  if(estado.tamanhoAberto){
+    renderSeletorTamanho(box);
+    return;
+  }
+  const resultados = buscarAlimentos(estado.buscaQuery);
+  if(!resultados.length){
+    if(estado.buscaQuery.trim()) box.innerHTML='<p class="sem-resultado">Nenhum alimento encontrado. Procura "Outro alimento" da categoria mais parecida (ex: digita "outro").</p>';
+    return;
+  }
+  resultados.forEach(a=>{
+    const btn = document.createElement('button');
+    btn.type='button';
+    btn.className='sugestao-item';
+    btn.innerHTML='<span>'+a.nome+'</span><span class="sugestao-porcao">'+(a.tamanhos? 'escolher porção' : a.porcao)+'</span>';
+    btn.onclick=()=>selecionarAlimento(a.id);
+    box.appendChild(btn);
+  });
+}
 
-    const head = document.createElement('div');
-    head.className='categoria-head';
-    head.innerHTML='<span>'+cat.nome+'</span><span class="seta">▾</span>';
-    head.onclick=()=>toggleCategoria(cat.id);
-    div.appendChild(head);
+function selecionarAlimento(id){
+  const a = ALIMENTOS.find(x=>x.id===id);
+  if(!a) return;
+  if(a.tamanhos){
+    estado.tamanhoAberto = id;
+    renderSugestoes();
+    return;
+  }
+  setQtd(a.id, getQtd(a.id)+1);
+  limparBusca();
+}
 
-    const lista = document.createElement('div');
-    lista.className='categoria-lista';
-    itensCat.forEach(a=>{
-      const row = document.createElement('div');
-      row.className='alimento';
-      if(a.tamanhos){
-        const wrap = document.createElement('div');
-        wrap.style.width='100%';
-        wrap.innerHTML='<div class="alimento-nome" style="margin-bottom:8px">'+a.nome+'</div>';
-        const lista2 = document.createElement('div');
-        lista2.className='tamanhos-lista';
-        a.tamanhos.forEach((t, idx)=>{
-          const chave = chaveAlimento(a.id, idx);
-          const qtd = getQtd(chave);
-          const b = document.createElement('div');
-          b.className='tamanho-btn';
-          b.innerHTML='<span>'+t.label+' <span style="color:var(--texto-fraco)">('+t.kcal+' kcal, '+t.prot+'g prot)</span></span>'+
-            '<span class="stepper"><button type="button">-</button><span class="qtd-val">'+qtd+'</span><button type="button">+</button></span>';
-          const btns = b.querySelectorAll('button');
-          btns[0].onclick=()=>setQtd(chave, getQtd(chave)-1);
-          btns[1].onclick=()=>setQtd(chave, getQtd(chave)+1);
-          lista2.appendChild(b);
-        });
-        wrap.appendChild(lista2);
-        row.appendChild(wrap);
-      } else {
-        const qtd = getQtd(a.id);
-        row.innerHTML='<div class="alimento-nome">'+a.nome+'<span class="alimento-porcao">'+a.porcao+' · '+a.kcal+' kcal, '+a.prot+'g prot</span></div>'+
-          '<span class="stepper"><button type="button">-</button><span class="qtd-val">'+qtd+'</span><button type="button">+</button></span>';
-        const btns = row.querySelectorAll('button');
-        btns[0].onclick=()=>setQtd(a.id, getQtd(a.id)-1);
-        btns[1].onclick=()=>setQtd(a.id, getQtd(a.id)+1);
-      }
-      lista.appendChild(row);
-    });
-    div.appendChild(lista);
-    box.appendChild(div);
+function renderSeletorTamanho(box){
+  const a = ALIMENTOS.find(x=>x.id===estado.tamanhoAberto);
+  if(!a) return;
+  const wrap = document.createElement('div');
+  wrap.className='seletor-tamanho';
+  const titulo = document.createElement('p');
+  titulo.className='seletor-tamanho-titulo';
+  titulo.textContent = a.nome+' — escolhe a porção:';
+  wrap.appendChild(titulo);
+  a.tamanhos.forEach((t, idx)=>{
+    const btn = document.createElement('button');
+    btn.type='button';
+    btn.className='sugestao-item';
+    btn.innerHTML='<span>'+t.label+'</span><span class="sugestao-porcao">'+t.kcal+' kcal, '+t.prot+'g prot</span>';
+    btn.onclick=()=>{
+      const chave = chaveAlimento(a.id, idx);
+      setQtd(chave, getQtd(chave)+1);
+      limparBusca();
+    };
+    wrap.appendChild(btn);
+  });
+  const cancelar = document.createElement('button');
+  cancelar.type='button';
+  cancelar.className='voltar-tamanho';
+  cancelar.textContent='Voltar pra busca';
+  cancelar.onclick=()=>{ estado.tamanhoAberto=null; renderSugestoes(); };
+  wrap.appendChild(cancelar);
+  box.appendChild(wrap);
+}
+
+function limparBusca(){
+  estado.buscaQuery=''; estado.tamanhoAberto=null;
+  const input = document.getElementById('input-busca');
+  if(input) input.value='';
+  renderSugestoes();
+}
+
+function renderItensRefeicao(){
+  const box = document.getElementById('itens-refeicao');
+  if(!box) return;
+  box.innerHTML='';
+  const refeicao = estado.itens[estado.refeicaoAtiva]||{};
+  const chaves = Object.keys(refeicao).filter(c=>refeicao[c]>0);
+  if(!chaves.length){
+    box.innerHTML='<p class="sem-item">Nenhum alimento adicionado nessa refeição ainda. Usa a busca acima.</p>';
+    return;
+  }
+  chaves.forEach(chave=>{
+    const info = resolverAlimento(chave); if(!info) return;
+    const partes = chave.split('#');
+    const alimento = ALIMENTOS.find(a=>a.id===partes[0]); if(!alimento) return;
+    const label = alimento.tamanhos ? alimento.nome+' ('+alimento.tamanhos[parseInt(partes[1],10)].label+')' : alimento.nome;
+    const qtd = refeicao[chave];
+    const row = document.createElement('div');
+    row.className='alimento';
+    row.innerHTML='<div class="alimento-nome">'+label+'<span class="alimento-porcao">'+Math.round(info.kcal*qtd)+' kcal, '+(info.prot*qtd).toFixed(1)+'g prot</span></div>'+
+      '<span class="stepper"><button type="button">-</button><span class="qtd-val">'+qtd+'</span><button type="button">+</button></span>';
+    const btns = row.querySelectorAll('button');
+    btns[0].onclick=()=>setQtd(chave, qtd-1);
+    btns[1].onclick=()=>setQtd(chave, qtd+1);
+    box.appendChild(row);
   });
 }
 

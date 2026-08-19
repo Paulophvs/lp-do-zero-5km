@@ -162,9 +162,13 @@
   <section class="tela" id="tela-anamnese">
     <p class="passo">PASSO 5 DE 5</p>
     <h2 class="pergunta">O que você comeu em cada refeição?</h2>
-    <p class="ajuda">Escolhe a refeição, depois clica nos alimentos e na quantidade em medida caseira. Cada clique de + soma 1 porção do tamanho de mão indicado.</p>
+    <p class="ajuda">Escolhe a refeição, digita o alimento na busca, clica na sugestão e ajusta a quantidade em medida caseira. Cada clique de + soma 1 porção do tamanho de mão indicado.</p>
     <div class="refeicoes-tabs" id="refeicoes-tabs"></div>
-    <div id="lista-categorias"></div>
+    <div class="busca-alimento">
+      <input type="text" id="input-busca" placeholder="Digite o alimento, ex: arroz, frango, pão..." oninput="onBuscaInput(this.value)" autocomplete="off">
+      <div id="sugestoes-busca"></div>
+    </div>
+    <div id="itens-refeicao"></div>
     <div class="resumo-fixo">
       <p class="resumo-num" id="resumo-fixo-txt"></p>
       <p class="resumo-num" id="aviso-refeicoes-pendentes" style="color:var(--texto-fraco)"></p>
