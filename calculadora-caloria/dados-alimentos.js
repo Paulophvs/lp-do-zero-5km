@@ -20,8 +20,8 @@ const CATEGORIAS = [
 const ALIMENTOS = [
   // ---- PÃES, CEREAIS E RAÍZES (medida: punho fechado ou unidade) ----
   { id:'pao-frances', nome:'Pão francês', cat:'paes', porcao:'1 unidade', kcal:135, prot:4.0 },
-  { id:'pao-forma', nome:'Pão de forma', cat:'paes', porcao:'2 fatias', kcal:130, prot:4.0 },
-  { id:'pao-integral', nome:'Pão integral', cat:'paes', porcao:'2 fatias', kcal:120, prot:5.0 },
+  { id:'pao-forma', nome:'Pão de forma', cat:'paes', porcao:'1 fatia', kcal:65, prot:2.0 },
+  { id:'pao-integral', nome:'Pão integral', cat:'paes', porcao:'1 fatia', kcal:60, prot:2.5 },
   { id:'tapioca', nome:'Tapioca (goma)', cat:'paes', porcao:'1 unidade média', kcal:130, prot:0.2 },
   { id:'aveia', nome:'Aveia em flocos', cat:'paes', porcao:'1 punho fechado', kcal:150, prot:5.5 },
   { id:'granola', nome:'Granola', cat:'paes', porcao:'1 punho fechado', kcal:180, prot:4.0 },

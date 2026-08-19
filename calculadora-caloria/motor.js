@@ -99,6 +99,7 @@ function irParaAnamnese(){
   if(!estado.numRefeicoes){ document.getElementById('erro-refeicoes').textContent='Escolhe quantas refeições.'; return; }
   document.getElementById('erro-refeicoes').textContent='';
   estado.refeicaoAtiva = 1;
+  estado.categoriasAbertas.clear();
   for(let i=1;i<=estado.numRefeicoes;i++){ if(!estado.itens[i]) estado.itens[i]={}; }
   renderRefeicaoTabs();
   renderAlimentos();
@@ -115,15 +116,20 @@ function renderRefeicaoTabs(){
     const btn = document.createElement('button');
     btn.className='refeicao-tab'+(estado.refeicaoAtiva===i?' ativa':'');
     btn.innerHTML='Refeição '+i+(qtdItens>0?'<span class="qtd">'+qtdItens+'</span>':'');
-    btn.onclick=()=>{ estado.refeicaoAtiva=i; renderRefeicaoTabs(); renderAlimentos(); };
+    btn.onclick=()=>{ estado.refeicaoAtiva=i; estado.categoriasAbertas.clear(); renderRefeicaoTabs(); renderAlimentos(); };
     box.appendChild(btn);
   }
 }
 
 // ---------- anamnese: lista de alimentos por categoria ----------
 function toggleCategoria(catId){
-  if(estado.categoriasAbertas.has(catId)) estado.categoriasAbertas.delete(catId);
-  else estado.categoriasAbertas.add(catId);
+  // sanfona: só 1 categoria aberta por vez dentro da refeição ativa
+  if(estado.categoriasAbertas.has(catId)){
+    estado.categoriasAbertas.delete(catId);
+  } else {
+    estado.categoriasAbertas.clear();
+    estado.categoriasAbertas.add(catId);
+  }
   renderAlimentos();
 }
 function chaveAlimento(id, idxTamanho){ return idxTamanho===undefined ? id : id+'#'+idxTamanho; }
