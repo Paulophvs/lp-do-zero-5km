@@ -344,7 +344,10 @@ function renderItensRefeicao(bucket){
   if(!box) return;
   box.innerHTML='';
   const refeicao = getItensBucket(bucket);
-  const chaves = Object.keys(refeicao).filter(c=>refeicao[c]>0);
+  // reverte a ordem de insercao: item adicionado por ultimo aparece no TOPO
+  // da lista, porque a pessoa adiciona um item, ajusta a porcao, e ja parte
+  // pro proximo — se o mais recente ficar no topo ela nao precisa procurar.
+  const chaves = Object.keys(refeicao).filter(c=>refeicao[c]>0).reverse();
   if(!chaves.length){
     box.innerHTML='<p class="sem-item">'+(domCtx==='refeicao'?'Nenhum alimento adicionado nessa refeição ainda.':'Nada adicionado ainda.')+' Usa a busca acima.</p>';
     return;

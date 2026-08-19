@@ -93,7 +93,8 @@ const ALIMENTOS = [
   // ---- VEGETAIS E LEGUMES ----
   { id:'alface', nome:'Alface', cat:'veg', porcao:'1 punho fechado', kcal:6, prot:0.6 },
   { id:'rucula', nome:'Rúcula', cat:'veg', porcao:'1 punho fechado', kcal:10, prot:1.0 },
-  { id:'tomate', nome:'Tomate', cat:'veg', porcao:'1 unidade média', kcal:18, prot:0.9 },
+  { id:'tomate', nome:'Tomate (fatia)', cat:'veg', porcao:'1 fatia (rodela)', kcal:4, prot:0.2 }, // tomate inteiro TACO ~18kcal/0,9g, dividido por ~5 rodelas por unidade media (ninguem come o tomate inteiro de uma vez)
+  { id:'salada-mista', nome:'Salada mista (alface, tomate, pepino)', cat:'veg', porcao:'1 prato de sobremesa', kcal:35, prot:1.5 }, // ESTIMATIVA: combinacao tipica de folha+tomate+pepino, TACO nao tem "salada" pronta como item unico
   { id:'cenoura', nome:'Cenoura crua ou cozida', cat:'veg', porcao:'1 punho fechado', kcal:27, prot:0.6 },
   { id:'brocolis', nome:'Brócolis cozido', cat:'veg', porcao:'1 punho fechado', kcal:22, prot:2.0 },
   { id:'legumes', nome:'Legumes refogados (mix)', cat:'veg', porcao:'1 punho fechado', kcal:40, prot:1.5 },
@@ -222,7 +223,7 @@ CATEGORIAS.forEach(function(cat){
   });
   if(n===0) return;
   ALIMENTOS.push({
-    id:'outros-'+cat.id, nome:'Outro alimento (não listado aqui)', cat:cat.id,
+    id:'outros-'+cat.id, nome:'Outro alimento não listado ('+cat.nome+')', cat:cat.id,
     porcao:'1 porção média (estimativa)',
     kcal:Math.round(somaKcal/n), prot:Math.round((somaProt/n)*10)/10,
   });
