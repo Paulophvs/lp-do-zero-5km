@@ -240,6 +240,37 @@ function limparBusca(){
   renderSugestoes();
 }
 
+/* Plural das unidades de medida caseira, pra mostrar "2 punhos fechados"
+   em vez de só o número. Cobre as frases distintas usadas em "porcao" na
+   base de alimentos; o que não estiver aqui cai no fallback (+"s"). */
+const PLURAL_UNIDADE = {
+  'unidade':'unidades', 'unidade média':'unidades médias', 'unidade pequena':'unidades pequenas',
+  'fatia':'fatias', 'fatia fina':'fatias finas', 'fatia de bolo':'fatias de bolo',
+  'punho fechado':'punhos fechados', 'punho fechado (fatia)':'punhos fechados (fatias)',
+  'filé (palma da mão)':'filés (palma da mão)',
+  'bife (palma da mão)':'bifes (palma da mão)',
+  'porção (palma da mão)':'porções (palma da mão)',
+  'concha (punho fechado)':'conchas (punho fechado)',
+  'copo (200ml)':'copos (200ml)',
+  'xícara (150ml)':'xícaras (150ml)',
+  'lata escorrida':'latas escorridas', 'lata (350ml)':'latas (350ml)',
+  'dose (30g)':'doses (30g)',
+};
+function unidadeBase(porcaoStr){
+  const m = porcaoStr.match(/^\d+\s*(.*)$/);
+  return m ? m[1] : porcaoStr;
+}
+function formatQtdComUnidade(porcaoStr, qtd){
+  const singular = unidadeBase(porcaoStr);
+  const plural = PLURAL_UNIDADE[singular] || (singular+'s');
+  const inteiro = Math.floor(qtd);
+  const temMeio = Math.abs(qtd - inteiro - 0.5) < 0.001;
+  if(qtd===0.5) return 'meio '+singular;
+  if(temMeio) return inteiro+' e meio '+singular;
+  if(inteiro===1) return '1 '+singular;
+  return inteiro+' '+plural;
+}
+
 function renderItensRefeicao(){
   const box = document.getElementById('itens-refeicao');
   if(!box) return;
@@ -254,15 +285,18 @@ function renderItensRefeicao(){
     const info = resolverAlimento(chave); if(!info) return;
     const partes = chave.split('#');
     const alimento = ALIMENTOS.find(a=>a.id===partes[0]); if(!alimento) return;
-    const label = alimento.tamanhos ? alimento.nome+' ('+alimento.tamanhos[parseInt(partes[1],10)].label+')' : alimento.nome;
+    const ehTamanho = partes.length>1;
     const qtd = refeicao[chave];
+    const label = ehTamanho ? alimento.nome+' ('+alimento.tamanhos[parseInt(partes[1],10)].label+')' : alimento.nome;
+    const valTexto = ehTamanho ? String(qtd)+'x' : formatQtdComUnidade(alimento.porcao, qtd);
+    const passo = ehTamanho ? 1 : 0.5;
     const row = document.createElement('div');
     row.className='alimento';
     row.innerHTML='<div class="alimento-nome">'+label+'<span class="alimento-porcao">'+Math.round(info.kcal*qtd)+' kcal, '+(info.prot*qtd).toFixed(1)+'g prot</span></div>'+
-      '<span class="stepper"><button type="button">-</button><span class="qtd-val">'+qtd+'</span><button type="button">+</button></span>';
+      '<span class="stepper"><button type="button">-</button><span class="qtd-val">'+valTexto+'</span><button type="button">+</button></span>';
     const btns = row.querySelectorAll('button');
-    btns[0].onclick=()=>setQtd(chave, qtd-1);
-    btns[1].onclick=()=>setQtd(chave, qtd+1);
+    btns[0].onclick=()=>setQtd(chave, qtd-passo);
+    btns[1].onclick=()=>setQtd(chave, qtd+passo);
     box.appendChild(row);
   });
 }
