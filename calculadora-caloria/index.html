@@ -59,6 +59,10 @@
       <button class="opcao" onclick="escolherDomestico('moderada', this)">Moderada</button>
       <button class="opcao" onclick="escolherDomestico('puxada', this)">Puxada</button>
     </div>
+    <div class="linha-campo">
+      <div><label>Quantos dias por semana você faz essa tarefa doméstica?</label><input type="number" id="input-domestico-freq" min="0" max="7" placeholder="0" onchange="atualizarDomesticoFreq(this.value)"></div>
+      <div></div>
+    </div>
     <p class="erro" id="erro-ocupacao"></p>
     <button class="btn" onclick="validarOcupacao()">CONTINUAR</button>
     <button class="voltar" onclick="irPara('tela-dados')">Voltar</button>

@@ -11,7 +11,7 @@
 
 const estado = {
   sexo:null, idade:null, altura:null, peso:null,
-  ocupacao:null, domestico:null,
+  ocupacao:null, domestico:null, domesticoFreq:null,
   atividades:{
     corrida:{on:false, intensidade:'moderada', freq:0, duracao:0},
     musculacao:{on:false, intensidade:'moderada', freq:0, duracao:0},
@@ -92,9 +92,16 @@ function escolherDomestico(v, el){
   estado.domestico=v;
   marcarOpcao(document.getElementById('opcoes-domestico'), el, 'opcao');
 }
+function atualizarDomesticoFreq(v){
+  estado.domesticoFreq = parseInt(v,10) || 0;
+}
 function validarOcupacao(){
   const erro = document.getElementById('erro-ocupacao');
   if(!estado.ocupacao || !estado.domestico){ erro.textContent='Escolhe as duas opções pra continuar.'; return; }
+  const freqEl = document.getElementById('input-domestico-freq');
+  const freq = parseInt(freqEl.value,10);
+  if(isNaN(freq) || freq<0 || freq>7){ erro.textContent='Quantos dias por semana? (0 a 7)'; return; }
+  estado.domesticoFreq = freq;
   erro.textContent='';
   irPara('tela-atividades');
 }
@@ -439,10 +446,18 @@ const PAL_OCUPACAO = {
 // Ajuste de tarefa doméstica: estimativa própria (não é linha direta de
 // tabela FAO/WHO/UNU), soma pequena ao PAL ocupacional. Documentado
 // como aproximação no aviso final, não fingir precisão de tabela.
+// Valor abaixo é o ajuste de um DIA CHEIO de tarefa doméstica naquela
+// intensidade; como nem todo mundo faz tarefa doméstica todo dia (ex:
+// faxina pesada 1x/semana), a média diária real é (ajuste_cheio x
+// dias_por_semana)/7, mesmo método de média semanal já usado no treino
+// estruturado e na seção "fora da rotina".
 const AJUSTE_DOMESTICO = {pouca:0.03, moderada:0.07, puxada:0.12};
 
 function calcularPAL(){
-  return PAL_OCUPACAO[estado.sexo][estado.ocupacao] + AJUSTE_DOMESTICO[estado.domestico];
+  const ajusteCheio = AJUSTE_DOMESTICO[estado.domestico] || 0;
+  const freq = estado.domesticoFreq || 0;
+  const ajusteMedio = (ajusteCheio * freq) / 7;
+  return PAL_OCUPACAO[estado.sexo][estado.ocupacao] + ajusteMedio;
 }
 
 // MET do Compendium of Physical Activities (Ainsworth et al., atualização

@@ -187,6 +187,13 @@ const ALIMENTOS = [
       {label:'pacote médio (50g)', kcal:250, prot:3.8},
   ]}, // fabricante (OpenFoodFacts/tabela do produto): ~125kcal/1,9g por porcao de 25g
   { id:'feijoada', nome:'Feijoada completa (com acompanhamentos)', cat:'leg', porcao:'1 prato médio', kcal:650, prot:35.0 }, // ESTIMATIVA: feijao+carnes+arroz+farofa+couve, varia muito por receita, faixa observada 526-940kcal por prato
+  { id:'tira-gosto', nome:'Tira-gosto de boteco (batata com carne do sol, moela, isca)', cat:'gordura', tamanhos:[
+      {label:'porção individual (~150g)', kcal:480, prot:19.0},
+      {label:'porção grande (~250g)', kcal:800, prot:32.0},
+  ]}, // ESTIMATIVA: prato tipico de boteco nao tem entrada unica na TACO, varia por receita
+     // (batata frita/moela/isca + carne do sol). Calculado a partir de 2 componentes-base
+     // da propria TACO: batata frita ~300kcal/3,6g por 100g + carne de sol assada/frita
+     // ~313-350kcal/26,9g por 100g, misturados 60% batata / 40% carne por peso, arredondado.
 
   // ---- BEBIDAS ----
   { id:'suco', nome:'Suco natural', cat:'bebida', porcao:'1 copo (200ml)', kcal:90, prot:0.5 },
