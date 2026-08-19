@@ -203,6 +203,30 @@
       <p class="res-fonte">Faixa de referência do American College of Sports Medicine (ACSM) pra pessoa fisicamente ativa: 1,2 a 2,0g de proteína por kg de peso corporal. Mostrada só como referência pública, sem comparação ou recomendação.</p>
     </div>
 
+    <div class="res-bloco" id="bloco-rfm">
+      <div id="rfm-convite">
+        <p class="rfm-titulo">E aí, sabe quanto de gordura corporal você tem?</p>
+        <p class="rfm-apoio">Descubra agora clicando no botão abaixo.</p>
+        <button class="btn-sec" style="margin-top:14px" onclick="abrirFormRFM()">Descubra seu percentual de gordura</button>
+      </div>
+      <div id="rfm-form" style="display:none">
+        <p class="res-rotulo">Composição corporal</p>
+        <div class="campo" style="margin:10px 0 6px">
+          <label for="cintura">Circunferência da cintura (cm)</label>
+          <input id="cintura" type="number" inputmode="decimal" min="40" max="200" placeholder="cm">
+        </div>
+        <p class="ajuda" style="margin-bottom:10px">Medida na altura do umbigo, sem forçar a fita.</p>
+        <p class="erro" id="erro-rfm"></p>
+        <button class="btn" onclick="calcularRFMevento()">Calcular</button>
+      </div>
+      <div id="rfm-resultado" style="display:none">
+        <p class="res-rotulo">Sua gordura corporal estimada</p>
+        <span class="res-num" id="r-rfm">0</span><span class="res-unid">%</span>
+        <div id="tabela-rfm"></div>
+        <p class="res-fonte">Fórmula RFM (Relative Fat Mass), Woolcott &amp; Bergman 2018, calculada com altura e circunferência de cintura. Tabela de referência do American Council on Exercise (ACE). Estimativa, não é medição clínica.</p>
+      </div>
+    </div>
+
     <p class="aviso">Essa calculadora é uma estimativa educacional. Não é diagnóstico nem prescrição de dieta. Pra orientação nutricional individualizada, procure um nutricionista.</p>
 
     <button class="btn-sec" onclick="recomecar()">Calcular de novo</button>

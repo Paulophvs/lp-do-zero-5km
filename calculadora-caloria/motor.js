@@ -25,6 +25,7 @@ const estado = {
   itens:{},
   buscaQuery:'',
   tamanhoAberto:null,
+  cintura:null,
 };
 
 function irPara(id){
@@ -385,6 +386,60 @@ function verResultado(){
   document.getElementById('r-faixa').textContent = Math.round(faixaMin)+'g a '+Math.round(faixaMax)+'g';
 
   irPara('tela-resultado');
+}
+
+// ---------- composição corporal (RFM, opcional) ----------
+// RFM (Relative Fat Mass), Woolcott & Bergman 2018: mais recente e mais
+// validada que o BAI (Body Adiposity Index, Bergman 2011, quadril+altura,
+// hoje considerado defasado). Altura e cintura na mesma unidade (cm).
+function calcularRFM(sexo, altura, cintura){
+  const base = sexo==='homem' ? 64 : 76;
+  return base - 20*(altura/cintura);
+}
+
+// Tabela de referência do American Council on Exercise (ACE). Faixa de
+// obesidade é aberta pra cima (25%+ homem, 32%+ mulher), por isso o "max"
+// usa Infinity só pra lógica de destaque, o texto mostrado é "X%+".
+const TABELA_ACE = [
+  {nome:'Gordura essencial', min:{homem:2,  mulher:10}, max:{homem:5,  mulher:13}},
+  {nome:'Atletas',           min:{homem:6,  mulher:14}, max:{homem:13, mulher:20}},
+  {nome:'Boa forma',         min:{homem:14, mulher:21}, max:{homem:17, mulher:24}},
+  {nome:'Aceitável',         min:{homem:18, mulher:25}, max:{homem:24, mulher:31}},
+  {nome:'Obesidade',         min:{homem:25, mulher:32}, max:{homem:Infinity, mulher:Infinity}},
+];
+
+function abrirFormRFM(){
+  document.getElementById('rfm-convite').style.display='none';
+  document.getElementById('rfm-form').style.display='block';
+}
+
+function renderTabelaRFM(percentual){
+  const sexo = estado.sexo;
+  const box = document.getElementById('tabela-rfm');
+  let html = '<table class="tabela-rfm-tb"><thead><tr><th>Categoria</th><th>Faixa de referência</th></tr></thead><tbody>';
+  TABELA_ACE.forEach(row=>{
+    const min = row.min[sexo], max = row.max[sexo];
+    const destaque = percentual>=min && percentual<=max;
+    const faixaTxt = max===Infinity ? min+'%+' : min+'% a '+max+'%';
+    html += '<tr'+(destaque?' class="linha-destaque"':'')+'><td>'+row.nome+'</td><td>'+faixaTxt+'</td></tr>';
+  });
+  html += '</tbody></table>';
+  box.innerHTML = html;
+}
+
+function calcularRFMevento(){
+  const cintura = parseFloat(document.getElementById('cintura').value);
+  const erro = document.getElementById('erro-rfm');
+  if(!cintura || cintura<40 || cintura>200){ erro.textContent='Circunferência de cintura inválida.'; return; }
+  erro.textContent='';
+  estado.cintura = cintura;
+
+  const rfm = calcularRFM(estado.sexo, estado.altura, cintura);
+  document.getElementById('r-rfm').textContent = rfm.toFixed(1).replace('.', ',');
+  renderTabelaRFM(rfm);
+
+  document.getElementById('rfm-form').style.display='none';
+  document.getElementById('rfm-resultado').style.display='block';
 }
 
 function recomecar(){
