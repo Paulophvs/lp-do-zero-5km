@@ -23,10 +23,35 @@ const estado = {
   numRefeicoes:3,
   refeicaoAtiva:1,
   itens:{},
+  // "fora da rotina": alcool e comida de fim de semana/dia livre, calculados
+  // por MEDIA SEMANAL (freq x total do bucket / 7), somados ao consumo diario
+  // normal. Ficam em objetos separados de estado.itens de proposito, pra nao
+  // entrar duas vezes na soma das refeicoes normais (ver calcularConsumoTotal).
+  foraRotina:{ alcoolOn:false, alcoolFreq:0, extraFreq:0 },
+  itensAlcool:{},
+  itensExtra:{},
+  contextoBusca:'refeicao', // 'refeicao' | 'alcool' | 'extra'
   buscaQuery:'',
   tamanhoAberto:null,
   cintura:null,
 };
+
+const DOM_BUSCA = {
+  refeicao:{input:'input-busca', sugestoes:'sugestoes-busca', itens:'itens-refeicao'},
+  alcool:{input:'input-busca-alcool', sugestoes:'sugestoes-busca-alcool', itens:'itens-alcool'},
+  extra:{input:'input-busca-extra', sugestoes:'sugestoes-busca-extra', itens:'itens-extra'},
+};
+function bucketAtivo(){
+  if(estado.contextoBusca==='alcool') return 'alcool';
+  if(estado.contextoBusca==='extra') return 'extra';
+  return estado.refeicaoAtiva;
+}
+function getItensBucket(bucket){
+  if(bucket==='alcool') return estado.itensAlcool;
+  if(bucket==='extra') return estado.itensExtra;
+  if(!estado.itens[bucket]) estado.itens[bucket]={};
+  return estado.itens[bucket];
+}
 
 function irPara(id){
   document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
@@ -88,6 +113,28 @@ function atualizarAtividade(nome, campo, valor){
   estado.atividades[nome][campo] = campo==='intensidade' ? valor : (parseFloat(valor)||0);
 }
 function continuarAtividades(){
+  irParaForaRotina();
+}
+
+// ---------- TELA: fora da rotina (álcool + comida de fim de semana) ----------
+function irParaForaRotina(){
+  estado.contextoBusca='alcool'; estado.buscaQuery=''; estado.tamanhoAberto=null;
+  renderSugestoes(); renderItensRefeicao(); renderTotaisForaRotina('alcool');
+  estado.contextoBusca='extra'; estado.buscaQuery=''; estado.tamanhoAberto=null;
+  renderSugestoes(); renderItensRefeicao(); renderTotaisForaRotina('extra');
+  estado.contextoBusca='alcool';
+  irPara('tela-fora-rotina');
+}
+function toggleAlcool(on, el){
+  estado.foraRotina.alcoolOn = on;
+  marcarOpcao(document.getElementById('opcoes-alcool'), el, 'opcao');
+  document.getElementById('bloco-alcool-detalhe').style.display = on ? '' : 'none';
+}
+function atualizarFreqAlcool(v){ estado.foraRotina.alcoolFreq = parseFloat(v)||0; }
+function atualizarFreqExtra(v){ estado.foraRotina.extraFreq = parseFloat(v)||0; }
+function onBuscaAlcoolInput(v){ estado.contextoBusca='alcool'; onBuscaInput(v); }
+function onBuscaExtraInput(v){ estado.contextoBusca='extra'; onBuscaInput(v); }
+function continuarForaRotina(){
   irPara('tela-refeicoes-num');
 }
 
@@ -100,6 +147,7 @@ function escolherNumRefeicoes(n, el){
 function irParaAnamnese(){
   if(!estado.numRefeicoes){ document.getElementById('erro-refeicoes').textContent='Escolhe quantas refeições.'; return; }
   document.getElementById('erro-refeicoes').textContent='';
+  estado.contextoBusca='refeicao';
   estado.refeicaoAtiva = 1;
   estado.buscaQuery=''; estado.tamanhoAberto=null;
   for(let i=1;i<=estado.numRefeicoes;i++){ if(!estado.itens[i]) estado.itens[i]={}; }
@@ -134,14 +182,15 @@ function renderRefeicaoTabs(){
 function normalizarTexto(s){
   return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 }
-function buscarAlimentos(query){
+function buscarAlimentos(query, soAlcoolica){
   const q = normalizarTexto(query.trim());
   if(!q) return [];
   // nome do item bate primeiro (score 2), categoria só desempata (score 1).
   // sem isso, categoria "Arroz, macarrão, pães e raízes" faz busca por "arroz"
   // trazer pão/tapioca/aveia antes do arroz de verdade, porque a palavra
   // "arroz" está no NOME da categoria inteira, não só no item certo.
-  const pontuados = ALIMENTOS.map(a=>{
+  const base = soAlcoolica ? ALIMENTOS.filter(a=>a.alcoolica) : ALIMENTOS;
+  const pontuados = base.map(a=>{
     const nome = normalizarTexto(a.nome);
     const catNome = normalizarTexto((CATEGORIAS.find(c=>c.id===a.cat)||{}).nome||'');
     let score = 0;
@@ -153,13 +202,19 @@ function buscarAlimentos(query){
   return pontuados.slice(0,8).map(p=>p.a);
 }
 function chaveAlimento(id, idxTamanho){ return idxTamanho===undefined ? id : id+'#'+idxTamanho; }
-function getQtd(chave){ return (estado.itens[estado.refeicaoAtiva] && estado.itens[estado.refeicaoAtiva][chave]) || 0; }
-function setQtd(chave, val){
-  if(!estado.itens[estado.refeicaoAtiva]) estado.itens[estado.refeicaoAtiva]={};
-  estado.itens[estado.refeicaoAtiva][chave] = Math.max(0, val);
-  renderItensRefeicao();
-  renderResumoFixo();
-  renderRefeicaoTabs();
+function getQtd(bucket, chave){ const b=getItensBucket(bucket); return b[chave]||0; }
+// bucket é passado EXPLÍCITO (não lido de estado.contextoBusca no momento do
+// clique) porque na tela "fora da rotina" as listas de álcool e de comida
+// extra ficam as DUAS visíveis ao mesmo tempo; se o botão +/- de uma lista
+// dependesse do contexto global, clicar numa lista depois de ter digitado
+// na busca da outra alteraria o bucket errado.
+function setQtd(bucket, chave, val){
+  const b = getItensBucket(bucket);
+  b[chave] = Math.max(0, val);
+  renderItensRefeicao(bucket);
+  if(bucket==='alcool') renderTotaisForaRotina('alcool');
+  else if(bucket==='extra') renderTotaisForaRotina('extra');
+  else { renderResumoFixo(); renderRefeicaoTabs(); }
 }
 
 function onBuscaInput(valor){
@@ -169,16 +224,18 @@ function onBuscaInput(valor){
 }
 
 function renderSugestoes(){
-  const box = document.getElementById('sugestoes-busca');
+  const ids = DOM_BUSCA[estado.contextoBusca];
+  const box = document.getElementById(ids.sugestoes);
   if(!box) return;
   box.innerHTML='';
   if(estado.tamanhoAberto){
     renderSeletorTamanho(box);
     return;
   }
-  const resultados = buscarAlimentos(estado.buscaQuery);
+  const soAlcoolica = estado.contextoBusca==='alcool';
+  const resultados = buscarAlimentos(estado.buscaQuery, soAlcoolica);
   if(!resultados.length){
-    if(estado.buscaQuery.trim()) box.innerHTML='<p class="sem-resultado">Nenhum alimento encontrado. Procura "Outro alimento" da categoria mais parecida (ex: digita "outro").</p>';
+    if(estado.buscaQuery.trim()) box.innerHTML='<p class="sem-resultado">Nenhum alimento encontrado'+(soAlcoolica?'.':'. Procura "Outro alimento" da categoria mais parecida (ex: digita "outro").')+'</p>';
     return;
   }
   resultados.forEach(a=>{
@@ -199,7 +256,8 @@ function selecionarAlimento(id){
     renderSugestoes();
     return;
   }
-  setQtd(a.id, getQtd(a.id)+1);
+  const bucket = bucketAtivo();
+  setQtd(bucket, a.id, getQtd(bucket, a.id)+1);
   limparBusca();
 }
 
@@ -219,7 +277,8 @@ function renderSeletorTamanho(box){
     btn.innerHTML='<span>'+t.label+'</span><span class="sugestao-porcao">'+t.kcal+' kcal, '+t.prot+'g prot</span>';
     btn.onclick=()=>{
       const chave = chaveAlimento(a.id, idx);
-      setQtd(chave, getQtd(chave)+1);
+      const bucket = bucketAtivo();
+      setQtd(bucket, chave, getQtd(bucket, chave)+1);
       limparBusca();
     };
     wrap.appendChild(btn);
@@ -235,7 +294,8 @@ function renderSeletorTamanho(box){
 
 function limparBusca(){
   estado.buscaQuery=''; estado.tamanhoAberto=null;
-  const input = document.getElementById('input-busca');
+  const ids = DOM_BUSCA[estado.contextoBusca];
+  const input = document.getElementById(ids.input);
   if(input) input.value='';
   renderSugestoes();
 }
@@ -271,14 +331,22 @@ function formatQtdComUnidade(porcaoStr, qtd){
   return inteiro+' '+plural;
 }
 
-function renderItensRefeicao(){
-  const box = document.getElementById('itens-refeicao');
+function domContextoDoBucket(bucket){
+  if(bucket==='alcool') return 'alcool';
+  if(bucket==='extra') return 'extra';
+  return 'refeicao';
+}
+function renderItensRefeicao(bucket){
+  if(bucket===undefined) bucket = bucketAtivo();
+  const domCtx = domContextoDoBucket(bucket);
+  const ids = DOM_BUSCA[domCtx];
+  const box = document.getElementById(ids.itens);
   if(!box) return;
   box.innerHTML='';
-  const refeicao = estado.itens[estado.refeicaoAtiva]||{};
+  const refeicao = getItensBucket(bucket);
   const chaves = Object.keys(refeicao).filter(c=>refeicao[c]>0);
   if(!chaves.length){
-    box.innerHTML='<p class="sem-item">Nenhum alimento adicionado nessa refeição ainda. Usa a busca acima.</p>';
+    box.innerHTML='<p class="sem-item">'+(domCtx==='refeicao'?'Nenhum alimento adicionado nessa refeição ainda.':'Nada adicionado ainda.')+' Usa a busca acima.</p>';
     return;
   }
   chaves.forEach(chave=>{
@@ -295,21 +363,27 @@ function renderItensRefeicao(){
     row.innerHTML='<div class="alimento-nome">'+label+'<span class="alimento-porcao">'+Math.round(info.kcal*qtd)+' kcal, '+(info.prot*qtd).toFixed(1)+'g prot</span></div>'+
       '<span class="stepper"><button type="button">-</button><span class="qtd-val">'+valTexto+'</span><button type="button">+</button></span>';
     const btns = row.querySelectorAll('button');
-    btns[0].onclick=()=>setQtd(chave, qtd-passo);
-    btns[1].onclick=()=>setQtd(chave, qtd+passo);
+    btns[0].onclick=()=>setQtd(bucket, chave, qtd-passo);
+    btns[1].onclick=()=>setQtd(bucket, chave, qtd+passo);
     box.appendChild(row);
   });
 }
 
-function totaisRefeicaoAtiva(){
+function totaisBucket(bucket){
   let kcal=0, prot=0;
-  const refeicao = estado.itens[estado.refeicaoAtiva]||{};
-  Object.keys(refeicao).forEach(chave=>{
-    const qtd = refeicao[chave]; if(!qtd) return;
+  const itens = getItensBucket(bucket);
+  Object.keys(itens).forEach(chave=>{
+    const qtd = itens[chave]; if(!qtd) return;
     const info = resolverAlimento(chave); if(!info) return;
     kcal += info.kcal*qtd; prot += info.prot*qtd;
   });
   return {kcal,prot};
+}
+function totaisRefeicaoAtiva(){ return totaisBucket(estado.refeicaoAtiva); }
+function renderTotaisForaRotina(bucket){
+  const t = totaisBucket(bucket);
+  const el = document.getElementById('totais-'+bucket);
+  if(el) el.innerHTML = 'Nessa lista: <b>'+Math.round(t.kcal)+' kcal</b> · <b>'+t.prot.toFixed(1)+'g proteína</b> (valor de 1 vez, a média semanal entra automático no resultado final)';
 }
 function refeicoesPreenchidas(){
   let n=0;
@@ -406,7 +480,25 @@ function calcularConsumoTotal(){
       kcal += info.kcal*qtd; prot += info.prot*qtd;
     });
   });
+  const fora = calcularForaRotina();
+  kcal += fora.kcal; prot += fora.prot;
   return {kcal,prot};
+}
+
+// "Fora da rotina" (álcool + comida de fim de semana/dia livre): a pessoa
+// monta a lista do que costuma consumir numa ocasião típica, e informa a
+// frequência por semana; o total do bucket é multiplicado pela frequência
+// e dividido por 7 pra virar média diária, mesmo método já usado no gasto
+// de treino estruturado (ver calcularGastoTreinoDiario).
+function calcularForaRotina(){
+  const freqAlcool = estado.foraRotina.alcoolOn ? (estado.foraRotina.alcoolFreq||0) : 0;
+  const freqExtra = estado.foraRotina.extraFreq||0;
+  const alc = totaisBucket('alcool');
+  const ext = totaisBucket('extra');
+  return {
+    kcal: (alc.kcal*freqAlcool + ext.kcal*freqExtra)/7,
+    prot: (alc.prot*freqAlcool + ext.prot*freqExtra)/7,
+  };
 }
 
 function verResultado(){

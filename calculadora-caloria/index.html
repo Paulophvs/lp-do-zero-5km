@@ -23,7 +23,7 @@
 
   <!-- ===== TELA 2: DADOS PESSOAIS ===== -->
   <section class="tela" id="tela-dados">
-    <p class="passo">PASSO 1 DE 5</p>
+    <p class="passo">PASSO 1 DE 6</p>
     <h2 class="pergunta">Seus dados básicos</h2>
     <p class="ajuda">Usados só pra fórmula de gasto calórico (Mifflin-St Jeor).</p>
     <div class="opcoes" id="opcoes-sexo" style="grid-template-columns:1fr 1fr;display:grid">
@@ -44,7 +44,7 @@
 
   <!-- ===== TELA 3: OCUPAÇÃO / DIA A DIA ===== -->
   <section class="tela" id="tela-ocupacao">
-    <p class="passo">PASSO 2 DE 5</p>
+    <p class="passo">PASSO 2 DE 6</p>
     <h2 class="pergunta">Como é seu dia a dia fora do treino?</h2>
     <p class="ajuda">Isso entra no cálculo do gasto calórico (fator de atividade da FAO/OMS/UNU).</p>
     <p class="ajuda" style="margin-bottom:10px">Seu trabalho</p>
@@ -66,7 +66,7 @@
 
   <!-- ===== TELA 4: ATIVIDADES ESTRUTURADAS ===== -->
   <section class="tela" id="tela-atividades">
-    <p class="passo">PASSO 3 DE 5</p>
+    <p class="passo">PASSO 3 DE 6</p>
     <h2 class="pergunta">Quais treinos você faz?</h2>
     <p class="ajuda">Ative o que você pratica e preenche frequência e duração. O resto do gasto de treino soma em cima do seu dia a dia.</p>
 
@@ -138,9 +138,51 @@
     <button class="voltar" onclick="irPara('tela-ocupacao')">Voltar</button>
   </section>
 
+  <!-- ===== TELA 4B: FORA DA ROTINA (ÁLCOOL + COMIDA DE FIM DE SEMANA) ===== -->
+  <section class="tela" id="tela-fora-rotina">
+    <p class="passo">PASSO 4 DE 6</p>
+    <h2 class="pergunta">Antes das refeições: e fora da rotina?</h2>
+    <p class="ajuda">Álcool e comida de fim de semana/dia livre pesam na conta mas ninguém lembra de contar isso na hora das refeições. Aqui é por frequência semanal, não por dia.</p>
+
+    <h3 style="margin:18px 0 6px;font-size:16px">Você consome bebida alcoólica?</h3>
+    <div class="opcoes" id="opcoes-alcool" style="grid-template-columns:1fr 1fr;display:grid">
+      <button class="opcao" onclick="toggleAlcool(true, this)">Sim</button>
+      <button class="opcao marcada" onclick="toggleAlcool(false, this)">Não</button>
+    </div>
+    <div id="bloco-alcool-detalhe" style="display:none;margin-top:14px">
+      <div class="linha-campo">
+        <div><label>Quantos dias por semana</label><input type="number" min="0" max="7" placeholder="0" oninput="atualizarFreqAlcool(this.value)"></div>
+        <div></div>
+      </div>
+      <p class="ajuda">Monta abaixo o que você costuma beber numa ocasião típica (ex: 2 latas de cerveja). A gente multiplica pela frequência e divide por 7 pra virar média diária.</p>
+      <div class="busca-alimento">
+        <input type="text" id="input-busca-alcool" placeholder="Digite a bebida: cerveja, vinho, destilada..." oninput="onBuscaAlcoolInput(this.value)" autocomplete="off">
+        <div id="sugestoes-busca-alcool"></div>
+      </div>
+      <div id="itens-alcool"></div>
+      <p class="resumo-num" id="totais-alcool"></p>
+    </div>
+
+    <h3 style="margin:22px 0 6px;font-size:16px">Come algo fora da rotina? (fim de semana, dia livre)</h3>
+    <p class="ajuda">Pizza, feijoada, sorvete, doce, essas coisas que não fazem parte do dia a dia normal.</p>
+    <div class="linha-campo">
+      <div><label>Quantas vezes por semana</label><input type="number" min="0" max="14" placeholder="0" oninput="atualizarFreqExtra(this.value)"></div>
+      <div></div>
+    </div>
+    <div class="busca-alimento">
+      <input type="text" id="input-busca-extra" placeholder="Digite o alimento: pizza, feijoada, sorvete..." oninput="onBuscaExtraInput(this.value)" autocomplete="off">
+      <div id="sugestoes-busca-extra"></div>
+    </div>
+    <div id="itens-extra"></div>
+    <p class="resumo-num" id="totais-extra"></p>
+
+    <button class="btn" style="margin-top:14px" onclick="continuarForaRotina()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-atividades')">Voltar</button>
+  </section>
+
   <!-- ===== TELA 5: NÚMERO DE REFEIÇÕES ===== -->
   <section class="tela" id="tela-refeicoes-num">
-    <p class="passo">PASSO 4 DE 5</p>
+    <p class="passo">PASSO 5 DE 6</p>
     <h2 class="pergunta">Quantas refeições você faz por dia?</h2>
     <p class="ajuda">Conta lanche também.</p>
     <div class="numeros" id="opcoes-refeicoes">
@@ -155,12 +197,12 @@
     </div>
     <p class="erro" id="erro-refeicoes"></p>
     <button class="btn" style="margin-top:14px" onclick="irParaAnamnese()">CONTINUAR</button>
-    <button class="voltar" onclick="irPara('tela-atividades')">Voltar</button>
+    <button class="voltar" onclick="irPara('tela-fora-rotina')">Voltar</button>
   </section>
 
   <!-- ===== TELA 6: ANAMNESE ALIMENTAR ===== -->
   <section class="tela" id="tela-anamnese">
-    <p class="passo">PASSO 5 DE 5</p>
+    <p class="passo">PASSO 6 DE 6</p>
     <h2 class="pergunta">O que você comeu em cada refeição?</h2>
     <p class="ajuda">Escolhe a refeição, digita o alimento na busca, clica na sugestão e ajusta a quantidade em medida caseira. Cada clique de + soma 1 porção do tamanho de mão indicado.</p>
     <div class="refeicoes-tabs" id="refeicoes-tabs"></div>

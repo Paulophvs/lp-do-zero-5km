@@ -161,14 +161,45 @@ const ALIMENTOS = [
       {label:'1 punhado pequeno', kcal:90, prot:3.0},
       {label:'1 punhado médio', kcal:180, prot:6.0},
   ]},
+  { id:'sorvete', nome:'Sorvete', cat:'gordura', tamanhos:[
+      {label:'2 bolas (~100g)', kcal:206, prot:3.6},
+      {label:'4 bolas (~200g)', kcal:412, prot:7.2},
+  ]}, // TACO/NuTrilho: sorvete industrializado media 206kcal/3,6g por 100g
+  { id:'acai', nome:'Açaí na tigela', cat:'gordura', tamanhos:[
+      {label:'tigela pequena (200ml)', kcal:250, prot:3.0},
+      {label:'tigela média (300ml, c/ granola)', kcal:330, prot:4.0},
+      {label:'tigela grande (500ml)', kcal:550, prot:6.0},
+  ]}, // ESTIMATIVA: creme de açaí batido + granola/xarope, varia muito por casa/franquia, faixa observada 250-600kcal
+  { id:'cachorro-quente', nome:'Cachorro-quente completo (pão, salsicha, molhos)', cat:'gordura', porcao:'1 unidade', kcal:340, prot:13.0 }, // baseado em TBCA ~215kcal/8,7g por 100g, porcao tipica ~160g
+  { id:'hamburguer', nome:'Hambúrguer completo (pão, carne, queijo, salada)', cat:'gordura', porcao:'1 unidade', kcal:480, prot:21.0 }, // baseado em TACO hamburguer bovino c/pao ~209kcal/9,3g por 100g, porcao tipica ~230g
+  { id:'biscoito-recheado', nome:'Biscoito recheado (passatempo)', cat:'gordura', tamanhos:[
+      {label:'3 unidades (~30g)', kcal:142, prot:1.9},
+      {label:'6 unidades (~60g)', kcal:283, prot:3.8},
+  ]}, // TACO: biscoito doce recheado com chocolate 472kcal/6,4g por 100g
+  { id:'biscoito-agua-sal', nome:'Biscoito água e sal / cream cracker', cat:'gordura', tamanhos:[
+      {label:'4 unidades (~20g)', kcal:86, prot:2.0},
+      {label:'8 unidades (~40g)', kcal:172, prot:4.0},
+  ]}, // ESTIMATIVA a partir de referencia geral (~430kcal/10g por 100g), TACO nao retornou entrada direta
+  { id:'salgadinho-pacote', nome:'Salgadinho de pacote (Doritos, Cheetos)', cat:'gordura', tamanhos:[
+      {label:'pacote pequeno (25g)', kcal:125, prot:1.9},
+      {label:'pacote médio (50g)', kcal:250, prot:3.8},
+  ]}, // fabricante (OpenFoodFacts/tabela do produto): ~125kcal/1,9g por porcao de 25g
+  { id:'feijoada', nome:'Feijoada completa (com acompanhamentos)', cat:'leg', porcao:'1 prato médio', kcal:650, prot:35.0 }, // ESTIMATIVA: feijao+carnes+arroz+farofa+couve, varia muito por receita, faixa observada 526-940kcal por prato
 
   // ---- BEBIDAS ----
   { id:'suco', nome:'Suco natural', cat:'bebida', porcao:'1 copo (200ml)', kcal:90, prot:0.5 },
   { id:'refri', nome:'Refrigerante', cat:'bebida', porcao:'1 copo (200ml)', kcal:85, prot:0 },
   { id:'cafe-puro', nome:'Café puro (sem leite, sem açúcar)', cat:'bebida', porcao:'1 xícara (150ml)', kcal:2, prot:0.2 },
   { id:'cafe', nome:'Café com leite e açúcar', cat:'bebida', porcao:'1 xícara (150ml)', kcal:60, prot:2.0 },
-  { id:'cerveja', nome:'Cerveja', cat:'bebida', porcao:'1 lata (350ml)', kcal:150, prot:1.6 },
   { id:'whey', nome:'Whey protein', cat:'bebida', porcao:'1 dose (30g)', kcal:120, prot:24.0 },
+  // Bebidas alcoolicas: marcadas com alcoolica:true, aparecem tambem na
+  // busca restrita da secao "fora da rotina" (ver motor.js, bucket alcool).
+  { id:'cerveja', nome:'Cerveja', cat:'bebida', alcoolica:true, tamanhos:[
+      {label:'1 lata (350ml)', kcal:150, prot:1.6},
+      {label:'1 garrafa (600ml)', kcal:257, prot:2.7},
+  ]},
+  { id:'vinho', nome:'Vinho (taça)', cat:'bebida', alcoolica:true, porcao:'1 taça (150ml)', kcal:120, prot:0.1 }, // media vinho tinto/branco seco, 110-125kcal por taca de 150ml
+  { id:'destilada', nome:'Destilada (uísque, vodka, cachaça, conhaque)', cat:'bebida', alcoolica:true, porcao:'1 dose (40ml)', kcal:96, prot:0 }, // uisque ~240kcal/100ml, dose padrao 40ml
 ];
 
 /* "Outros" por categoria: item de resgate pra quem não achar o alimento
