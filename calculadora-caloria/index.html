@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora de Caloria e Proteína | PH Corridas</title>
+<meta name="description" content="Estimativa gratuita de gasto calórico, consumo calórico e proteína diária, com base em fórmulas científicas públicas. Não é diagnóstico nem prescrição de dieta.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/calculadora-caloria/estilo.css?v=1">
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== TELA 1: HERO ===== -->
+  <section class="tela ativa" id="tela-hero">
+    <h1>Quanto você <span class="destaque">gasta</span>, quanto você <span class="destaque">come</span> e quanta <span class="destaque">proteína</span> você consome por dia?</h1>
+    <p class="sub">Calculadora grátis. Você responde algumas perguntas sobre sua rotina e sua alimentação (em medida caseira, sem precisar saber grama), e no final mostro os 3 números calculados, lado a lado com a referência científica pública. Sem prescrição, sem dieta pronta, só o número, pra você interpretar.</p>
+    <p class="aviso">Essa calculadora é uma estimativa educacional. Não é diagnóstico nem prescrição de dieta. Pra orientação nutricional individualizada, procure um nutricionista.</p>
+    <button class="btn" onclick="irPara('tela-dados')">COMEÇAR</button>
+  </section>
+
+  <!-- ===== TELA 2: DADOS PESSOAIS ===== -->
+  <section class="tela" id="tela-dados">
+    <p class="passo">PASSO 1 DE 5</p>
+    <h2 class="pergunta">Seus dados básicos</h2>
+    <p class="ajuda">Usados só pra fórmula de gasto calórico (Mifflin-St Jeor).</p>
+    <div class="opcoes" id="opcoes-sexo" style="grid-template-columns:1fr 1fr;display:grid">
+      <button class="opcao" onclick="escolherSexo('homem', this)">Homem</button>
+      <button class="opcao" onclick="escolherSexo('mulher', this)">Mulher</button>
+    </div>
+    <div class="campos">
+      <div class="dupla">
+        <div class="campo"><label for="idade">Idade</label><input id="idade" type="number" inputmode="numeric" min="10" max="99" placeholder="anos"></div>
+        <div class="campo"><label for="altura">Altura (cm)</label><input id="altura" type="number" inputmode="numeric" min="120" max="230" placeholder="cm"></div>
+      </div>
+      <div class="campo"><label for="peso">Peso (kg)</label><input id="peso" type="number" inputmode="decimal" min="30" max="250" placeholder="kg"></div>
+    </div>
+    <p class="erro" id="erro-dados"></p>
+    <button class="btn" onclick="validarDados()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-hero')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 3: OCUPAÇÃO / DIA A DIA ===== -->
+  <section class="tela" id="tela-ocupacao">
+    <p class="passo">PASSO 2 DE 5</p>
+    <h2 class="pergunta">Como é seu dia a dia fora do treino?</h2>
+    <p class="ajuda">Isso entra no cálculo do gasto calórico (fator de atividade da FAO/OMS/UNU).</p>
+    <p class="ajuda" style="margin-bottom:10px">Seu trabalho</p>
+    <div class="opcoes" id="opcoes-ocupacao">
+      <button class="opcao" onclick="escolherOcupacao('sentado', this)">Sentado o dia todo<span class="desc">Escritório, home office, motorista</span></button>
+      <button class="opcao" onclick="escolherOcupacao('pe_moderado', this)">Em pé, se movimentando pouco<span class="desc">Vendedor, professor, recepção</span></button>
+      <button class="opcao" onclick="escolherOcupacao('pesado', this)">Trabalho braçal pesado<span class="desc">Pedreiro, carregador, entregador a pé</span></button>
+    </div>
+    <p class="ajuda" style="margin-bottom:10px">Tarefa doméstica (faxina, cuidar de casa/filhos)</p>
+    <div class="opcoes" id="opcoes-domestico">
+      <button class="opcao" onclick="escolherDomestico('pouca', this)">Pouca</button>
+      <button class="opcao" onclick="escolherDomestico('moderada', this)">Moderada</button>
+      <button class="opcao" onclick="escolherDomestico('puxada', this)">Puxada</button>
+    </div>
+    <p class="erro" id="erro-ocupacao"></p>
+    <button class="btn" onclick="validarOcupacao()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-dados')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 4: ATIVIDADES ESTRUTURADAS ===== -->
+  <section class="tela" id="tela-atividades">
+    <p class="passo">PASSO 3 DE 5</p>
+    <h2 class="pergunta">Quais treinos você faz?</h2>
+    <p class="ajuda">Ative o que você pratica e preenche frequência e duração. O resto do gasto de treino soma em cima do seu dia a dia.</p>
+
+    <div class="atividade" id="ativ-corrida">
+      <div class="atividade-topo" onclick="toggleAtividade('corrida')"><span class="atividade-nome">Corrida</span><span class="toggle"></span></div>
+      <div class="atividade-corpo">
+        <div class="linha-campo">
+          <div><label>Intensidade</label><select onchange="atualizarAtividade('corrida','intensidade',this.value)"><option value="leve">Leve (trote)</option><option value="moderada" selected>Moderada</option><option value="forte">Forte</option></select></div>
+          <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('corrida','freq',this.value)"></div>
+        </div>
+        <div class="linha-campo"><div><label>Minutos por treino</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('corrida','duracao',this.value)"></div><div></div></div>
+      </div>
+    </div>
+
+    <div class="atividade" id="ativ-musculacao">
+      <div class="atividade-topo" onclick="toggleAtividade('musculacao')"><span class="atividade-nome">Musculação</span><span class="toggle"></span></div>
+      <div class="atividade-corpo">
+        <div class="linha-campo">
+          <div><label>Intensidade</label><select onchange="atualizarAtividade('musculacao','intensidade',this.value)"><option value="leve">Leve</option><option value="moderada" selected>Moderada</option><option value="forte">Pesada</option></select></div>
+          <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('musculacao','freq',this.value)"></div>
+        </div>
+        <div class="linha-campo"><div><label>Minutos por treino</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('musculacao','duracao',this.value)"></div><div></div></div>
+      </div>
+    </div>
+
+    <div class="atividade" id="ativ-natacao">
+      <div class="atividade-topo" onclick="toggleAtividade('natacao')"><span class="atividade-nome">Natação</span><span class="toggle"></span></div>
+      <div class="atividade-corpo">
+        <div class="linha-campo">
+          <div><label>Intensidade</label><select onchange="atualizarAtividade('natacao','intensidade',this.value)"><option value="moderada" selected>Moderada</option><option value="forte">Forte</option></select></div>
+          <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('natacao','freq',this.value)"></div>
+        </div>
+        <div class="linha-campo"><div><label>Minutos por treino</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('natacao','duracao',this.value)"></div><div></div></div>
+      </div>
+    </div>
+
+    <div class="atividade" id="ativ-futebol">
+      <div class="atividade-topo" onclick="toggleAtividade('futebol')"><span class="atividade-nome">Futebol</span><span class="toggle"></span></div>
+      <div class="atividade-corpo">
+        <div class="linha-campo">
+          <div><label>Intensidade</label><select onchange="atualizarAtividade('futebol','intensidade',this.value)"><option value="casual" selected>Casual (pelada)</option><option value="competitivo">Competitivo</option></select></div>
+          <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('futebol','freq',this.value)"></div>
+        </div>
+        <div class="linha-campo"><div><label>Minutos por jogo</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('futebol','duracao',this.value)"></div><div></div></div>
+      </div>
+    </div>
+
+    <div class="atividade" id="ativ-crossfit">
+      <div class="atividade-topo" onclick="toggleAtividade('crossfit')"><span class="atividade-nome">Crossfit / treino funcional</span><span class="toggle"></span></div>
+      <div class="atividade-corpo">
+        <div class="linha-campo">
+          <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('crossfit','freq',this.value)"></div>
+          <div><label>Minutos por treino</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('crossfit','duracao',this.value)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="atividade" id="ativ-outro">
+      <div class="atividade-topo" onclick="toggleAtividade('outro')"><span class="atividade-nome">Outro esporte</span><span class="toggle"></span></div>
+      <div class="atividade-corpo">
+        <div class="linha-campo">
+          <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('outro','freq',this.value)"></div>
+          <div><label>Minutos por treino</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('outro','duracao',this.value)"></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" style="margin-top:14px" onclick="continuarAtividades()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-ocupacao')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 5: NÚMERO DE REFEIÇÕES ===== -->
+  <section class="tela" id="tela-refeicoes-num">
+    <p class="passo">PASSO 4 DE 5</p>
+    <h2 class="pergunta">Quantas refeições você faz por dia?</h2>
+    <p class="ajuda">Conta lanche também.</p>
+    <div class="numeros" id="opcoes-refeicoes">
+      <button class="num-btn marcada" onclick="escolherNumRefeicoes(1,this)">1</button>
+      <button class="num-btn" onclick="escolherNumRefeicoes(2,this)">2</button>
+      <button class="num-btn" onclick="escolherNumRefeicoes(3,this)">3</button>
+      <button class="num-btn" onclick="escolherNumRefeicoes(4,this)">4</button>
+      <button class="num-btn" onclick="escolherNumRefeicoes(5,this)">5</button>
+      <button class="num-btn" onclick="escolherNumRefeicoes(6,this)">6</button>
+      <button class="num-btn" onclick="escolherNumRefeicoes(7,this)">7</button>
+      <button class="num-btn" onclick="escolherNumRefeicoes(8,this)">8</button>
+    </div>
+    <p class="erro" id="erro-refeicoes"></p>
+    <button class="btn" style="margin-top:14px" onclick="irParaAnamnese()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-atividades')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 6: ANAMNESE ALIMENTAR ===== -->
+  <section class="tela" id="tela-anamnese">
+    <p class="passo">PASSO 5 DE 5</p>
+    <h2 class="pergunta">O que você comeu em cada refeição?</h2>
+    <p class="ajuda">Escolhe a refeição, depois clica nos alimentos e na quantidade em medida caseira. Cada clique de + soma 1 porção do tamanho de mão indicado.</p>
+    <div class="refeicoes-tabs" id="refeicoes-tabs"></div>
+    <div id="lista-categorias"></div>
+    <div class="resumo-fixo">
+      <p class="resumo-num" id="resumo-fixo-txt"></p>
+      <button class="btn" onclick="verResultado()">VER MEU RESULTADO</button>
+      <button class="voltar" onclick="irPara('tela-refeicoes-num')">Voltar</button>
+    </div>
+  </section>
+
+  <!-- ===== TELA 7: RESULTADO ===== -->
+  <section class="tela" id="tela-resultado">
+    <p class="passo">SEU RESULTADO</p>
+    <h2 class="pergunta" style="margin-bottom:20px">3 números, sem julgamento. A leitura é sua.</h2>
+
+    <div class="res-bloco">
+      <p class="res-rotulo">Gasto calórico diário estimado</p>
+      <span class="res-num" id="r-tdee">0</span><span class="res-unid">kcal/dia</span>
+      <p class="res-fonte">Método fatorial: Taxa Metabólica Basal (fórmula Mifflin-St Jeor) x fator de atividade do dia a dia (FAO/OMS/UNU) + gasto do treino estruturado (MET, Compendium of Physical Activities). Estimativa, não medição de laboratório.</p>
+    </div>
+
+    <div class="res-bloco">
+      <p class="res-rotulo">Consumo calórico diário calculado</p>
+      <span class="res-num" id="r-consumo">0</span><span class="res-unid">kcal/dia</span>
+      <p class="res-fonte">Soma das porções que você marcou na anamnese, em medida caseira (referência de mão), com base em valores da Tabela TACO e USDA.</p>
+    </div>
+
+    <div class="res-bloco">
+      <p class="res-rotulo">Proteína consumida x referência ACSM</p>
+      <div class="res-dupla">
+        <div><span class="res-num" id="r-proteina">0</span><span class="res-unid">g/dia consumido</span></div>
+        <div><span class="res-num" id="r-faixa" style="color:var(--texto)">0g a 0g</span><span class="res-unid">faixa ACSM</span></div>
+      </div>
+      <p class="res-fonte">Faixa de referência do American College of Sports Medicine (ACSM) pra pessoa fisicamente ativa: 1,2 a 2,0g de proteína por kg de peso corporal. Mostrada só como referência pública, sem comparação ou recomendação.</p>
+    </div>
+
+    <p class="aviso">Essa calculadora é uma estimativa educacional baseada em fórmulas científicas públicas (Mifflin-St Jeor, PAL da FAO/OMS/UNU, MET do Compendium of Physical Activities, Tabela TACO, ACSM). Não é diagnóstico nem prescrição de dieta. Pra orientação nutricional individualizada, procure um nutricionista.</p>
+
+    <button class="btn-sec" onclick="recomecar()">Calcular de novo</button>
+  </section>
+
+</div>
+
+<script src="/calculadora-caloria/dados-alimentos.js?v=1"></script>
+<script src="/calculadora-caloria/motor.js?v=1"></script>
+</body>
+</html>
