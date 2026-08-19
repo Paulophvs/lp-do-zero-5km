@@ -94,7 +94,7 @@ const ALIMENTOS = [
   { id:'alface', nome:'Alface', cat:'veg', porcao:'1 punho fechado', kcal:6, prot:0.6 },
   { id:'rucula', nome:'Rúcula', cat:'veg', porcao:'1 punho fechado', kcal:10, prot:1.0 },
   { id:'tomate', nome:'Tomate (fatia)', cat:'veg', porcao:'1 fatia (rodela)', kcal:4, prot:0.2 }, // tomate inteiro TACO ~18kcal/0,9g, dividido por ~5 rodelas por unidade media (ninguem come o tomate inteiro de uma vez)
-  { id:'salada-mista', nome:'Salada mista (alface, tomate, pepino)', cat:'veg', porcao:'1 prato de sobremesa', kcal:35, prot:1.5 }, // ESTIMATIVA: combinacao tipica de folha+tomate+pepino, TACO nao tem "salada" pronta como item unico
+  { id:'salada-mista', nome:'Salada mista (alface, tomate, pepino, etc)', cat:'veg', porcao:'1 prato de sobremesa', kcal:35, prot:1.5 }, // ESTIMATIVA: combinacao tipica de folha+tomate+pepino, TACO nao tem "salada" pronta como item unico
   { id:'cenoura', nome:'Cenoura crua ou cozida', cat:'veg', porcao:'1 punho fechado', kcal:27, prot:0.6 },
   { id:'brocolis', nome:'Brócolis cozido', cat:'veg', porcao:'1 punho fechado', kcal:22, prot:2.0 },
   { id:'legumes', nome:'Legumes refogados (mix)', cat:'veg', porcao:'1 punho fechado', kcal:40, prot:1.5 },
@@ -187,7 +187,7 @@ const ALIMENTOS = [
       {label:'pacote médio (50g)', kcal:250, prot:3.8},
   ]}, // fabricante (OpenFoodFacts/tabela do produto): ~125kcal/1,9g por porcao de 25g
   { id:'feijoada', nome:'Feijoada completa (com acompanhamentos)', cat:'leg', porcao:'1 prato médio', kcal:650, prot:35.0 }, // ESTIMATIVA: feijao+carnes+arroz+farofa+couve, varia muito por receita, faixa observada 526-940kcal por prato
-  { id:'tira-gosto', nome:'Tira-gosto de boteco (batata com carne do sol, moela, isca)', cat:'gordura', porcao:'1 punhado', kcal:160, prot:6.3 },
+  { id:'tira-gosto', nome:'Tira-gosto de boteco (batata com carne do sol, moela, isca, etc)', cat:'gordura', porcao:'1 punhado', kcal:160, prot:6.3 },
   // ESTIMATIVA: prato tipico de boteco nao tem entrada unica na TACO, varia por receita
   // (batata frita/moela/isca + carne do sol). Calculado a partir de 2 componentes-base da
   // propria TACO: batata frita ~300kcal/3,6g por 100g + carne de sol assada/frita

@@ -21,7 +21,7 @@
     padding:24px 20px 48px;
   }
   .wrap{width:100%;max-width:560px}
-  .logo{display:block;width:100%;max-width:340px;margin:0 auto 32px;height:auto}
+  .logo{display:block;height:96px;width:auto;max-width:100%;margin:0 auto 20px}
 
   .tela{display:none;animation:entra .35s ease}
   .tela.ativa{display:block}
@@ -185,6 +185,19 @@
   .res-fonte{font-size:11.5px;color:var(--texto-fraco);margin-top:8px;line-height:1.5}
   .res-dupla{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .res-dupla .res-num{font-size:26px}
+
+  /* ---- cards de subseção (separa blocos dentro de uma tela) ---- */
+  .secao{
+    background:var(--carvao);border:1px solid var(--linha);border-radius:14px;
+    padding:16px 18px;margin-bottom:14px;
+  }
+  .secao-titulo{
+    font-size:13px;font-weight:800;letter-spacing:.04em;color:var(--verde);
+    margin-bottom:12px;text-transform:uppercase;
+  }
+  .secao .opcoes:last-child,.secao .linha-campo:last-child{margin-bottom:0}
+
+  .res-bloco-bonus{border-color:var(--verde)}
 
   /* ---- composição corporal (RFM) ---- */
   .rfm-titulo{font-size:17px;font-weight:800;line-height:1.35;margin-bottom:6px}
