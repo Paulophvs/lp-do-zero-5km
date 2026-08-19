@@ -159,7 +159,7 @@
         <div><label>Quantos dias por semana</label><input type="number" min="0" max="7" placeholder="0" oninput="atualizarFreqAlcool(this.value)"></div>
         <div></div>
       </div>
-      <p class="ajuda">Monta abaixo o que você costuma beber numa ocasião típica (ex: 2 latas de cerveja). A gente multiplica pela frequência e divide por 7 pra virar média diária.</p>
+      <p class="ajuda"><strong>Quantidade por dia, no dia em que você bebe</strong> (não é o total da semana). Ex: se você bebe 5 garrafas de 600ml no dia que bebe, marca 5 aqui, não o total somado dos dias. A gente já multiplica pela frequência que você informou acima e divide por 7 pra virar média diária.</p>
       <div class="busca-alimento">
         <input type="text" id="input-busca-alcool" placeholder="Digite a bebida: cerveja, vinho, destilada..." oninput="onBuscaAlcoolInput(this.value)" autocomplete="off">
         <div id="sugestoes-busca-alcool"></div>
@@ -169,7 +169,7 @@
     </div>
 
     <h3 style="margin:22px 0 6px;font-size:16px">Come algo fora da rotina? (fim de semana, dia livre)</h3>
-    <p class="ajuda">Pizza, feijoada, sorvete, doce, essas coisas que não fazem parte do dia a dia normal.</p>
+    <p class="ajuda">Pizza, feijoada, sorvete, doce, essas coisas que não fazem parte do dia a dia normal. <strong>Marca a quantidade do dia em que você come isso</strong> (ex: 4 fatias de pizza naquele dia), não o total somado da semana. A gente multiplica pela frequência informada abaixo e divide por 7.</p>
     <div class="linha-campo">
       <div><label>Quantas vezes por semana</label><input type="number" min="0" max="14" placeholder="0" oninput="atualizarFreqExtra(this.value)"></div>
       <div></div>
