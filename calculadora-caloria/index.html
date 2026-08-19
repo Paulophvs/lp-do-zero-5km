@@ -82,6 +82,7 @@
           <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('corrida','freq',this.value)"></div>
         </div>
         <div class="linha-campo"><div><label>Minutos de treino por dia em média</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('corrida','duracao',this.value)"></div><div></div></div>
+        <p class="ajuda">Não sabe qual marcar? Teste da fala: Leve = dá pra conversar frase inteira sem dificuldade. Moderada = só dá pra falar frase curta, meio ofegante. Forte = quase não consegue falar.</p>
         <p class="ajuda">Treino intervalado (tiro): se metade ou mais da sessão for recuperação leve, marque Moderada mesmo com tiro forte no meio. Se a maior parte for esforço forte, marque Forte.</p>
       </div>
     </div>
@@ -93,6 +94,7 @@
           <div><label>Intensidade</label><select onchange="atualizarAtividade('musculacao','intensidade',this.value)"><option value="leve">Leve</option><option value="moderada" selected>Moderada</option><option value="forte">Pesada</option></select></div>
           <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('musculacao','freq',this.value)"></div>
         </div>
+        <p class="ajuda">Não sabe qual marcar? Teste da fala: Leve = dá pra conversar frase inteira sem dificuldade. Moderada = só dá pra falar frase curta, meio ofegante. Pesada = quase não consegue falar.</p>
         <div class="linha-campo"><div><label>Minutos de treino por dia em média</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('musculacao','duracao',this.value)"></div><div></div></div>
       </div>
     </div>
