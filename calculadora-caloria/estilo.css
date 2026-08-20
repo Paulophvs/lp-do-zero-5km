@@ -141,7 +141,7 @@
   #sugestoes-busca{margin-top:8px;display:flex;flex-direction:column;gap:6px}
   .sugestao-item{
     display:flex;justify-content:space-between;align-items:center;width:100%;
-    background:var(--carvao);border:1px solid var(--linha);border-radius:10px;padding:12px 14px;
+    background:var(--carvao);border:1.5px solid var(--verde);border-radius:10px;padding:12px 14px;
     font-family:inherit;font-size:14px;font-weight:600;color:var(--texto);cursor:pointer;text-align:left;
   }
   .sugestao-item:hover{border-color:var(--laranja)}
