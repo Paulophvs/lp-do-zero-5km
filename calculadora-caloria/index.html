@@ -84,7 +84,7 @@
       <div class="atividade-topo" onclick="toggleAtividade('corrida')"><span class="atividade-nome">Corrida</span><span class="toggle"></span></div>
       <div class="atividade-corpo">
         <div class="linha-campo">
-          <div><label>Intensidade</label><select onchange="atualizarAtividade('corrida','intensidade',this.value)"><option value="leve">Leve (trote)</option><option value="moderada" selected>Moderada</option><option value="forte">Forte</option></select></div>
+          <div><label>Intensidade</label><select onchange="atualizarAtividade('corrida','intensidade',this.value)"><option value="leve">Leve</option><option value="moderada" selected>Moderada</option><option value="forte">Forte</option></select></div>
           <div><label>Vezes/semana</label><input type="number" min="0" max="14" placeholder="0" onchange="atualizarAtividade('corrida','freq',this.value)"></div>
         </div>
         <div class="linha-campo"><div><label>Minutos de treino por dia em média</label><input type="number" min="0" max="300" placeholder="0" onchange="atualizarAtividade('corrida','duracao',this.value)"></div><div></div></div>
