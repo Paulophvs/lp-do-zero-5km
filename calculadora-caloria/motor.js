@@ -462,13 +462,15 @@ function calcularPAL(){
 
 // MET do Compendium of Physical Activities (Ainsworth et al., atualização
 // 2024). Corrida: jogging leve 7.0, ritmo ~6mph 9.8, mais rápido que
-// 10min/milha 12.0. Musculação: esforço leve/moderado/vigoroso 3.5/5.0/6.0.
+// 10min/milha 12.0. Musculação: esforço leve/vigoroso 3.5/6.0 direto da
+// tabela; moderado é 4.3 por decisão do Paulo (ajuste manual, não é o valor
+// de literatura, que seria 5.0), pedido em 02/09/2026.
 // Natação: laps moderado 7.0, vigoroso 10.0. Futebol: casual 7.0, competitivo
 // 10.0. Circuit training vigoroso (proxy pra crossfit/funcional): 8.0.
 // "Outro esporte" sem MET específico: aproximação de atividade moderada 6.0.
 const MET = {
   corrida:{leve:7.0, moderada:9.8, forte:12.0},
-  musculacao:{leve:3.5, moderada:5.0, forte:6.0},
+  musculacao:{leve:3.5, moderada:4.3, forte:6.0},
   natacao:{moderada:7.0, forte:10.0},
   futebol:{casual:7.0, competitivo:10.0},
   crossfit:{padrao:8.0},
