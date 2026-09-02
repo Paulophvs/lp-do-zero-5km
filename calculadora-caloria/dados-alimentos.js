@@ -84,6 +84,22 @@ const ALIMENTOS = [
       {label:'2 fatias', kcal:75, prot:4.0},
       {label:'4 fatias', kcal:150, prot:8.0},
   ]},
+  { id:'presunto', nome:'Presunto (fatia de frios)', cat:'carnes', tamanhos:[
+      {label:'1 fatia (20g)', kcal:25, prot:3.5},
+      {label:'2 fatias (40g)', kcal:50, prot:7.0},
+  ]}, // TACO: presunto cozido magro ~111kcal/17,8g por 100g
+  { id:'mortadela', nome:'Mortadela (fatia de frios)', cat:'carnes', tamanhos:[
+      {label:'1 fatia (20g)', kcal:55, prot:2.5},
+      {label:'2 fatias (40g)', kcal:110, prot:5.0},
+  ]}, // ESTIMATIVA a partir de referencia geral de mortadela (~270kcal/12g por 100g), mais gordurosa que presunto
+  { id:'peito-peru', nome:'Peito de peru (fatia de frios)', cat:'carnes', tamanhos:[
+      {label:'1 fatia (20g)', kcal:22, prot:4.0},
+      {label:'2 fatias (40g)', kcal:44, prot:8.0},
+  ]}, // ESTIMATIVA a partir de referencia geral de peito de peru defumado (~105kcal/20g por 100g), mais magro que presunto
+  { id:'salame', nome:'Salame (fatia de frios)', cat:'carnes', tamanhos:[
+      {label:'3 fatias (30g)', kcal:120, prot:6.5},
+      {label:'6 fatias (60g)', kcal:240, prot:13.0},
+  ]}, // ESTIMATIVA a partir de referencia geral de salame tipo italiano (~400kcal/22g por 100g)
 
   // ---- FEIJÕES E LEGUMINOSAS ----
   { id:'feijao', nome:'Feijão cozido (com caldo)', cat:'leg', porcao:'1 concha (punho fechado)', kcal:76, prot:4.8 },
@@ -134,6 +150,10 @@ const ALIMENTOS = [
       {label:'1 colher de chá', kcal:22, prot:0},
       {label:'1 colher de sopa', kcal:62, prot:0},
   ]}, // TACO: mel de abelha 309kcal/100g, 0g proteina
+  { id:'achocolatado-po', nome:'Achocolatado em pó (Nescau, Toddy)', cat:'gordura', tamanhos:[
+      {label:'1 colher de sopa (10g)', kcal:39, prot:0.9},
+      {label:'2 colheres de sopa (20g)', kcal:78, prot:1.7},
+  ]}, // fabricante (Nescau/Toddy): ~390kcal/8,5g por 100g de po, nao inclui o leite
   { id:'farofa', nome:'Farofa', cat:'gordura', tamanhos:[
       {label:'1 colher de sopa', kcal:60, prot:0.5},
       {label:'1 punho fechado', kcal:200, prot:1.5},
