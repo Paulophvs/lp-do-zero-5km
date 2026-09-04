@@ -1414,10 +1414,10 @@
   <script>
     // TODO: preencher com o número real do WhatsApp Business do Paulo.
     // Formato: DDI 55 + DDD + número, só dígitos, sem espaço/símbolo. Ex: '5571999999999'.
-    const WHATSAPP_NUMBER = '55SEUNUMEROAQUI';
+    const WHATSAPP_NUMBER = '5571994102328';
 
     function linkWhatsapp(nome) {
-      const msg = 'Oi Paulo! Vim da página da Assessoria 40+ e quero saber mais.' + (nome ? ' Me chamo ' + nome + ',' : '') + ' tenho mais de 40 anos e quero voltar a evoluir na corrida com segurança.';
+      const msg = 'Oi Paulo! Meu nome é ' + (nome || '') + '. Gostaria de saber mais sobre essa Assessoria de Corrida para pessoas com mais de 40 anos de idade.';
       return 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
     }
 
