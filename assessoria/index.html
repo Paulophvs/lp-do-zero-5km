@@ -1493,6 +1493,7 @@
           fbp: getCookie('_fbp'),
           fbc: getCookie('_fbc'),
           source_url: location.href,
+          content_name: 'Assessoria 40+',
         };
         if (!payload.nome || !payload.email || !payload.telefone) return;
 
@@ -1503,10 +1504,8 @@
             { eventID: payload.event_id });
         }
 
-        // Rastreio server-side via /api/lead (mesmo endpoint do site principal).
-        // ATENCAO: api/lead.js hoje manda custom_data.content_name fixo como 'LP 5km do Zero'.
-        // Antes de rodar anuncio de verdade para essa pagina, isso precisa virar parametrizavel,
-        // senao os leads dessa assessoria aparecem com rotulo errado no Gerenciador de Anuncios.
+        // Rastreio server-side via /api/lead (mesmo endpoint do site principal, agora parametrizado
+        // por content_name, ver api/lead.js).
         fetch('/api/lead', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

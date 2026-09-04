@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
         event_source_url: body.source_url || req.headers['referer'] || 'https://www.phcorridas.com',
         event_id: eventId,
         user_data: userData,
-        custom_data: { content_name: 'LP 5km do Zero', currency: 'BRL' },
+        custom_data: { content_name: body.content_name || 'LP 5km do Zero', currency: 'BRL' },
       },
     ],
   };
