@@ -1517,8 +1517,14 @@
           keepalive: true,
         }).catch(() => {});
 
-        // Nao envia pro Google Sheets do funil de 5km de proposito (misturaria lead de produto
-        // diferente na mesma planilha). Se for para frente, criar aba/sheet dedicada.
+        // Planilha dedicada da assessoria (Apps Script Web App, nao mistura com o funil do 5km).
+        fetch('https://script.google.com/macros/s/AKfycbz9iG_VHLOqVULtkYKFW8BlckNvBlV8ubnI1_mbqoTogPl7V6lwvQng-82UyprkUCtw/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload),
+          keepalive: true,
+        }).catch(() => {});
 
         formBlock.style.display = 'none';
         successBlock.style.display = '';
