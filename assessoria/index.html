@@ -902,6 +902,7 @@
     <!-- VIDEO DE VENDAS -->
     <div class="video-wrapper" id="videoPlaceholder">
       <video
+        id="vslVideo"
         controls
         playsinline
         preload="metadata"
@@ -1532,6 +1533,45 @@
         if (linkBtn) linkBtn.href = waLink;
         setTimeout(() => { window.location.href = waLink; }, 1800);
       });
+    })();
+  </script>
+
+  <!-- Rastreio de engajamento (video do VSL + scroll), mesmo Pixel Km3 ja instalado acima, sem script novo -->
+  <script>
+    (function () {
+      if (!window.fbq) return;
+
+      // Progresso do VSL: dispara uma vez por marco (25/50/75/100%).
+      var video = document.getElementById('vslVideo');
+      if (video) {
+        var marcos = [25, 50, 75, 100];
+        var disparados = {};
+        video.addEventListener('timeupdate', function () {
+          if (!video.duration) return;
+          var pct = (video.currentTime / video.duration) * 100;
+          marcos.forEach(function (m) {
+            if (pct >= m && !disparados[m]) {
+              disparados[m] = true;
+              fbq('trackCustom', 'VSLProgress', { content_name: 'Assessoria 40+', percent: m });
+            }
+          });
+        });
+      }
+
+      // Profundidade de rolagem da pagina: mesmo esquema de marco unico.
+      var scrollMarcos = [25, 50, 75, 100];
+      var scrollDisparados = {};
+      window.addEventListener('scroll', function () {
+        var alturaTotal = document.documentElement.scrollHeight - window.innerHeight;
+        if (alturaTotal <= 0) return;
+        var pct = (window.scrollY / alturaTotal) * 100;
+        scrollMarcos.forEach(function (m) {
+          if (pct >= m && !scrollDisparados[m]) {
+            scrollDisparados[m] = true;
+            fbq('trackCustom', 'ScrollDepth', { content_name: 'Assessoria 40+', percent: m });
+          }
+        });
+      }, { passive: true });
     })();
   </script>
 </body>
