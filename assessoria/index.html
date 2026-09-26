@@ -209,6 +209,30 @@
       font-size: 0.9rem;
     }
 
+    .depo-topo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      max-width: 460px;
+      margin: 20px auto 0;
+      padding: 12px 14px;
+      background: rgba(22, 163, 74, 0.08);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      border-radius: 14px;
+      text-align: left;
+    }
+    .depo-topo img {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid var(--verde-claro);
+    }
+    .depo-topo .depo-topo-texto { color: var(--branco); font-size: 0.95rem; line-height: 1.4; }
+    .depo-topo .depo-topo-texto strong { color: var(--verde-claro); }
+    .depo-topo a { color: var(--cinza-claro); font-size: 0.85rem; text-decoration: underline; }
+
     .hero-credencial {
       color: var(--cinza-claro);
       font-size: 0.85rem;
@@ -890,7 +914,7 @@
 
   <!-- ===== HERO ===== -->
   <section class="hero">
-    <div class="badge">Assessoria de Corrida Individual · 40+</div>
+    <div class="badge">Método Baixa Pace 40+ · Assessoria Individual</div>
 
     <p class="hero-credencial">+ de 1.200 alunos já treinados nesta assessoria</p>
 
@@ -914,9 +938,17 @@
       </video>
     </div>
 
-    <button type="button" data-open-modal class="cta-btn laranja">QUERO CONHECER A ASSESSORIA →</button>
+    <button type="button" data-open-modal class="cta-btn laranja">QUERO GARANTIR MINHA VAGA →</button>
 
     <p class="hero-meta">✓ Atendimento 100% individual &nbsp;·&nbsp; ✓ Direto com o treinador no WhatsApp &nbsp;·&nbsp; ✓ Sem planilha genérica</p>
+
+    <div class="depo-topo">
+      <img src="/assessoria/depoimento-topo.jpg" alt="Arnaldo, aluno da assessoria, no pódio" width="72" height="72" loading="lazy" />
+      <div>
+        <p class="depo-topo-texto"><strong>Arnaldo, 53 anos:</strong> de 26 minutos para 20:33 nos 5 km.</p>
+        <a href="#depoimentos">Ver depoimentos dos alunos</a>
+      </div>
+    </div>
   </section>
 
   <!-- ===== STORY: IDENTIFICAÇÃO ===== -->
@@ -1008,7 +1040,7 @@
       </div>
 
       <div style="text-align:center; margin-top: 36px;">
-        <a href="#oferta" class="cta-btn laranja">QUERO CONHECER A ASSESSORIA →</a>
+        <a href="#oferta" class="cta-btn laranja">QUERO GARANTIR MINHA VAGA →</a>
       </div>
     </div>
   </section>
@@ -1197,7 +1229,7 @@
       </div>
 
       <div style="text-align:center; margin-top: 36px;">
-        <a href="#oferta" class="cta-btn laranja">QUERO CONHECER A ASSESSORIA →</a>
+        <a href="#oferta" class="cta-btn laranja">QUERO GARANTIR MINHA VAGA →</a>
       </div>
     </div>
   </section>
@@ -1281,7 +1313,7 @@
   </section>
 
   <!-- ===== DEPOIMENTOS EM VIDEO ===== -->
-  <section class="depoimentos">
+  <section class="depoimentos" id="depoimentos">
     <div class="container">
       <p class="section-label">Quem já treina comigo</p>
       <h2>O que dizem os alunos <span>que já vivem isso</span></h2>
@@ -1340,29 +1372,29 @@
   <section class="oferta" id="oferta">
     <div class="container">
       <p class="section-label" style="text-align:center;">Investimento</p>
-      <h2 style="text-align:center;">Assessoria Individual de Corrida · 12 meses</h2>
-      <p style="text-align:center; color: var(--cinza-claro); font-size: 0.95rem; line-height: 1.7;">Acompanhamento contínuo por 12 meses, não é um curso fechado nem um plano avulso. E você tem 15 dias de garantia: se não fizer sentido para você, devolvo 100% do seu dinheiro.</p>
+      <h2 style="text-align:center;">Assessoria Individual de Corrida · 24 meses pelo preço de 1 ano</h2>
+      <p style="text-align:center; color: var(--cinza-claro); font-size: 0.95rem; line-height: 1.7;">12 meses de acompanhamento contínuo + 12 meses de bônus. Não é um curso fechado nem um plano avulso. E você tem 15 dias de garantia: se não fizer sentido para você, devolvo 100% do seu dinheiro.</p>
 
       <div class="oferta-box">
-        <p class="bonus-banner">🎁 Bônus por tempo limitado: +3 meses de assessoria de graça, são 15 meses de acompanhamento pelo preço de 12</p>
+        <p class="bonus-banner">🎁 Bônus por tempo limitado: +12 meses de assessoria de graça, são 24 meses de acompanhamento pelo preço de 1 ano</p>
 
         <div class="preco-riscado">R$ 1.297</div>
         <div class="preco">12x de R$ 69</div>
         <p class="preco-pix">no cartão, ou <strong>R$ 667 à vista</strong></p>
 
         <ul class="oferta-bonus">
-          <li><span class="b-check">✅</span> 12 meses de acompanhamento contínuo + 3 meses de bônus, 15 meses no total</li>
+          <li><span class="b-check">✅</span> 12 meses de acompanhamento contínuo + 12 meses de bônus, 24 meses no total</li>
           <li><span class="b-check">✅</span> Avaliação inicial completa</li>
           <li><span class="b-check">✅</span> Planilha individual, revisada todo mês</li>
           <li><span class="b-check">✅</span> Protocolo de fortalecimento incluso</li>
-          <li><span class="b-check">✅</span> Acompanhamento direto com o treinador no WhatsApp</li>
+          <li><span class="b-check">✅</span> Acompanhamento direto comigo, seu treinador, pelo WhatsApp</li>
           <li><span class="b-check">✅</span> Estratégia construída para sua meta específica</li>
           <li><span class="b-check">✅</span> 15 dias de garantia</li>
           <li><span class="b-check">🎁</span> Bônus: protocolo de nutrição esportiva para corredores, o que comer antes, durante e depois do treino</li>
         </ul>
 
         <button type="button" data-open-modal class="cta-btn laranja" style="display:block; width:100%; font-size: 1.1rem; padding: 20px 32px;">
-          QUERO CONHECER A ASSESSORIA →
+          QUERO GARANTIR MINHA VAGA →
         </button>
 
         <p class="garantia">🛡️ Garantia de 15 dias: se nas primeiras 2 semanas você sentir que a assessoria não é para você, é só pedir e recebe 100% do seu dinheiro de volta. Sem letra miúda.</p>
@@ -1480,6 +1512,7 @@
         else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5}).*/, '($1) $2');
         else if (v.length > 0) v = v.replace(/^(\d{0,2}).*/, '($1');
         e.target.value = v;
+        e.target.setCustomValidity('');
       });
 
       // Le um cookie pelo nome (para _fbp / _fbc, melhora o match na Meta).
@@ -1501,6 +1534,15 @@
           content_name: 'Assessoria 40+',
         };
         if (!payload.nome || !payload.email || !payload.telefone) return;
+
+        // Telefone precisa ter DDD + 8 ou 9 digitos (celular com 9 na frente).
+        const telDigitos = payload.telefone.replace(/\D/g, '');
+        const telValido = /^[1-9][1-9]\d{8}$/.test(telDigitos) || /^[1-9][1-9]9\d{8}$/.test(telDigitos);
+        if (!telValido) {
+          form.telefone.setCustomValidity('Confira seu WhatsApp: coloque o DDD e o número completo.');
+          form.telefone.reportValidity();
+          return;
+        }
 
         // Pixel do navegador: Lead com o MESMO event_id do server-side, para Meta deduplicar.
         if (window.fbq) {
@@ -1529,7 +1571,12 @@
 
         // Vai direto pro checkout, sem tela intermediaria. 1s de espera para o Lead
         // (pixel, /api/lead e planilha) sair antes da troca de pagina.
-        const checkoutUrl = 'https://pay.hotmart.com/F11050799H?checkoutMode=10&split=12&hideTrial=1';
+        // Dados ja preenchidos no checkout (parametros oficiais da Hotmart), pra pessoa nao digitar de novo.
+        const checkoutUrl = 'https://pay.hotmart.com/F11050799H?checkoutMode=10&split=12&hideTrial=1'
+          + '&name=' + encodeURIComponent(payload.nome)
+          + '&email=' + encodeURIComponent(payload.email)
+          + '&phoneac=' + telDigitos.slice(0, 2)
+          + '&phonenumber=' + telDigitos.slice(2);
         const submitBtn = form.querySelector('button[type="submit"]');
         const submitTxt = submitBtn.textContent;
         submitBtn.disabled = true;
