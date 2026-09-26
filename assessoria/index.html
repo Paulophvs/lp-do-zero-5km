@@ -1357,6 +1357,7 @@
           <li><span class="b-check">✅</span> Protocolo de fortalecimento incluso</li>
           <li><span class="b-check">✅</span> Acompanhamento direto com o treinador no WhatsApp</li>
           <li><span class="b-check">✅</span> Estratégia construída para sua meta específica</li>
+          <li><span class="b-check">✅</span> 15 dias de garantia</li>
           <li><span class="b-check">🎁</span> Bônus: protocolo de nutrição esportiva para corredores, o que comer antes, durante e depois do treino</li>
         </ul>
 
@@ -1526,13 +1527,20 @@
           keepalive: true,
         }).catch(() => {});
 
-        formBlock.style.display = 'none';
-        successBlock.style.display = '';
+        // Vai direto pro checkout, sem tela intermediaria. 1s de espera para o Lead
+        // (pixel, /api/lead e planilha) sair antes da troca de pagina.
+        const checkoutUrl = 'https://pay.hotmart.com/F11050799H?checkoutMode=10&split=12&hideTrial=1';
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const submitTxt = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Abrindo inscrição...';
+        setTimeout(() => { window.location.href = checkoutUrl; }, 1000);
 
-        const waLink = linkWhatsapp(payload.nome);
-        const linkBtn = document.getElementById('checkoutLink');
-        if (linkBtn) linkBtn.href = waLink;
-        setTimeout(() => { window.location.href = waLink; }, 1800);
+        // Se a pessoa voltar do checkout pelo botao "voltar", o botao nao fica travado.
+        window.addEventListener('pageshow', () => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = submitTxt;
+        }, { once: true });
       });
     })();
   </script>
