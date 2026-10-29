@@ -156,7 +156,28 @@ function paceDoKmh(kmh){
 
 /* Entra o tempo total de prova, sai tudo.
    tempo / distancia = pace decimal, que e exatamente o P1!D10. */
+/* Previsao nunca melhor que a de um corredor mais rapido. Na divisa de faixa
+   o coeficiente sobe (ex 5 km: 20:59 usa 16,5%, 21:00 usa 17%) e o mais lento
+   ganhava previsao melhor (20:59 -> 20:20, 21:00 -> 20:15). Regra do Paulo
+   29/10: nesse caso ele recebe a mesma previsao do ultimo segundo da faixa
+   mais rapida. Fora das divisas nada muda. */
 function prever(distancia, minutos, segundos){
+  var r = preverBruto(distancia, minutos, segundos);
+  var t = Math.round(minutos*60 + segundos);
+  var melhor = null;
+  for (var b = 1; b <= t; b++){
+    var pa = paramsPara(distancia, (b-1)/60), pb = paramsPara(distancia, b/60);
+    if (pa.boost === pb.boost && pa.pct === pb.pct) continue;   // nao e divisa
+    var c = preverBruto(distancia, Math.floor((b-1)/60), (b-1)%60);
+    if (!melhor || c.segNovo > melhor.segNovo) melhor = c;
+  }
+  if (melhor && melhor.segNovo > r.segNovo){
+    r.paceNovo = melhor.paceNovo; r.segNovo = melhor.segNovo; r.delta = r.segHoje - r.segNovo;
+  }
+  return r;
+}
+
+function preverBruto(distancia, minutos, segundos){
   var par = paramsPara(distancia, minutos + segundos/60);
   var paceDec = (minutos + segundos/60) / distancia;   // P1!D10
   var vo2max  = vo2maxDoPace(paceDec, par.boost);
@@ -522,7 +543,7 @@ function montarPlano(distancia, minutos, segundos, qtdDias, diasSemana, ciclo){
       } else if (d.tipo === 'competicao'){
         /* o pace do dia de prova TEM que sair do mesmo pct da previsao,
            senao a planilha mostra um alvo diferente do numero da tela. */
-        var pa = paceDoPct(par.pct, vo2);
+        var pa = ms(prever(distancia, minutos, segundos).paceNovo);
         var seg = paceParaSeg(pa) * d.km;
         treinos.push({ dia:d.dia, tipo:'competicao', km:d.km, paceAlvo:pa, tempoPrevisto:segParaTempo(seg) });
       } else {
