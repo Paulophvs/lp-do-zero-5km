@@ -1,6 +1,7 @@
 {
   "redirects": [
     { "source": "/pacebaixo", "destination": "/pacepodio", "permanent": false },
+    { "source": "/pacebaixo/", "destination": "/pacepodio/", "permanent": false },
     { "source": "/pacebaixo/:path*", "destination": "/pacepodio/:path*", "permanent": false }
   ]
 }
