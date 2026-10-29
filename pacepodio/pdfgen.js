@@ -113,7 +113,7 @@
     var titX = mx, logoBottom = 0;
     if (opts.logo) {
       try {
-        var lgH = 22, lgW = lgH * 659 / 383;   // proporcao do PNG (659x383), grande e centrada no titulo (pedido do Paulo 18/07)
+        var lgH = 22, lgW = lgH * 884 / 537;   // proporcao do PNG (884x537, logo Pace Podio 29/10), grande e centrada no titulo (pedido do Paulo 18/07)
         var logoTop = y - 13.5;                 // centra a logo no texto do titulo (baseline em y)
         doc.addImage(opts.logo, 'PNG', mx, logoTop, lgW, lgH);
         logoBottom = logoTop + lgH;

@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pace Baixo | Descubra seu tempo daqui a 4 semanas</title>
+<title>Pace Pódio | Descubra seu tempo daqui a 4 semanas</title>
 <meta name="description" content="O seu pace de hoje já diz em quantos minutos você vai estar correndo 5 km e 10 km daqui a 4 semanas.">
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/pacebaixo/estilo.css?v=1">
+<link rel="stylesheet" href="/pacepodio/estilo.css?v=1">
 </head>
 <body>
 <div class="wrap">
 
-  <!-- caminho ABSOLUTO de proposito: a pagina e servida em /pacebaixo (sem barra final),
-       entao src relativo resolveria pra /logo-pace-baixo.png na raiz e daria 404. -->
-  <img class="logo" src="/pacebaixo/logo-pace-baixo.png" alt="Pace Baixo">
+  <!-- caminho ABSOLUTO de proposito: a pagina e servida em /pacepodio (sem barra final),
+       entao src relativo resolveria pra /logo-pace-podio.png na raiz e daria 404. -->
+  <img class="logo" src="/pacepodio/logo-pace-podio.png" alt="Pace Pódio">
 
   <!-- ===== TELA 1: HERO ===== -->
   <section class="tela ativa" id="tela-hero">
     <h1>O seu pace de hoje já diz em quantos minutos você vai estar correndo <span class="destaque">5 km e 10 km</span> daqui a 4 semanas.</h1>
     <p class="apoio">Quer ver o número?</p>
-    <p class="sub">É por isso que eu só preciso saber o seu tempo atual. O método Pace Baixo faz a conta na hora, a mesma que eu uso com meus alunos de assessoria.</p>
+    <p class="sub">É por isso que eu só preciso saber o seu tempo atual. O método Pace Pódio faz a conta na hora, a mesma que eu uso com meus alunos de assessoria.</p>
     <button class="btn" onclick="irPara('tela-q1')">QUERO VER MEU TEMPO</button>
   </section>
 
@@ -121,7 +121,7 @@
     <div class="res-bloco">
       <p class="res-rotulo verde">DAQUI A 4 SEMANAS</p>
       <p class="res-frase">
-        Seguindo o método Pace Baixo, você vai estar correndo em
+        Seguindo o método Pace Pódio, você vai estar correndo em
         <span class="res-num verde" id="r-tempo-novo">43:00</span>
         <span class="res-pace">num pace de <b id="r-pace-novo">4:18</b> por km</span>
       </p>
@@ -171,7 +171,7 @@
   <section class="tela" id="tela-plano">
     <div class="plano-topo">
       <div class="plano-head">
-        <img class="plano-logo" src="/pacebaixo/logo-pace-baixo.png" alt="Pace Baixo">
+        <img class="plano-logo" src="/pacepodio/logo-pace-podio.png" alt="Pace Pódio">
         <h2>Sua planilha completa</h2>
       </div>
       <p id="plano-sub"></p>
@@ -193,8 +193,8 @@
 
 </div>
 
-<script src="/pacebaixo/jspdf.umd.min.js"></script>
-<script src="/pacebaixo/pdfgen.js?v=5"></script>
-<script src="/pacebaixo/motor.js?v=1"></script>
+<script src="/pacepodio/jspdf.umd.min.js"></script>
+<script src="/pacepodio/pdfgen.js?v=5"></script>
+<script src="/pacepodio/motor.js?v=1"></script>
 </body>
 </html>

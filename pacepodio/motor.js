@@ -102,7 +102,7 @@ var NIVEL_FRASE = {
   intermediario: 'Você já saiu da largada. No ritmo desse plano, o degrau <span class="prev">Avançado</span> é o próximo horizonte.',
   avancado:      'Nível de quem já treina com consistência. Falta pouco pro degrau <span class="prev">Competitivo</span>.',
   competitivo:   'Você está entre os corredores mais rápidos da régua. O último degrau, <span class="prev">Elite</span>, está no radar.',
-  elite:         'Você está no topo da régua Pace Baixo. <span class="prev">Poucos corredores chegam até aqui.</span>'
+  elite:         'Você está no topo da régua Pace Pódio. <span class="prev">Poucos corredores chegam até aqui.</span>'
 };
 function renderSeloNivel(nivel){
   var bloco = document.getElementById('bloco-nivel');
@@ -751,7 +751,7 @@ function mostrarObs(id){
 /* logomarca pequena (texto preto) pro PDF em fundo branco; pre-carregada
    pra ja estar pronta quando o usuario clicar em baixar. */
 var PDF_LOGO = new Image();
-PDF_LOGO.src = '/pacebaixo/logo-planilha.png';
+PDF_LOGO.src = '/pacepodio/logo-planilha.png';
 
 /* ---- PDF: mesma cara da tela (cartoes), gerado no navegador ----
    Reusa montarPlano/frasesTreino/prever pra o PDF NUNCA divergir do link. */
@@ -782,7 +782,7 @@ function baixarPDF(){
       observacao: resp.obsDias || '',
       semanas: semanas
     });
-    doc.save('pace-baixo-' + d + 'km.pdf');
+    doc.save('pace-podio-' + d + 'km.pdf');
   } catch (e){
     alert('Nao consegui gerar o PDF agora. Tenta de novo.');
   }
@@ -793,7 +793,7 @@ function baixarPlano(){
   var d = resp.distancia, pl = montarPlano(d, resp.min, resp.seg, resp.dias, resp.diasSemana, resp.ciclo);
   var prev = prever(d, resp.min, resp.seg);
   var sep = ';', nl = '\r\n', linhas = [];
-  linhas.push('Pace Baixo - Planilha ' + d + ' km');
+  linhas.push('Pace Pódio - Planilha ' + d + ' km');
   linhas.push('Tempo atual' + sep + segParaTempo(prev.segHoje));
   linhas.push('Previsao em 4 semanas' + sep + segParaTempo(prev.segNovo));
   linhas.push('');
@@ -825,7 +825,7 @@ function baixarPlano(){
   var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  a.href = url; a.download = 'pace-baixo-' + d + 'km.csv';
+  a.href = url; a.download = 'pace-podio-' + d + 'km.csv';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
 }
