@@ -8,7 +8,7 @@
 // no Redis (chave "webhook:ultimo") pra eu conferir contra uma notificacao
 // REAL (ou o botao "Enviar teste" do painel da Hotmart) antes de confiar
 // nisso de vez em producao. Nao apagar esse log ate validar.
-const { redisSet, redisGet, pedidoKey, alunoKey, normalizeEmail } = require('./_redis');
+const { redisSet, redisGet, pedidoKey, alunoKey, bonusKey, normalizeEmail } = require('./_redis');
 
 // anual dura 12 meses; guarda 400 dias para sobrar margem (antes era 30 e o anual perdia o acesso)
 const TTL_ACESSO = 60 * 60 * 24 * 400;
@@ -127,6 +127,10 @@ module.exports = async (req, res) => {
     await redisSet(key, atualizado, TTL_ACESSO);
     const plano = achaPlanoHotmart(body) || atualizado.plano || 'mensal';
     await redisSet(alunoKey(email), { email, plano, pago_em: atualizado.pago_em }, TTL_ACESSO);
+    // anual libera os bonus para sempre (sem prazo); renovacoes nao mexem na data original
+    if (plano === 'anual' && !(await redisGet(bonusKey(email)))) {
+      await redisSet(bonusKey(email), { email, desde: atualizado.pago_em });
+    }
     res.statusCode = 200;
     return res.end(JSON.stringify({ ok: true }));
   } catch (err) {

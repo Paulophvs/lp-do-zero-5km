@@ -119,8 +119,9 @@
 </div>
 <script>
 /* Area de membros: entra com o e-mail da compra (confere em /api/aluno, que
-   so existe depois do aviso de pagamento da Hotmart). Anual ve tudo; mensal
-   ve o Pace Podio e os bonus com cadeado, levando para o checkout do anual. */
+   so existe depois do aviso de pagamento da Hotmart). Quem comprou o anual tem
+   os bonus para sempre; mensal ve os bonus com cadeado (checkout do anual);
+   assinatura vencida trava so o card do Pace Podio (RENOVAR). */
 var CHAVE_ALUNO = 'pp-aluno';
 var CHECKOUT_ANUAL = 'https://pay.hotmart.com/H107169811Q?off=3ww7ii10&checkoutMode=10';
 var CADEADO = '<span class="cadeado" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>';
@@ -128,27 +129,33 @@ var CADEADO = '<span class="cadeado" aria-hidden="true"><svg viewBox="0 0 24 24"
 function lerAluno(){ try { return JSON.parse(localStorage.getItem(CHAVE_ALUNO) || 'null'); } catch(e){ return null; } }
 function gravarAluno(a){ try { localStorage.setItem(CHAVE_ALUNO, JSON.stringify(a)); } catch(e){} }
 
+function travar(c, href, rotulo){
+  var a = document.createElement('a');
+  a.className = c.className.replace('breve','') + ' travado';
+  a.id = c.id;
+  a.style.cssText = c.style.cssText;
+  a.href = href;
+  a.innerHTML = CADEADO + c.innerHTML;
+  var acao = a.querySelector('.card-acao'); if (acao) acao.textContent = rotulo;
+  c.parentNode.replaceChild(a, c);
+}
+
 function montarArea(aluno){
   document.body.classList.remove('sem-login');
+  var anual = CHECKOUT_ANUAL + '&email=' + encodeURIComponent(aluno.email);
   var pp = document.getElementById('card-pacepodio');
   pp.href = '/pacepodio/obrigado.html?email=' + encodeURIComponent(aluno.email);
-  if (aluno.plano === 'anual') return;
+  // assinatura vencida: a planilha trava, os bonus vitalicios continuam
+  if (!aluno.plano) travar(pp, anual, 'RENOVAR');
+  if (aluno.bonus) return;
   var bonus = document.querySelectorAll('[data-bonus]');
-  for (var i = 0; i < bonus.length; i++){
-    var c = bonus[i], a = document.createElement('a');
-    a.className = c.className.replace('breve','') + ' travado';
-    a.style.cssText = c.style.cssText;
-    a.href = CHECKOUT_ANUAL + '&email=' + encodeURIComponent(aluno.email);
-    a.innerHTML = CADEADO + c.innerHTML;
-    var acao = a.querySelector('.card-acao'); if (acao) acao.textContent = 'LIBERE NO ANUAL';
-    c.parentNode.replaceChild(a, c);
-  }
+  for (var i = 0; i < bonus.length; i++) travar(bonus[i], anual, 'LIBERE NO ANUAL');
 }
 
 function consultar(email, aoTerminar){
   fetch('/api/aluno?email=' + encodeURIComponent(email), { cache: 'no-store' })
     .then(function(r){ return r.json().then(function(j){ return { status: r.status, j: j }; }); })
-    .then(function(x){ aoTerminar(x.status === 200 && x.j.ok ? { email: email, plano: x.j.plano } : null, x.status); })
+    .then(function(x){ aoTerminar(x.status === 200 && x.j.ok ? { email: email, plano: x.j.plano, bonus: !!x.j.bonus } : null, x.status); })
     .catch(function(){ aoTerminar(null, 0); });
 }
 
@@ -175,7 +182,7 @@ function sair(){ try { localStorage.removeItem(CHAVE_ALUNO); } catch(e){} locati
   montarArea(a);
   // confere de novo em segundo plano: plano pode ter mudado (ex: mensal virou anual)
   consultar(a.email, function(novo, status){
-    if (novo && novo.plano !== a.plano){ gravarAluno(novo); location.reload(); }
+    if (novo && (novo.plano !== a.plano || novo.bonus !== a.bonus)){ gravarAluno(novo); location.reload(); }
     else if (!novo && status === 404){ sair(); }
   });
 })();

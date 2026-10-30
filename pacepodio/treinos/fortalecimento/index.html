@@ -1339,14 +1339,14 @@ document.getElementById('btnTema').onclick=()=>{
 </script>
 
 <script>
-/* ===== Area de membros (30/10): acesso so para o anual + plano guardado no banco =====
+/* ===== Area de membros (30/10): acesso so para quem comprou o anual (bonus vitalicio) + plano guardado no banco =====
    Bloco separado de proposito: o motor e o resto da pagina sao a copia exata do
    Artifact v64. Aqui so (1) confere o acesso, (2) puxa o plano salvo no banco e
    (3) manda para o banco toda vez que o plano e gravado no aparelho. */
 (function(){
   var aluno = null;
   try { aluno = JSON.parse(localStorage.getItem('pp-aluno') || 'null'); } catch(_){}
-  if (!aluno || !aluno.email || aluno.plano !== 'anual'){ location.replace('/pacepodio/treinos/'); return; }
+  if (!aluno || !aluno.email || !aluno.bonus){ location.replace('/pacepodio/treinos/'); return; } // bonus vitalicio do anual
   var email = aluno.email;
 
   // 1) toda gravacao local tambem vai para o banco (espera 1,5 s para juntar cliques seguidos)

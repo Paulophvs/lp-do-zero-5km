@@ -51,8 +51,14 @@ function alunoKey(email) {
   return 'aluno:' + normalizeEmail(email);
 }
 
+// bonus do anual (fortalecimento, alimentacao) sao VITALICIOS (decisao do Paulo
+// 30/10): essa chave e gravada sem prazo na primeira compra do anual
+function bonusKey(email) {
+  return 'bonus:' + normalizeEmail(email);
+}
+
 function fortalecimentoKey(email) {
   return 'fc:' + normalizeEmail(email);
 }
 
-module.exports = { redisSet, redisGet, normalizeEmail, pedidoKey, alunoKey, fortalecimentoKey };
+module.exports = { redisSet, redisGet, normalizeEmail, pedidoKey, alunoKey, bonusKey, fortalecimentoKey };
