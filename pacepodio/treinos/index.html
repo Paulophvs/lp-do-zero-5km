@@ -54,6 +54,12 @@
   .cadeado{position:absolute;top:10px;left:10px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.65);display:grid;place-items:center}
   .cadeado svg{width:17px;height:17px;stroke:#fff}
   .sair{display:block;margin:22px auto 0;background:none;border:none;color:var(--texto-fraco);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
+  /* aviso de renovacao / vencimento */
+  .aviso-plano{display:none;margin:0 0 18px;padding:13px 14px;border-radius:12px;font-size:14px;line-height:1.45;font-weight:600}
+  .aviso-plano.on{display:block}
+  .aviso-plano.renova{background:rgba(248,104,0,.12);border:1px solid rgba(248,104,0,.45);color:#ffd2b0}
+  .aviso-plano.venceu{background:rgba(255,82,82,.12);border:1px solid rgba(255,82,82,.5);color:#ffc4c4}
+  .aviso-plano a{display:inline-block;margin-top:8px;color:#fff;font-weight:800;letter-spacing:.3px}
 </style>
 </head>
 <body class="sem-login">
@@ -75,6 +81,7 @@
   <div class="area">
   <h1 class="saudacao">Seus treinos</h1>
   <p class="saudacao-sub">Tudo o que vem com o seu plano fica aqui.</p>
+  <div class="aviso-plano" id="aviso-plano"></div>
 
   <div class="cards">
 
@@ -140,9 +147,28 @@ function travar(c, href, rotulo){
   c.parentNode.replaceChild(a, c);
 }
 
+function avisoPlano(aluno, anual){
+  var el = document.getElementById('aviso-plano'), DIA = 864e5;
+  if (!aluno.plano && aluno.ultimo){
+    el.className = 'aviso-plano venceu on';
+    el.innerHTML = 'Seu plano venceu. Renove para voltar a receber sua planilha.' + (aluno.bonus ? ' O fortalecimento continua liberado.' : '') +
+      '<br><a href="' + anual + '">RENOVAR AGORA</a>';
+    return;
+  }
+  if (!aluno.plano || !aluno.vence) return;
+  var dias = Math.ceil((aluno.vence - Date.now()) / DIA);
+  if (aluno.plano === 'anual' && dias <= 30){
+    el.className = 'aviso-plano renova on';
+    el.textContent = dias > 1 ? 'Seu plano anual renova em ' + dias + ' dias, no mesmo cartão.'
+                   : dias === 1 ? 'Seu plano anual renova amanhã, no mesmo cartão.'
+                   : 'Seu plano anual renova hoje, no mesmo cartão.';
+  }
+}
+
 function montarArea(aluno){
   document.body.classList.remove('sem-login');
   var anual = CHECKOUT_ANUAL + '&email=' + encodeURIComponent(aluno.email);
+  avisoPlano(aluno, anual);
   var pp = document.getElementById('card-pacepodio');
   pp.href = '/pacepodio/obrigado.html?email=' + encodeURIComponent(aluno.email);
   // assinatura vencida: a planilha trava, os bonus vitalicios continuam
@@ -155,7 +181,7 @@ function montarArea(aluno){
 function consultar(email, aoTerminar){
   fetch('/api/aluno?email=' + encodeURIComponent(email), { cache: 'no-store' })
     .then(function(r){ return r.json().then(function(j){ return { status: r.status, j: j }; }); })
-    .then(function(x){ aoTerminar(x.status === 200 && x.j.ok ? { email: email, plano: x.j.plano, bonus: !!x.j.bonus } : null, x.status); })
+    .then(function(x){ aoTerminar(x.status === 200 && x.j.ok ? { email: email, plano: x.j.plano, bonus: !!x.j.bonus, vence: x.j.vence_em || null, ultimo: x.j.ultimo_plano || null } : null, x.status); })
     .catch(function(){ aoTerminar(null, 0); });
 }
 
@@ -182,7 +208,7 @@ function sair(){ try { localStorage.removeItem(CHAVE_ALUNO); } catch(e){} locati
   montarArea(a);
   // confere de novo em segundo plano: plano pode ter mudado (ex: mensal virou anual)
   consultar(a.email, function(novo, status){
-    if (novo && (novo.plano !== a.plano || novo.bonus !== a.bonus)){ gravarAluno(novo); location.reload(); }
+    if (novo && (novo.plano !== a.plano || novo.bonus !== a.bonus || novo.vence !== a.vence)){ gravarAluno(novo); location.reload(); }
     else if (!novo && status === 404){ sair(); }
   });
 })();
