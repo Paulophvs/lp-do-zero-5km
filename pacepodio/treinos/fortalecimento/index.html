@@ -1,0 +1,1341 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex"><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Fortalecimento personalizado para a corrida</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --laranja:#F86800; --laranja-2:#ff8124; --laranja-d:#c94f00;
+  --tinta:#1b1712; --tinta-2:#4a4238; --linha:#e7ded3;
+  --fundo:#faf6f0; --card:#ffffff; --card-2:#f4ece1;
+  --ok:#1f8a4c; --alerta:#b26a00; --grave:#c0392b;
+  --sombra:0 1px 2px rgba(40,25,10,.05),0 8px 24px rgba(40,25,10,.06);
+  --r:14px;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --tinta:#f3ece2; --tinta-2:#b3a795; --linha:#332c23;
+    --fundo:#141210; --card:#1e1a15; --card-2:#26211a;
+    --ok:#4cc47f; --alerta:#e0a341; --grave:#e8695a;
+    --sombra:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --tinta:#f3ece2; --tinta-2:#b3a795; --linha:#332c23;
+  --fundo:#141210; --card:#1e1a15; --card-2:#26211a;
+  --ok:#4cc47f; --alerta:#e0a341; --grave:#e8695a;
+  --sombra:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);
+}
+:root[data-theme="light"]{
+  --tinta:#1b1712; --tinta-2:#4a4238; --linha:#e7ded3;
+  --fundo:#faf6f0; --card:#ffffff; --card-2:#f4ece1;
+  --ok:#1f8a4c; --alerta:#b26a00; --grave:#c0392b;
+  --sombra:0 1px 2px rgba(40,25,10,.05),0 8px 24px rgba(40,25,10,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--tinta);font-family:var(--sans);
+  line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:20px 18px 80px}
+header{display:flex;align-items:center;gap:12px;padding:22px 0 8px}
+.marca{font-weight:800;letter-spacing:.5px;font-size:15px}
+.marca .pc{color:var(--laranja)}
+.selo{margin-left:auto;font-size:11px;text-transform:uppercase;letter-spacing:1px;
+  color:var(--tinta-2);border:1px solid var(--linha);padding:4px 9px;border-radius:20px}
+h1{font-size:clamp(26px,6vw,38px);line-height:1.08;margin:.2em 0 .3em;text-wrap:balance;font-weight:800}
+h1 .pc{color:var(--laranja)}
+.lead{color:var(--tinta-2);font-size:16px;max-width:52ch}
+.barra{height:6px;background:var(--card-2);border-radius:6px;overflow:hidden;margin:22px 0 26px}
+.barra i{display:block;height:100%;background:var(--laranja);width:0;transition:width .35s ease}
+.tela{display:none;animation:sobe .35s ease both}
+.tela.on{display:block}
+@keyframes sobe{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.passo{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:var(--laranja);font-weight:700;margin-bottom:6px}
+.perg{font-size:22px;font-weight:700;margin:0 0 6px;text-wrap:balance}
+.ajuda{color:var(--tinta-2);font-size:14px;margin:0 0 18px}
+.grid{display:grid;gap:10px}
+.g2{grid-template-columns:1fr 1fr}
+.opcao{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+  background:var(--card);border:1.5px solid var(--linha);color:var(--tinta);
+  padding:15px 16px;border-radius:12px;cursor:pointer;font-size:15px;font-family:inherit;
+  transition:border-color .15s,background .15s,transform .05s}
+.opcao:hover{border-color:var(--laranja)}
+.opcao:active{transform:scale(.99)}
+.opcao.sel{border-color:var(--laranja);background:color-mix(in srgb,var(--laranja) 10%,var(--card))}
+.opcao .k{font-weight:700}
+.opcao .d{display:block;color:var(--tinta-2);font-size:13px;margin-top:2px}
+.opcao.mini{padding:12px 14px;justify-content:center;text-align:center;font-weight:600}
+.campo{display:block;margin-bottom:14px}
+.campo span{display:block;font-size:13px;color:var(--tinta-2);margin-bottom:5px;font-weight:600}
+input[type=number],input[type=text]{width:100%;padding:13px 14px;border-radius:11px;
+  border:1.5px solid var(--linha);background:var(--card);color:var(--tinta);font-size:16px;font-family:inherit}
+input:focus{outline:2px solid var(--laranja);outline-offset:1px;border-color:var(--laranja)}
+.fisico{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nav{display:flex;gap:10px;margin-top:24px}
+.btn{appearance:none;border:none;font-family:inherit;font-size:16px;font-weight:700;
+  padding:14px 22px;border-radius:12px;cursor:pointer;transition:filter .15s,transform .05s}
+.btn:active{transform:scale(.99)}
+.btn.pri{background:var(--laranja);color:#fff;flex:1}
+.btn.pri:hover{filter:brightness(1.05)}
+.btn.sec{background:transparent;color:var(--tinta-2);border:1.5px solid var(--linha)}
+.btn.mini2{flex:none;font-size:14px;padding:10px 16px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.erro{color:var(--grave);font-size:13px;margin-top:10px;min-height:16px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:9px}
+.chip{border:1.5px solid var(--linha);background:var(--card);color:var(--tinta);
+  padding:11px 15px;border-radius:24px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:600;transition:.15s}
+.chip.sel{border-color:var(--laranja);background:color-mix(in srgb,var(--laranja) 14%,var(--card));color:var(--laranja-d)}
+.chip:hover{border-color:var(--laranja)}
+/* laudo */
+.laudo-hero{text-align:center;padding:6px 0 2px}
+.laudo-hero .lead{margin-left:auto;margin-right:auto}
+.estagio-badge{display:inline-block;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;
+  font-weight:800;color:#fff;background:var(--laranja);padding:6px 16px;border-radius:20px;margin-bottom:12px}
+.estagio-badge.big{font-size:13px;padding:8px 20px;box-shadow:0 6px 18px color-mix(in srgb,var(--laranja) 40%,transparent)}
+.fatores{display:grid;gap:8px;margin-top:4px}
+.fator{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:10px 0;border-bottom:1px dashed var(--linha)}
+.fator:last-child{border-bottom:none}
+.fator .fk{font-size:14px;color:var(--tinta-2)}
+.fator .fv{font-weight:700;font-size:14.5px;text-align:right}
+/* resultado / plano */
+.res-top{text-align:center;padding:8px 0 4px}
+.diag{background:var(--card);border:1px solid var(--linha);border-radius:var(--r);padding:18px 18px;
+  box-shadow:var(--sombra);margin:16px 0}
+.diag h3{margin:0 0 8px;font-size:16px}
+.diag p{margin:0 0 8px;color:var(--tinta-2);font-size:14.5px}
+.diag p:last-child{margin-bottom:0}
+.aviso{border-left:3px solid var(--alerta);padding-left:12px;color:var(--alerta)!important;font-weight:500}
+.aquecimento{background:color-mix(in srgb,var(--laranja) 8%,var(--card));border:1px solid color-mix(in srgb,var(--laranja) 30%,var(--linha));
+  border-radius:12px;padding:14px 16px;margin:14px 0;font-size:14px}
+.aquecimento b{color:var(--laranja-d)}
+.semana{margin:22px 0}
+.semana-cab{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.semana-cab h2{font-size:20px;margin:0;font-weight:800}
+.semana-cab .fase{font-size:12px;color:var(--tinta-2);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.semana-nota{font-size:13.5px;color:var(--tinta-2);margin:0 0 14px}
+.sessao{background:var(--card);border:1px solid var(--linha);border-radius:var(--r);
+  box-shadow:var(--sombra);margin:12px 0;overflow:hidden}
+.sessao-cab{display:flex;align-items:center;gap:10px;padding:13px 16px;background:var(--card-2);border-bottom:1px solid var(--linha)}
+.sessao-cab .n{width:26px;height:26px;border-radius:8px;background:var(--laranja);color:#fff;
+  font-weight:800;font-size:13px;display:grid;place-items:center;flex:none}
+.sessao-cab .t{font-weight:700;font-size:15px;white-space:nowrap}
+.sessao-cab .foco{text-align:right}
+.sessao-cab .foco{margin-left:auto;font-size:12px;color:var(--tinta-2);text-transform:uppercase;letter-spacing:.5px}
+.sessao-foot{padding:12px 16px;background:var(--card-2);border-top:1px solid var(--linha);display:flex;justify-content:flex-end}
+.ex{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--linha)}
+.ex:last-child{border-bottom:none}
+.ex .ico{width:34px;height:34px;flex:none;border-radius:9px;background:var(--card-2);display:grid;place-items:center;color:var(--laranja);margin-top:1px}
+.ex .ico svg{width:20px;height:20px}
+.ex .corpo{flex:1;min-width:0}
+.ex .nome{font-weight:650;font-size:15px}
+.meta{font-size:13px;color:var(--tinta-2);margin-top:4px;font-variant-numeric:tabular-nums;
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;letter-spacing:.2px}
+.meta b{color:var(--laranja-d);font-weight:700}
+.meta .desc{color:var(--tinta-2);font-weight:400}
+.meta.aqloc{display:block;font-size:12.5px}
+.meta.aqloc b{color:var(--laranja-d);font-weight:700}
+.por{font-size:12.5px;color:var(--tinta-2);margin-top:4px;border-left:2px solid color-mix(in srgb,var(--laranja) 45%,var(--linha));padding-left:8px}
+.ex .por,.ex .dica{display:block}
+.dica{font-size:12.5px;color:var(--tinta-2);margin-top:3px;font-style:italic}
+.tag-cor{display:inline-block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+  color:#fff;background:var(--alerta);padding:2px 7px;border-radius:5px;margin-left:6px;vertical-align:middle}
+.acoes{position:sticky;bottom:0;background:linear-gradient(transparent,var(--fundo) 32%);
+  padding:22px 0 6px;display:flex;gap:10px;margin-top:10px}
+.rodape{text-align:center;color:var(--tinta-2);font-size:12px;margin-top:30px;line-height:1.6}
+.toggle-tema{background:none;border:1px solid var(--linha);color:var(--tinta-2);border-radius:20px;
+  padding:5px 10px;font-size:12px;cursor:pointer;font-family:inherit}
+/* player de sessão */
+.pl-top{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.pl-title{font-weight:800;font-size:16px;display:flex;flex-direction:column}
+.pl-foco{font-size:12px;color:var(--tinta-2);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.pl-prog{display:flex;align-items:center;gap:12px;margin:14px 0 6px}
+.pl-prog-bar{flex:1;height:8px;background:var(--card-2);border-radius:8px;overflow:hidden}
+.pl-prog-bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s ease}
+#plCount{font-size:12.5px;color:var(--tinta-2);font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pl-warm{background:color-mix(in srgb,var(--laranja) 8%,var(--card));border:1px solid color-mix(in srgb,var(--laranja) 30%,var(--linha));
+  border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--tinta-2);margin-bottom:14px}
+.pl-ex{background:var(--card);border:1px solid var(--linha);border-radius:var(--r);box-shadow:var(--sombra);
+  margin:12px 0;overflow:hidden;transition:border-color .2s}
+.pl-ex.feito{border-color:var(--ok)}
+.media{aspect-ratio:16/10;background:var(--card-2);border-bottom:1px dashed var(--linha);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--laranja);position:relative}
+.media-ico svg{width:46px;height:46px}
+.media-cap{font-size:10.5px;color:var(--tinta-2);text-transform:uppercase;letter-spacing:1px}
+.media.foto{aspect-ratio:auto;background:#fff;padding:10px;gap:6px}
+.media.foto img{display:block;width:100%;max-height:340px;object-fit:contain}
+.media.foto .media-cap{color:#6b6157;text-transform:none;letter-spacing:0;font-size:11.5px;text-align:center}
+.ex-img{display:block;margin-top:8px;background:#fff;border-radius:9px;border:1px solid var(--linha);padding:6px;max-width:420px}
+.ex-img img{display:block;width:100%;max-height:180px;object-fit:contain}
+.ex-img.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:560px}
+.ex-img.duo small,.media.foto .duo small{display:block;text-align:center;font-size:11.5px;font-weight:600;color:#6b6157;margin-top:3px}
+.media.foto .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.media.foto .duo img{max-height:260px}
+.pl-body{padding:14px 16px}
+.pl-avanco{display:block;margin:10px 0 4px;padding:10px 12px;border-radius:10px;font-size:13.5px;line-height:1.5;color:var(--tinta);
+  background:color-mix(in srgb,var(--ok) 10%,var(--card));border:1px solid color-mix(in srgb,var(--ok) 35%,var(--linha))}
+.pl-avanco b{color:var(--ok)}
+.pl-sem{margin:12px 0 2px;font-size:13px;color:var(--tinta-2);font-weight:600}
+.pl-sem .chips{margin-top:6px;gap:7px}
+.pl-sem .chip{padding:7px 13px;font-size:13px}
+.series-sem{gap:2px 12px}
+.series-sem b{color:var(--tinta)}
+.contador b{color:var(--laranja-d)}
+.fases p{margin:0 0 6px;font-size:13.5px}
+.pl-nome{font-weight:750;font-size:16px}
+.pl-pres{font-size:14px;margin-top:8px;font-variant-numeric:tabular-nums}
+.pl-pres b{color:var(--laranja-d)}
+.sets{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+.setdot{width:40px;height:40px;border-radius:11px;border:1.5px solid var(--linha);background:var(--card);
+  color:var(--tinta-2);font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;transition:.12s}
+.setdot:hover{border-color:var(--laranja)}
+.setdot.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.descbtn{width:100%;margin-top:12px;font-size:14px;padding:11px}
+.pl-fim{margin-top:22px}
+.pl-fim .btn{width:100%}
+/* overlay de descanso */
+#rest{position:fixed;inset:0;background:rgba(10,8,6,.72);display:none;align-items:center;justify-content:center;z-index:50}
+#rest.on{display:flex}
+.rest-card{background:var(--card);border-radius:20px;padding:30px 34px;text-align:center;box-shadow:var(--sombra);min-width:220px}
+.rest-lbl{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--tinta-2);font-weight:700}
+.rest-num{font-size:66px;font-weight:800;color:var(--laranja);line-height:1.1;margin:6px 0 14px;font-variant-numeric:tabular-nums}
+@media (max-width:480px){.fisico{grid-template-columns:1fr}.g2{grid-template-columns:1fr}.media.foto .duo{grid-template-columns:1fr}}
+@media print{
+  .acoes,.barra,.toggle-tema,.selo,.rodape button,.sessao-foot{display:none!important}
+  body{background:#fff;color:#000}
+  .sessao,.diag,.aquecimento{box-shadow:none;break-inside:avoid}
+  .semana{break-inside:avoid}
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="marca">PH<span class="pc">·</span>CORRIDAS</span>
+    <button class="toggle-tema" id="btnTema" type="button">tema</button>
+    <span class="selo">teste</span>
+  </header>
+
+  <div class="barra" id="barraProg"><i></i></div>
+
+  <!-- ABERTURA -->
+  <section class="tela on" id="t0">
+    <h1>Fortalecimento <span class="pc">personalizado</span> para a corrida</h1>
+    <p class="lead">Você responde uma avaliação rápida e recebe um treino de fortalecimento montado para o seu nível, com o equipamento que você tem. É força para correr mais rápido e deixar o corpo mais forte para aguentar o treino. Não é treino para ficar grande.</p>
+    <div id="salvoBox"></div>
+    <div class="nav"><button class="btn pri" id="btnComecar" onclick="ir(10)">Começar avaliação</button></div>
+    <p class="rodape" style="margin-top:26px">Leva menos de 2 minutos. Sem cadastro.</p>
+  </section>
+
+  <!-- TIPO DE AVALIAÇÃO -->
+  <section class="tela" id="t10">
+    <p class="perg">É sua primeira avaliação?</p>
+    <p class="ajuda">Se você está terminando um bloco de 4 semanas, a gente faz o teste de subida de nível.</p>
+    <div class="grid">
+      <button class="opcao" data-modo="primeira" type="button" onclick="pick(this,'modo')"><span><span class="k">Primeira avaliação</span><span class="d">Nunca usei o app, ou quero começar do zero.</span></span></button>
+      <button class="opcao" data-modo="reav" type="button" onclick="pick(this,'modo')"><span><span class="k">Estou terminando um bloco</span><span class="d">Fiz as 4 semanas e quero saber se subo de nível.</span></span></button>
+    </div>
+    <div class="erro" id="e10"></div>
+    <div class="nav"><button class="btn sec" onclick="ir(0)">Voltar</button><button class="btn pri" onclick="val10()">Continuar</button></div>
+  </section>
+
+  <!-- 1. PERFIL -->
+  <section class="tela" id="t1">
+    <div class="passo">Passo 1 de 6</div>
+    <p class="perg">Seu perfil</p>
+    <p class="ajuda">Usado para ajustar recuperação e progressão. Idade pesa na dose, não te exclui de nada.</p>
+    <div class="fisico">
+      <label class="campo"><span>Idade</span><input type="number" id="idade" inputmode="numeric" min="12" max="90" placeholder="anos"></label>
+      <div class="campo"><span>Sexo</span>
+        <div class="chips" style="margin-top:2px">
+          <button class="chip" data-sexo="F" type="button" onclick="pick(this,'sexo')">Feminino</button>
+          <button class="chip" data-sexo="M" type="button" onclick="pick(this,'sexo')">Masculino</button>
+        </div>
+      </div>
+      <label class="campo"><span>Peso (kg)</span><input type="text" id="peso" inputmode="decimal" placeholder="kg"></label>
+      <label class="campo"><span>Altura (cm)</span><input type="text" id="altura" inputmode="decimal" placeholder="cm"></label>
+    </div>
+    <div class="erro" id="e1"></div>
+    <div class="nav"><button class="btn sec" onclick="ir(10)">Voltar</button><button class="btn pri" onclick="val1()">Continuar</button></div>
+  </section>
+
+  <!-- 2. DIAS -->
+  <section class="tela" id="t2">
+    <div class="passo">Passo 2 de 6</div>
+    <p class="perg">Quantos dias por semana você consegue treinar fortalecimento?</p>
+    <p class="ajuda">Fora as corridas. Monto a semana em cima da rotina que você aguenta manter.</p>
+    <div class="grid g2">
+      <button class="opcao mini" data-dias="1" type="button" onclick="pick(this,'dias')">1 dia</button>
+      <button class="opcao mini" data-dias="2" type="button" onclick="pick(this,'dias')">2 dias</button>
+      <button class="opcao mini" data-dias="3" type="button" onclick="pick(this,'dias')">3 dias</button>
+      <button class="opcao mini" data-dias="4" type="button" onclick="pick(this,'dias')">4 dias</button>
+    </div>
+    <p style="font-weight:650;margin:22px 0 6px;font-size:15px">Quanto tempo por dia você tem para o fortalecimento, sem contar o aquecimento?</p>
+    <p class="ajuda" style="margin:0 0 10px">O aquecimento leva mais uns 5 a 6 minutos. Monto o treino para caber no seu tempo.</p>
+    <div class="grid g2">
+      <button class="opcao mini" data-tempotreino="35" id="op35" type="button" onclick="pick(this,'tempotreino')">Até 35 minutos</button>
+      <button class="opcao mini" data-tempotreino="45" type="button" onclick="pick(this,'tempotreino')">36 a 45 minutos</button>
+      <button class="opcao mini" data-tempotreino="60" type="button" onclick="pick(this,'tempotreino')">46 a 60 minutos</button>
+      <button class="opcao mini" data-tempotreino="90" type="button" onclick="pick(this,'tempotreino')">Mais de 60 minutos</button>
+    </div>
+    <p class="ajuda" id="aviso1dia" style="margin:8px 0 0" hidden>Com 1 treino por semana, o mínimo é 45 minutos, para o treino ter o corpo todo.</p>
+    <div class="erro" id="e2"></div>
+    <div class="nav"><button class="btn sec" onclick="ir(1)">Voltar</button><button class="btn pri" onclick="val2()">Continuar</button></div>
+  </section>
+
+  <!-- 3. EQUIPAMENTO -->
+  <section class="tela" id="t3">
+    <div class="passo">Passo 3 de 6</div>
+    <p class="perg">Onde você vai treinar e o que você tem para usar?</p>
+    <p class="ajuda">Marca tudo que você tem à mão. Seu treino usa só o que dá para fazer no seu cenário.</p>
+    <div class="chips" id="equipChips">
+      <button class="chip sel" data-eq="peso" type="button" onclick="pickMulti(this,'equip')">Peso do corpo</button>
+      <button class="chip" data-eq="halter" type="button" onclick="pickMulti(this,'equip')">Halteres</button>
+      <button class="chip" data-eq="band" type="button" onclick="pickMulti(this,'equip')">Elástico</button>
+      <button class="chip" data-eq="barra" type="button" onclick="pickMulti(this,'equip')">Academia (barra, máquina, halteres)</button>
+    </div>
+    <p class="ajuda" style="margin-top:12px">Peso do corpo já vem marcado, sempre dá para treinar. O elástico é barato e faz um trabalho que o corredor precisa, por isso ele entra no aquecimento de todo treino.</p>
+    <div class="erro" id="e3"></div>
+    <div class="nav"><button class="btn sec" onclick="ir(2)">Voltar</button><button class="btn pri" onclick="val3()">Continuar</button></div>
+  </section>
+
+  <!-- 4. NIVEL -->
+  <section class="tela" id="t4">
+    <div class="passo">Passo 4 de 6</div>
+    <p class="perg">Seu nível de fortalecimento</p>
+    <p class="ajuda">Não tem resposta certa nem errada. É para eu não te dar exercício que seu corpo ainda não aguenta.</p>
+
+    <p style="font-weight:650;margin:16px 0 8px;font-size:15px">Há quanto tempo você faz fortalecimento muscular?</p>
+    <p class="ajuda" style="margin-top:-4px">Vale casa, academia, peso do corpo, elástico ou carga.</p>
+    <div class="grid">
+      <button class="opcao" data-tempo="0" type="button" onclick="pick(this,'tempo')">Nunca fiz</button>
+      <button class="opcao" data-tempo="1" type="button" onclick="pick(this,'tempo')">Menos de 6 meses</button>
+      <button class="opcao" data-tempo="2" type="button" onclick="pick(this,'tempo')">6 meses a 2 anos</button>
+      <button class="opcao" data-tempo="3" type="button" onclick="pick(this,'tempo')">Mais de 2 anos</button>
+    </div>
+
+    <p style="font-weight:650;margin:20px 0 8px;font-size:15px">Você já faz agachamento com carga, com segurança?</p>
+    <div class="grid g2">
+      <button class="opcao mini" data-carga="sim" type="button" onclick="pick(this,'carga')">Sim</button>
+      <button class="opcao mini" data-carga="nao" type="button" onclick="pick(this,'carga')">Não / não sei</button>
+    </div>
+
+    <p style="font-weight:650;margin:20px 0 8px;font-size:15px">Consegue ficar 15 segundos apoiado numa perna só sem desequilibrar?</p>
+    <div class="grid g2">
+      <button class="opcao mini" data-apoio="sim" type="button" onclick="pick(this,'apoio')">Sim</button>
+      <button class="opcao mini" data-apoio="nao" type="button" onclick="pick(this,'apoio')">Não</button>
+    </div>
+
+    <div id="blocoPotQ" hidden>
+    <p style="font-weight:650;margin:20px 0 8px;font-size:15px">Você já completou pelo menos 2 blocos de 4 semanas de Potência Inicial (8 semanas) sem dor?</p>
+    <div class="grid g2">
+      <button class="opcao mini" data-blocopot="sim" type="button" onclick="pick(this,'blocopot')">Sim</button>
+      <button class="opcao mini" data-blocopot="nao" type="button" onclick="pick(this,'blocopot')">Não / não sei</button>
+    </div>
+    </div>
+
+    <div class="erro" id="e4"></div>
+    <div class="nav"><button class="btn sec" onclick="ir(3)">Voltar</button><button class="btn pri" onclick="val4()">Continuar</button></div>
+  </section>
+
+  <!-- 4b. REAVALIAÇÃO (teste de subida) -->
+  <section class="tela" id="t11">
+    <div class="passo">Passo 4 de 6</div>
+    <p class="perg">Teste de subida de nível</p>
+    <p class="ajuda">Responde com sinceridade. Se ainda não passou em tudo, você repete o nível subindo a carga, e isso também é evolução.</p>
+    <p style="font-weight:650;margin:16px 0 8px;font-size:15px">Qual nível você acabou de terminar?</p>
+    <div class="grid g2">
+      <button class="opcao mini" data-nivelant="base" type="button" onclick="pickNivelAnt(this)">Base</button>
+      <button class="opcao mini" data-nivelant="forca" type="button" onclick="pickNivelAnt(this)">Força</button>
+      <button class="opcao mini" data-nivelant="potencia" type="button" onclick="pickNivelAnt(this)">Potência Inicial</button>
+      <button class="opcao mini" data-nivelant="avancada" type="button" onclick="pickNivelAnt(this)">Potência Avançada</button>
+    </div>
+    <div id="testeReav"></div>
+    <div class="erro" id="e11"></div>
+    <div class="nav"><button class="btn sec" onclick="ir(3)">Voltar</button><button class="btn pri" onclick="val11()">Continuar</button></div>
+  </section>
+
+  <!-- 5. CORRIDA -->
+  <section class="tela" id="t9">
+    <div class="passo">Passo 5 de 6</div>
+    <p class="perg">Sua corrida hoje</p>
+    <p class="ajuda">Seu nível na corrida pesa em quanto impacto e carga cabem no seu fortalecimento.</p>
+
+    <p style="font-weight:650;margin:16px 0 8px;font-size:15px">Há quanto tempo você corre?</p>
+    <div class="grid">
+      <button class="opcao" data-corrtempo="0" type="button" onclick="pick(this,'corrtempo')">Menos de 6 meses</button>
+      <button class="opcao" data-corrtempo="1" type="button" onclick="pick(this,'corrtempo')">6 meses a 2 anos</button>
+      <button class="opcao" data-corrtempo="2" type="button" onclick="pick(this,'corrtempo')">Mais de 2 anos</button>
+    </div>
+
+    <p style="font-weight:650;margin:20px 0 8px;font-size:15px">Quantos km você corre por semana?</p>
+    <div class="grid g2">
+      <button class="opcao mini" data-corrkm="0" type="button" onclick="pick(this,'corrkm')">Até 15 km</button>
+      <button class="opcao mini" data-corrkm="1" type="button" onclick="pick(this,'corrkm')">15 a 30 km</button>
+      <button class="opcao mini" data-corrkm="2" type="button" onclick="pick(this,'corrkm')">30 a 50 km</button>
+      <button class="opcao mini" data-corrkm="3" type="button" onclick="pick(this,'corrkm')">Mais de 50 km</button>
+    </div>
+
+    <p style="font-weight:650;margin:20px 0 8px;font-size:15px">Tem prova marcada?</p>
+    <div class="grid">
+      <button class="opcao" data-prova="nao" type="button" onclick="pick(this,'prova')">Não</button>
+      <button class="opcao" data-prova="longe" type="button" onclick="pick(this,'prova')">Sim, daqui a mais de 8 semanas</button>
+      <button class="opcao" data-prova="perto" type="button" onclick="pick(this,'prova')">Sim, entre 4 e 8 semanas</button>
+      <button class="opcao" data-prova="muito" type="button" onclick="pick(this,'prova')">Sim, em menos de 4 semanas</button>
+    </div>
+
+    <div class="erro" id="e9"></div>
+    <div class="nav"><button class="btn sec" onclick="ir(resp.modo==='reav'?11:4)">Voltar</button><button class="btn pri" onclick="val9()">Continuar</button></div>
+  </section>
+
+  <!-- 5. SAUDE -->
+  <section class="tela" id="t5">
+    <div class="passo">Passo 6 de 6</div>
+    <p class="perg">Você tem alguma dor ou lesão hoje que te limita fazer algum exercício?</p>
+    <p class="ajuda">Marca onde te limita HOJE. Se já passou e não te atrapalha mais, marca Não. Dor de agora não é para improvisar, e este treino não substitui avaliação médica ou de fisio.</p>
+    <div class="chips" id="lesaoChips">
+      <button class="chip sel" data-les="nenhuma" type="button" onclick="pickLesao(this)">Não tenho. Tô bem!</button>
+      <button class="chip" data-les="joelho" type="button" onclick="pickLesao(this)">Joelho</button>
+      <button class="chip" data-les="lombar" type="button" onclick="pickLesao(this)">Lombar / coluna</button>
+      <button class="chip" data-les="tornozelo" type="button" onclick="pickLesao(this)">Tornozelo / pé</button>
+      <button class="chip" data-les="canelite" type="button" onclick="pickLesao(this)">Canelite</button>
+      <button class="chip" data-les="quadril" type="button" onclick="pickLesao(this)">Quadril</button>
+      <button class="chip" data-les="ombro" type="button" onclick="pickLesao(this)">Ombro</button>
+    </div>
+    <div class="erro" id="e5"></div>
+    <div class="nav"><button class="btn sec" onclick="ir(9)">Voltar</button><button class="btn pri" onclick="val5()">Ver minha avaliação</button></div>
+  </section>
+
+  <!-- 6. LAUDO (pós-anamnese) -->
+  <section class="tela" id="t6">
+    <div id="laudo"></div>
+  </section>
+
+  <!-- 7. PLANO -->
+  <section class="tela" id="t7">
+    <div id="plano"></div>
+    <div class="acoes">
+      <button class="btn sec" onclick="refazer()">Refazer</button>
+      <button class="btn pri" onclick="window.print()">Baixar / imprimir treino</button>
+    </div>
+    <p class="rodape">Versão de teste. As demonstrações em vídeo de cada exercício entram na versão final.<br>PH Corridas · Fortalecimento personalizado para a corrida.</p>
+  </section>
+
+  <!-- 8. PLAYER DE SESSÃO -->
+  <section class="tela" id="t8">
+    <div id="player"></div>
+    <p class="rodape">Versão de teste. As demonstrações em vídeo de cada exercício entram na versão final.</p>
+  </section>
+</div>
+
+<!-- overlay de descanso -->
+<div id="rest">
+  <div class="rest-card">
+    <div class="rest-lbl">Descanso</div>
+    <div class="rest-num" id="restNum">60</div>
+    <button class="btn sec" onclick="fecharRest()">Pular descanso</button>
+  </div>
+</div>
+
+<script>
+/* ---------- estado ---------- */
+const resp={modo:null,nivelant:null,teste:{},sexo:null,dias:null,tempotreino:null,equip:new Set(['peso']),tempo:null,carga:null,apoio:null,blocopot:null,corrtempo:null,corrkm:null,prova:null,lesoes:new Set(['nenhuma'])};
+let telaAtual=0;
+const TOTAL=6;
+
+/* ---------- navegação ---------- */
+function ir(n){
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('on'));
+  document.getElementById('t'+n).classList.add('on');
+  telaAtual=n;
+  const PASSO={0:0,10:0,1:1,2:2,3:3,4:4,11:4,9:5,5:6};
+  document.querySelector('#barraProg i').style.width=Math.min(100,((PASSO[n]??TOTAL)/TOTAL*100))+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function pick(el,campo){
+  el.parentElement.querySelectorAll('.opcao,.chip').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel');
+  resp[campo]=el.dataset[campo];
+  if(['tempo','carga','apoio'].includes(campo))mostraBlocoPot();
+  if(campo==='dias')ajustaTempo1Dia();
+}
+/* 1 dia por semana: mínimo de 45 minutos, some a opção "até 35" */
+function ajustaTempo1Dia(){
+  const um=resp.dias==='1', op=document.getElementById('op35');
+  op.hidden=um; op.style.display=um?'none':''; document.getElementById('aviso1dia').hidden=!um;
+  document.querySelector('[data-tempotreino="45"]').textContent=um?'Até 45 minutos':'36 a 45 minutos';
+  if(um&&resp.tempotreino==='35'){resp.tempotreino=null;op.classList.remove('sel');}
+}
+/* pergunta dos blocos de Potência: só aparece pra quem pode chegar no Potência */
+function podePot(){return resp.tempo==='3' && resp.carga==='sim' && resp.apoio==='sim';}
+function mostraBlocoPot(){
+  const q=document.getElementById('blocoPotQ'); q.hidden=!podePot();
+  if(q.hidden){resp.blocopot=null;q.querySelectorAll('.opcao').forEach(x=>x.classList.remove('sel'));}
+}
+function pickMulti(el,campo){
+  const k=el.dataset.eq;
+  if(k==='peso'){return;} // peso do corpo sempre fica
+  el.classList.toggle('sel');
+  if(el.classList.contains('sel'))resp.equip.add(k); else resp.equip.delete(k);
+}
+function pickLesao(el){
+  const k=el.dataset.les;
+  const chips=document.getElementById('lesaoChips');
+  if(k==='nenhuma'){
+    chips.querySelectorAll('.chip').forEach(c=>c.classList.remove('sel'));
+    el.classList.add('sel'); resp.lesoes=new Set(['nenhuma']);
+  }else{
+    chips.querySelector('[data-les="nenhuma"]').classList.remove('sel');
+    resp.lesoes.delete('nenhuma');
+    el.classList.toggle('sel');
+    if(el.classList.contains('sel'))resp.lesoes.add(k); else resp.lesoes.delete(k);
+    if(resp.lesoes.size===0){resp.lesoes.add('nenhuma');chips.querySelector('[data-les="nenhuma"]').classList.add('sel');}
+  }
+}
+
+/* ---------- validações ---------- */
+function val1(){
+  const num=id=>{const v=document.getElementById(id).value.trim().replace(',','.');return v===''?NaN:+v;};
+  const i=num('idade'), p=num('peso');
+  let a=num('altura');
+  const e=document.getElementById('e1');
+  if(!Number.isInteger(i)||i<12||i>90){e.textContent='Coloca uma idade válida.';return;}
+  if(!resp.sexo){e.textContent='Marca o sexo.';return;}
+  if(!p||p<35||p>200){e.textContent='Coloca um peso válido.';return;}
+  if(a>=1&&a<2.5){a=Math.round(a*100);document.getElementById('altura').value=a;} // 1,65 vira 165 cm
+  if(!a||a<130||a>220){e.textContent='Coloca uma altura válida (em cm).';return;}
+  resp.idade=i;resp.peso=p;resp.altura=a;e.textContent='';ir(2);
+}
+function val2(){const e=document.getElementById('e2');if(!resp.dias){e.textContent='Escolhe quantos dias.';return;}if(!resp.tempotreino){e.textContent='Escolhe quanto tempo você tem por dia.';return;}e.textContent='';ir(3);}
+function val3(){const e=document.getElementById('e3');if(resp.equip.size===0){e.textContent='Marca ao menos uma opção.';return;}e.textContent='';ir(resp.modo==='reav'?11:4);}
+function val4(){
+  const e=document.getElementById('e4');
+  if(resp.tempo===null){e.textContent='Responde há quanto tempo você treina.';return;}
+  if(!resp.carga){e.textContent='Responde a pergunta do agachamento com carga.';return;}
+  if(!resp.apoio){e.textContent='Responde a pergunta do apoio numa perna.';return;}
+  if(podePot() && !resp.blocopot){e.textContent='Responde a pergunta dos blocos de Potência Inicial.';return;}
+  if(!podePot())resp.blocopot='nao';
+  e.textContent='';ir(9);
+}
+function val9(){
+  const e=document.getElementById('e9');
+  if(!resp.corrtempo){e.textContent='Responde há quanto tempo você corre.';return;}
+  if(!resp.corrkm){e.textContent='Responde quantos km você corre por semana.';return;}
+  if(!resp.prova){e.textContent='Responde se tem prova marcada.';return;}
+  e.textContent='';ir(5);
+}
+function val10(){const e=document.getElementById('e10');if(!resp.modo){e.textContent='Escolhe uma opção.';return;}e.textContent='';ir(1);}
+
+/* reavaliação: teste de subida de cada nível (passou em tudo, sobe um degrau; senão, repete) */
+const ORDEM=['base','forca','potencia','avancada'];
+const NOME_EST={base:'Base',forca:'Força',potencia:'Potência Inicial',avancada:'Potência Avançada'};
+const TESTE={
+  base:[
+    {k:'carga',q:'Você agacha com carga com boa técnica?'},
+    {k:'apoio',q:'Fica 15 segundos numa perna só sem desequilibrar?'},
+    {k:'pant20',q:'Faz 20 elevações de panturrilha numa perna só, em cada perna?'}],
+  forca:[
+    {k:'carga',q:'Você agacha com carga moderada a alta com boa técnica?'},
+    {k:'apoio',q:'Tem equilíbrio firme numa perna só, 15 segundos sem desequilibrar?'},
+    {k:'pant25',q:'Faz 25 elevações de panturrilha numa perna só, em cada perna?'}],
+  potencia:[
+    {k:'blocos',q:'Já completou 2 blocos de Potência Inicial (8 semanas)?'},
+    {k:'pant25',q:'Faz 25 elevações de panturrilha numa perna só, em cada perna?'},
+    {k:'saltos',q:'Faz os saltos aterrissando suave, sem dor no joelho, na canela ou no tornozelo?'}],
+  avancada:[
+    {k:'pant25',q:'Faz 25 elevações de panturrilha numa perna só, em cada perna?'},
+    {k:'saltos',q:'Faz o búlgaro com saltos aterrissando suave, sem dor no joelho, na canela ou no tornozelo?'}]
+};
+function pickNivelAnt(el){
+  pick(el,'nivelant'); resp.teste={};
+  let h='';
+  TESTE[resp.nivelant].forEach(t=>{
+    h+='<p style="font-weight:650;margin:20px 0 8px;font-size:15px">'+t.q+'</p><div class="grid g2">'+
+       '<button class="opcao mini" data-v="sim" type="button" onclick="pickTeste(this,\''+t.k+'\')">Sim</button>'+
+       '<button class="opcao mini" data-v="nao" type="button" onclick="pickTeste(this,\''+t.k+'\')">Ainda não</button></div>';
+  });
+  h+='<p style="font-weight:650;margin:20px 0 8px;font-size:15px">Você já repetiu esse nível pelo menos uma vez, subindo a carga?</p><div class="grid g2">'+
+     '<button class="opcao mini" data-v="sim" type="button" onclick="pickTeste(this,\'repetiu\')">Sim</button>'+
+     '<button class="opcao mini" data-v="nao" type="button" onclick="pickTeste(this,\'repetiu\')">Não</button></div>';
+  document.getElementById('testeReav').innerHTML=h;
+}
+function pickTeste(el,k){
+  el.parentElement.querySelectorAll('.opcao').forEach(x=>x.classList.remove('sel'));
+  el.classList.add('sel'); resp.teste[k]=el.dataset.v;
+}
+function val11(){
+  const e=document.getElementById('e11');
+  if(!resp.nivelant){e.textContent='Marca o nível que você terminou.';return;}
+  if(TESTE[resp.nivelant].some(t=>!resp.teste[t.k])||!resp.teste.repetiu){e.textContent='Responde todas as perguntas do teste.';return;}
+  e.textContent='';ir(9);
+}
+function passouTeste(){return TESTE[resp.nivelant].every(t=>resp.teste[t.k]==='sim');}
+function itensFalhos(){return TESTE[resp.nivelant].filter(t=>resp.teste[t.k]!=='sim').map(t=>t.k);}
+/* quem já repetiu o nível subindo a carga sobe falhando em 1 item, desde que não seja a dor nos saltos */
+function subiuPorRepeticao(){const f=itensFalhos();return resp.teste.repetiu==='sim' && f.length===1 && f[0]!=='saltos';}
+const ROTULO_TESTE={carga:'o agachamento com carga',apoio:'o equilíbrio numa perna só',pant20:'as 20 elevações de panturrilha',pant25:'as 25 elevações de panturrilha',blocos:'os 2 blocos completos',saltos:'os saltos sem dor'};
+function listaItens(ks){const r=ks.map(k=>ROTULO_TESTE[k]);return r.length>1?r.slice(0,-1).join(', ')+' e '+r[r.length-1]:r[0];}
+function nivelReav(){
+  const i=ORDEM.indexOf(resp.nivelant);
+  if(resp.nivelant==='avancada'&&resp.teste.saltos==='nao')return 'potencia'; // dor no búlgaro com saltos: volta para os saltos básicos
+  return (passouTeste()||subiuPorRepeticao())?ORDEM[Math.min(i+1,ORDEM.length-1)]:resp.nivelant;
+}
+/* dor nos saltos básicos no teste da Potência Inicial: repete o nível sem nenhum salto */
+function semSaltoReav(){return resp.modo==='reav'&&resp.nivelant==='potencia'&&resp.teste.saltos==='nao';}
+
+/* Refazer: zera respostas e volta pro começo */
+function refazer(){
+  Object.assign(resp,{modo:null,nivelant:null,teste:{},sexo:null,dias:null,tempotreino:null,equip:new Set(['peso']),tempo:null,carga:null,apoio:null,blocopot:null,corrtempo:null,corrkm:null,prova:null,lesoes:new Set(['nenhuma'])});
+  ['idade','peso','altura'].forEach(id=>document.getElementById(id).value='');
+  document.querySelectorAll('.opcao.sel,.chip.sel').forEach(x=>x.classList.remove('sel'));
+  document.querySelector('[data-eq="peso"]').classList.add('sel');
+  document.querySelector('[data-les="nenhuma"]').classList.add('sel');
+  document.querySelectorAll('.erro').forEach(x=>x.textContent='');
+  document.getElementById('blocoPotQ').hidden=true;
+  document.getElementById('testeReav').innerHTML='';
+  ajustaTempo1Dia();
+  PLANO=null;DIAG=null;SALVO=null;
+  document.getElementById('laudo').innerHTML='';document.getElementById('plano').innerHTML='';
+  mostraSalvo(); ir(0);
+}
+function val5(){
+  document.getElementById('e5').textContent='';gerar();ir(6);
+}
+
+/* =====================================================================
+   MOTOR — catálogo + classificação + montagem
+   ===================================================================== */
+/* padrões: agachar, dobradica, unilateral, panturrilha, gluteo(estab.), core, empurrar, puxar, pliometria
+   equip: peso, band, halter, barra   |   estagios: base, forca, potencia, avancada
+   cor: regiões que o exercício ajuda (corretivo)   |   contra: regiões que contraindicam
+   por: porquê para corrida (assessoria, aparece pro aluno) */
+const ICO={
+  agachar:'M4 10h16M7 10V4m10 6V4M7 20v-6m10 6v-6M5 20h4m6 0h4',
+  dobradica:'M5 6v6a7 7 0 0014 0V6M5 12h14',
+  unilateral:'M12 3v7m0 0l-4 8m4-8l4 8M8 10h8',
+  panturrilha:'M9 3v9l-3 8m3-8h6m-6 0l6 0m0-9v9l3 8',
+  gluteo:'M4 12h16M4 12a4 4 0 004-4m8 4a4 4 0 01-4-4m-4 8a4 4 0 004 4m4-4a4 4 0 01-4 4',
+  core:'M4 8h16M4 16h16M8 8v8m8-8v8',
+  empurrar:'M6 12h12m0 0l-4-4m4 4l-4 4M4 6v12',
+  puxar:'M18 12H6m0 0l4-4m-4 4l4 4M20 6v12',
+  pliometria:'M12 3l3 6h-6l3-6zm0 8v10m-5-4l5 4 5-4',
+  tibial:'M9 3v9l-3 8m3-8h6m-6 0l6 0m0-9v9l3 8'
+};
+const CAT=[
+  // AGACHAR
+  {nm:'Agachamento livre',pad:'agachar',eq:['peso'],est:['base'],dica:'Desce até o joelho ~90°, tronco firme.',por:'Base de força da passada: quadríceps e glúteo que empurram o chão a cada passo.'},
+  {nm:'Agachamento com pausa (descida lenta)',pad:'agachar',eq:['peso'],est:['forca'],dica:'Desce em 3 segundos, segura 2 segundos embaixo e sobe firme.',por:'Sem carga externa, a descida lenta e a pausa deixam o agachamento pesado o bastante para ganhar força de perna.'},
+  {nm:'Agachamento goblet (halter)',pad:'agachar',eq:['halter'],est:['base','forca'],dica:'Halter no peito, desce controlado.',por:'Força de perna com o tronco ereto, o mesmo alinhamento que te segura correndo.'},
+  {nm:'Agachamento com barra',pad:'agachar',eq:['barra'],est:['forca'],dica:'Barra nas costas, coluna neutra.',por:'Carga alta na perna inteira, o que sobra vira economia de passada.'},
+  {nm:'Agachamento cossaco',pad:'agachar',eq:['peso'],est:['forca'],contra:['joelho'],dica:'Pés bem afastados. Senta para um lado com o calcanhar no chão; a outra perna fica esticada, ponta do pé para cima. Volta e troca de lado.',por:'Força de perna com movimento lateral, que o corredor quase nunca treina e que protege joelho e quadril.'},
+  {nm:'Agachamento sumô com halter',pad:'agachar',eq:['halter'],est:['forca'],dica:'Pés afastados e virados para fora, halter pendurado entre as pernas, joelhos seguindo a ponta dos pés.',por:'Quadríceps, glúteo e parte interna da coxa fortes, com o tronco ereto.'},
+  {nm:'Leg press',pad:'agachar',eq:['barra'],est:['forca'],dica:'Pés na largura do quadril, desce até o joelho chegar perto de 90 graus sem tirar a lombar do encosto.',por:'Carga alta na perna sem precisar equilibrar uma barra nas costas.'},
+  {nm:'Agachamento com mini-band (acima do joelho)',pad:'agachar',eq:['band'],est:['base'],cor:['joelho','quadril'],dica:'Empurra os joelhos contra o elástico o tempo todo.',por:'Ensina o joelho a não cair para dentro, erro comum em corredor.'},
+  {nm:'Agachamento com salto',pad:'pliometria',eq:['peso'],est:['potencia','avancada'],contra:['joelho','lombar','tornozelo','canelite'],dica:'Explode para cima, aterrissa suave. Qualidade > quantidade.',por:'Treina a perna a devolver energia rápido no solo, o que te faz correr mais rápido.'},
+  // DOBRADICA / POSTERIOR
+  {nm:'Ponte de glúteo',pad:'dobradica',eq:['peso'],est:['base'],cor:['lombar','quadril'],dica:'Aperta o glúteo no topo, não força a lombar.',por:'Liga o glúteo, o músculo que mais empurra o corpo para frente e que a maioria usa de menos.'},
+  {nm:'Ponte de glúteo unipodal',pad:'dobradica',eq:['peso'],est:['forca'],cor:['quadril'],dica:'Uma perna estendida no ar, sobe o quadril com a outra e segura 1 segundo no topo.',por:'Glúteo de uma perna só fazendo força, como em cada apoio da corrida.'},
+  {nm:'Stiff unipodal (peso do corpo)',pad:'dobradica',eq:['peso'],est:['forca'],dica:'Uma perna no chão, o tronco desce como gangorra e o quadril fica alinhado.',por:'Posterior da coxa e glúteo numa perna só, com equilíbrio, como na passada.'},
+  {nm:'Elevação pélvica com carga',pad:'dobradica',eq:['halter','barra'],est:['forca'],cor:['quadril'],dica:'Apoia as costas no banco, carga no quadril.',por:'Glúteo forte com carga: mais empurrão no chão e lombar mais estável.'},
+  {nm:'Stiff com halteres',pad:'dobradica',eq:['halter'],est:['forca'],dica:'Empurra o quadril para trás, joelho leve, sente o posterior.',por:'Fortalece o posterior da coxa, que segura a passada.'},
+  {nm:'Levantamento terra com barra',pad:'dobradica',eq:['barra'],est:['forca'],contra:['lombar'],dica:'Coluna neutra do início ao fim.',por:'Cadeia posterior inteira forte, a que te impulsiona para frente.'},
+  {nm:'Flexão nórdica assistida',pad:'dobradica',eq:['peso'],est:['forca'],contra:['joelho'],dica:'Ajoelhado num colchonete, pés presos embaixo do sofá ou seguros por alguém. Corpo reto do joelho à cabeça, desce para frente o mais devagar possível e apara com as mãos no chão. Volta empurrando com as mãos.',por:'Posterior de coxa forte na fase em que ele mais se lesiona correndo. Em estudos com jogadores de futebol, reduziu lesão de posterior.'},
+  {nm:'Stiff unipodal com halter',pad:'dobradica',eq:['halter'],est:['forca'],dica:'Halter na mão do lado oposto à perna de apoio. O tronco desce como gangorra, quadril alinhado, costas retas.',por:'Posterior da coxa e glúteo numa perna só, com carga e equilíbrio, como na passada.'},
+  {nm:'Mesa flexora',pad:'dobradica',eq:['barra'],est:['forca'],leve:true,dica:'Deitado na máquina, dobra os joelhos trazendo o rolo até perto do glúteo e desce devagar.',por:'Fortalece o posterior da coxa, que freia a perna na passada.'},
+  {nm:'Good morning com elástico',pad:'dobradica',eq:['band'],est:['base'],dica:'Elástico longo preso nos pés e passando atrás da nuca, dobra o quadril devagar.',por:'Ensina a dobrar o quadril com a lombar estável.'},
+  // UNILATERAL
+  {nm:'Afundo no lugar',pad:'unilateral',eq:['peso'],est:['base'],cor:['quadril'],dica:'Joelho de trás desce reto, não passa muito da ponta do pé.',por:'Correr é apoio numa perna só; o afundo fortalece exatamente esse gesto.'},
+  {nm:'Afundo com halteres',pad:'unilateral',eq:['halter'],est:['forca'],dica:'Um halter em cada mão, passada firme.',por:'Força de perna isolada, corrige diferença entre perna direita e esquerda.'},
+  {nm:'Búlgaro (pé de trás no banco)',pad:'unilateral',eq:['peso','halter'],est:['forca'],cor:['quadril'],dica:'A perna da frente faz o trabalho. Sem halter, desce em 3 segundos.',por:'Uma perna faz todo o trabalho, igual à corrida. Dos melhores pro corredor.'},
+  {nm:'Afundo com saltos alternados',pad:'pliometria',eq:['peso'],est:['potencia'],contra:['joelho','canelite'],dica:'Do afundo baixo, salta e troca as pernas no ar. Aterrissa suave, já no afundo. Volume baixo, só pós-base.',por:'Potência numa perna só, transfere direto para velocidade da passada.'},
+  {nm:'Búlgaro com saltos',pad:'pliometria',eq:['peso'],est:['avancada'],contra:['joelho','canelite','tornozelo'],dica:'Pé de trás no banco, desce no búlgaro e explode para cima: o pé da frente sai do chão e o de trás fica no banco. Aterrissa suave, já descendo para o próximo. Volume baixo.',por:'Potência numa perna só com o quadril estabilizado, a versão mais exigente para velocidade da passada.'},
+  {nm:'Salto no degrau ou banco baixo',pad:'pliometria',eq:['peso'],est:['potencia','avancada'],contra:['joelho','canelite','tornozelo'],dica:'Salta para cima de um degrau ou banco baixo e firme, aterrissa suave com os dois pés. Desce andando, não pulando.',por:'Treina explosão com aterrissagem mais leve que no chão, porque você cai mais alto.'},
+  {nm:'Salto lateral alternado (patinador)',pad:'pliometria',eq:['peso'],est:['potencia','avancada'],contra:['joelho','canelite','tornozelo'],dica:'Salta de lado de uma perna para a outra, como um patinador, e segura 1 segundo na aterrissagem antes do próximo.',por:'Potência e estabilidade numa perna só, com o movimento lateral que fortalece tornozelo e quadril.'},
+  {nm:'Salto de profundidade baixo',pad:'pliometria',eq:['peso'],est:['avancada'],contra:['joelho','canelite','tornozelo'],dica:'Em cima de um degrau de 20 a 30 cm, dá um passo para fora (não pula), cai com os dois pés e, assim que tocar o chão, salta para cima o mais rápido possível. O pé fica o mínimo de tempo no chão.',por:'Treina a perna a devolver energia rápido, como em cada passada. É o tipo de salto usado nos estudos que melhoraram a economia de corrida.'},
+  {nm:'Saltos numa perna só para frente',pad:'pliometria',eq:['peso'],est:['avancada'],contra:['joelho','canelite','tornozelo'],dica:'Numa perna só, saltos curtos e rápidos para frente, tocando pouco o chão. Faz a série com uma perna e depois troca.',por:'Potência e rigidez de tornozelo numa perna só, igual ao apoio da corrida.'},
+  {nm:'Step-up no banco',pad:'unilateral',eq:['peso','halter'],est:['base','forca'],cor:['joelho'],dica:'Sobe empurrando pelo calcanhar, controla a descida.',por:'Subir empurrando com uma perna, igual à subida na corrida.'},
+  {nm:'Step-down lento (descida do degrau)',pad:'unilateral',eq:['peso'],est:['base','forca'],cor:['joelho'],dica:'Em cima de um degrau, desce o outro pé até encostar no chão em 3 segundos, joelho alinhado com o pé, e sobe.',por:'Fortalece o quadríceps na descida controlada, o músculo que absorve o impacto a cada passada.'},
+  {nm:'Afundo reverso',pad:'unilateral',eq:['peso'],est:['forca'],dica:'Mãos na cintura, dá um passo longo para trás e desce até o joelho de trás quase encostar no chão. Joelho da frente em cima do tornozelo.',por:'Força numa perna só com menos carga no joelho do que o afundo para frente.'},
+  {nm:'Afundo reverso com halteres',pad:'unilateral',eq:['halter'],est:['forca'],dica:'Um halter em cada mão, passo longo para trás, joelho da frente em cima do tornozelo, tronco em pé.',por:'Força de perna isolada com carga, poupando o joelho da frente.'},
+  {nm:'Apoio unipodal (equilíbrio)',pad:'unilateral',eq:['peso'],est:['base'],cor:['tornozelo','joelho'],iso:true,dica:'20 a 30s por perna. Descalço evolui a propriocepção.',por:'Treina equilíbrio e tornozelo para cada aterrissagem ficar mais firme.'},
+  // PANTURRILHA (pesada e lenta em toda sessão de perna)
+  {nm:'Elevação de panturrilha em pé',pad:'panturrilha',eq:['peso'],est:['base'],cor:['tornozelo'],dica:'Sobe na ponta do pé, segura 1s, desce devagar.',por:'Panturrilha aguenta o impacto e devolve energia, ainda mais no fim da prova.'},
+  {nm:'Panturrilha com carga',pad:'panturrilha',eq:['halter','barra'],est:['forca'],dica:'Amplitude total, sem pressa.',por:'Panturrilha forte segura mais quilômetros sem fadigar.'},
+  {nm:'Panturrilha unipodal',pad:'panturrilha',eq:['peso'],est:['base','forca'],cor:['tornozelo'],dica:'Uma perna só, mão na parede para equilíbrio. Dá para segurar um halter ou usar mochila com peso.',por:'Força de tornozelo perna a perna, onde o impacto da corrida cai.'},
+  {nm:'Panturrilha com joelho flexionado (sóleo)',pad:'panturrilha',eq:['peso'],est:['base','forca'],cor:['canelite','tornozelo'],dica:'Joelho dobrado. Em casa: mão na parede, joelho fletido, sobe e desce na ponta do pé. Ativa o sóleo, que a panturrilha em pé não pega.',por:'Sóleo forte absorve o impacto e alivia a canela na corrida.'},
+  {nm:'Panturrilha sentado na máquina',pad:'panturrilha',eq:['barra'],est:['forca'],cor:['canelite','tornozelo'],dica:'Sentado, carga em cima dos joelhos, sobe na ponta dos pés e desce devagar até alongar.',por:'Sóleo forte com carga, o músculo que mais trabalha em cada passada.'},
+  // TIBIAL (corretivo de canelite; só entra via bloco corretivo)
+  {nm:'Elevação do tibial anterior (dorsiflexão)',pad:'tibial',eq:['peso'],est:['base'],cor:['canelite','tornozelo'],dica:'Puxa a ponta do pé para cima (dorsiflexão) devagar e controla a descida. Sem nada em casa: costas na parede, calcanhares um pouco à frente, levanta as pontas dos pés. Dá para somar elástico ou uma anilha leve no pé.',por:'Fortalece o tibial anterior, músculo-chave para canela aguentar o impacto da corrida.'},
+  // GLUTEO / ESTABILIDADE
+  {nm:'Deslocamento lateral com mini-band (caranguejo)',pad:'gluteo',eq:['band'],est:['base'],cor:['joelho','quadril'],tempo:true,dica:'Semi-agachado, passos curtos e controlados, sem juntar os pés.',por:'Liga o glúteo médio, o que estabiliza quadril e joelho a cada apoio.'},
+  {nm:'Deslocamento ântero-posterior com mini-band',pad:'gluteo',eq:['band'],est:['base'],cor:['quadril'],tempo:true,dica:'Elástico no tornozelo, meia agachada. Dá passos curtos para frente sem juntar os pés e depois volta de ré do mesmo jeito. O elástico fica esticado o tempo todo.',por:'Estabilidade de quadril em movimento, direto para passada.'},
+  {nm:'Monster walk com mini-band',pad:'gluteo',eq:['band'],est:['base'],cor:['joelho','quadril'],tempo:true,dica:'Elástico no tornozelo, meia agachada. Dá um passo curto na diagonal para frente e para fora, traz a outra perna sem juntar os pés e alterna. Joelhos sempre empurrando para fora.',por:'Trabalha o glúteo médio, que ajuda a manter o joelho alinhado.'},
+  {nm:'Concha (clamshell) com mini-band',pad:'gluteo',eq:['band'],est:['base'],cor:['lombar','quadril'],dica:'Deitado de lado, abre o joelho de cima contra o elástico.',por:'Ativa o glúteo profundo que segura o quadril firme na corrida.'},
+  {nm:'Prancha lateral com elevação de perna',pad:'gluteo',eq:['peso'],est:['base','forca'],cor:['quadril','lombar'],iso:true,dica:'Quadril alto, sobe a perna de cima devagar.',por:'Estabiliza tronco e quadril para passada não desabar de lado.'},
+  // CORE
+  {nm:'Prancha frontal',pad:'core',eq:['peso'],est:['base'],cor:['lombar'],iso:true,dica:'Corpo reto, glúteo e abdômen contraídos. Mantém a posição.',por:'Tronco firme não desperdiça energia; tudo vai para frente.'},
+  {nm:'Dead bug (inseto morto)',pad:'core',eq:['peso'],est:['base'],cor:['lombar'],dica:'Lombar colada no chão o tempo todo.',por:'Ensina o core a segurar a lombar enquanto os membros se movem, igual correndo.'},
+  {nm:'Bird dog (perdigueiro)',pad:'core',eq:['peso'],est:['base'],cor:['lombar','quadril'],dica:'Estende braço e perna opostos sem torcer o tronco.',por:'Estabilidade de tronco com braço e perna opostos, o padrão da corrida.'},
+  {nm:'Pallof press com elástico',pad:'core',eq:['band'],est:['forca'],cor:['lombar'],dica:'Elástico longo preso de lado na altura do peito. Segura no centro e estende os braços sem deixar o tronco girar.',por:'Segura o tronco contra a rotação, o que economiza energia na passada.'},
+  {nm:'Elevação de pernas',pad:'core',eq:['peso'],est:['forca'],contra:['lombar'],dica:'Controla a descida, não deixa a lombar arquear.',por:'Fortalece o abdômen baixo que sustenta a postura nos km finais.'},
+  {nm:'Prancha com toque no ombro',pad:'core',eq:['peso'],est:['forca'],foraDe:['base'],dica:'Prancha com os braços esticados, pés um pouco afastados. Tira uma mão e toca o ombro oposto, alternando, sem o quadril girar. Conta cada toque.',por:'Tronco firme contra a rotação, o que segura a passada sem desperdiçar energia.'},
+  // EMPURRAR (superior)
+  {nm:'Flexão de braço',pad:'empurrar',eq:['peso'],est:['forca'],dica:'No joelho se precisar. Corpo em prancha.',por:'Braço e tronco firmes ajudam no balanço dos braços que embala a passada.'},
+  {nm:'Flexão de braço com joelho no chão',pad:'empurrar',eq:['peso'],est:['base'],soCasa:true,dica:'Joelhos no chão, mãos embaixo dos ombros, corpo reto do joelho à cabeça. Quando ficar fácil, tira o joelho do chão.',por:'Braço e tronco firmes ajudam no balanço dos braços que embala a passada.'},
+  {nm:'Supino vertical (máquina)',pad:'empurrar',eq:['barra'],est:['base'],dica:'Sentado, costas apoiadas no encosto e pés no chão. Pegadores na altura do peito, empurra para frente sem travar o cotovelo e volta controlando. Carga leve no começo. Se a academia não tiver, pede ao professor um equivalente.',por:'Força de empurrar para postura ereta e braços que não cansam.'},
+  {nm:'Desenvolvimento com halteres',pad:'empurrar',eq:['halter'],est:['forca'],foraDe:['potencia'],contra:['ombro'],dica:'Ombro para cima, sem arquear a lombar.',por:'Ombro forte mantém o balanço dos braços eficiente na corrida longa.'},
+  {nm:'Supino reto com barra',pad:'empurrar',eq:['barra'],est:['forca'],foraDe:['potencia'],contra:['ombro'],alt:{nm:'Supino reto com halteres',cap1:'Com barra (recomendado)',cap2:'Ou com halteres'},dica:'Deitado no banco reto, pés no chão. Pegada um pouco mais aberta que os ombros, desce a barra controlando até a parte de baixo do peito, cotovelos a uns 45° do corpo, e empurra de volta. Se o banco da barra estiver ocupado, faz com halteres do mesmo jeito.',por:'Força de empurrar para postura ereta e braços que não cansam.'},
+  {nm:'Supino reto com halteres',pad:'empurrar',eq:['halter'],est:['forca'],semBarra:true,dica:'Deitado no banco reto, pés no chão, um halter em cada mão. Desce controlando até o lado do peito, cotovelos um pouco junto do corpo, e empurra de volta. Sem banco, faz deitado no chão. Com dor no ombro: carga leve e desce só até onde não incomoda.',por:'Força de empurrar para postura ereta e braços que não cansam.'},
+  {nm:'Elevação lateral com halteres',pad:'empurrar',eq:['halter'],est:['potencia'],contra:['ombro'],leve:true,dica:'Em pé, um halter em cada mão e joelhos destravados. Sobe os braços para os lados até a altura do ombro, cotovelo levemente dobrado, e desce devagar. Carga leve, sem balançar o corpo e sem encolher o ombro.',por:'Ombro forte e estável segura o balanço dos braços na corrida longa.'},
+  // PUXAR (superior)
+  {nm:'Remada baixa (cabo sentado)',pad:'puxar',eq:['barra'],est:['base','forca'],dica:'Sentado, pés apoiados e coluna ereta. Puxa até a barriga levando os cotovelos para trás e apertando as escápulas, e volta controlando. Com a barra de pegada aberta é melhor, com o triângulo também vale.',por:'Costas fortes seguram a postura ereta lá pelo km final.'},
+  {nm:'Remada com halter (serrote)',pad:'puxar',eq:['halter'],est:['base','forca'],dica:'Um braço de cada vez, apoia no banco.',por:'Equilibra o empurrar com o puxar, postura alinhada na corrida.'},
+  {nm:'Remada com elástico',pad:'puxar',eq:['band'],est:['base','forca'],dica:'Elástico longo preso na frente, na altura do peito. Puxa o cotovelo para trás.',por:'Ativa as costas para não encurvar quando a fadiga chega.'},
+  {nm:'Superman com remada',pad:'puxar',eq:['peso'],est:['base','forca'],dica:'Deitado de bruços, braços esticados à frente. Tira o peito do chão e puxa os cotovelos para trás junto do corpo, apertando as escápulas. Pés no chão e olhar para o chão. Volta devagar, sem forçar a lombar.',por:'Fortalece as costas sem nenhum equipamento, para a postura não encurvar quando a fadiga chega.'},
+  {nm:'Puxada ou barra fixa assistida',pad:'puxar',eq:['barra'],est:['forca'],contra:['ombro'],dica:'Desce controlado.',por:'Dorsal forte estabiliza o tronco e o balanço dos braços.'},
+  {nm:'Remada invertida na mesa',pad:'puxar',eq:['peso'],est:['forca'],contra:['ombro'],dica:'Deitado embaixo de uma mesa bem firme, segura na borda, corpo reto e puxa o peito até a mesa. Em academia, dá para fazer numa barra baixa.',por:'Costas fortes para manter a postura e o balanço dos braços nos km finais.'},
+  {nm:'Remada curvada com halteres',pad:'puxar',eq:['halter'],est:['forca'],dica:'Tronco inclinado para frente, costas retas, puxa os dois halteres até a cintura.',por:'Costas fortes para manter a postura e o balanço dos braços nos km finais.'}
+];
+
+/* imagem de referência da execução (embutida, o CSP do Artifact bloqueia URL externa) */
+const IMG={"Elevação lateral com halteres": "img/elevacao-lateral-com-halteres.jpg", "Supino reto com halteres": "img/supino-reto-com-halteres.jpg", "Supino reto com barra": "img/supino-reto-com-barra.jpg", "Bird dog (perdigueiro)": "img/bird-dog-perdigueiro.jpg", "Deslocamento lateral com mini-band (caranguejo)": "img/deslocamento-lateral-com-mini-band-caranguejo.jpg", "Concha (clamshell) com mini-band": "img/concha-clamshell-com-mini-band.jpg", "Step-down lento (descida do degrau)": "img/step-down-lento-descida-do-degrau.jpg", "Panturrilha unipodal": "img/panturrilha-unipodal.jpg", "Elevação do tibial anterior (dorsiflexão)": "img/elevacao-do-tibial-anterior-dorsiflexao.jpg", "Apoio unipodal (equilíbrio)": "img/apoio-unipodal-equilibrio.jpg", "Búlgaro (pé de trás no banco)": "img/bulgaro-pe-de-tras-no-banco.jpg", "Elevação de panturrilha em pé": "img/elevacao-de-panturrilha-em-pe.jpg", "Panturrilha com joelho flexionado (sóleo)": "img/panturrilha-com-joelho-flexionado-soleo.jpg", "Prancha lateral com elevação de perna": "img/prancha-lateral-com-elevacao-de-perna.jpg", "Agachamento com pausa (descida lenta)": "img/agachamento-com-pausa-descida-lenta.jpg", "Agachamento com mini-band (acima do joelho)": "img/agachamento-com-mini-band-acima-do-joelho.jpg", "Stiff unipodal (peso do corpo)": "img/stiff-unipodal-peso-do-corpo.jpg", "Afundo no lugar": "img/afundo-no-lugar.jpg", "Elevação de pernas": "img/elevacao-de-pernas.jpg", "Remada com elástico": "img/remada-com-elastico.jpg", "Afundo com saltos alternados": "img/afundo-com-saltos-alternados.jpg", "Agachamento livre": "img/agachamento-livre.jpg", "Agachamento goblet (halter)": "img/agachamento-goblet-halter.jpg", "Agachamento com barra": "img/agachamento-com-barra.jpg", "Agachamento com salto": "img/agachamento-com-salto.jpg", "Ponte de glúteo": "img/ponte-de-gluteo.jpg", "Ponte de glúteo unipodal": "img/ponte-de-gluteo-unipodal.jpg", "Elevação pélvica com carga": "img/elevacao-pelvica-com-carga.jpg", "Stiff com halteres": "img/stiff-com-halteres.jpg", "Levantamento terra com barra": "img/levantamento-terra-com-barra.jpg", "Good morning com elástico": "img/good-morning-com-elastico.jpg", "Afundo com halteres": "img/afundo-com-halteres.jpg", "Step-up no banco": "img/step-up-no-banco.jpg", "Panturrilha com carga": "img/panturrilha-com-carga.jpg", "Prancha frontal": "img/prancha-frontal.jpg", "Dead bug (inseto morto)": "img/dead-bug-inseto-morto.jpg", "Pallof press com elástico": "img/pallof-press-com-elastico.jpg", "Flexão de braço": "img/flexao-de-braco.jpg", "Desenvolvimento com halteres": "img/desenvolvimento-com-halteres.jpg", "Remada com halter (serrote)": "img/remada-com-halter-serrote.jpg", "Puxada ou barra fixa assistida": "img/puxada-ou-barra-fixa-assistida.jpg", "Monster walk com mini-band": "img/monster-walk-com-mini-band.jpg", "Deslocamento ântero-posterior com mini-band": "img/deslocamento-antero-posterior-com-mini-band.jpg", "Búlgaro com saltos": "img/bulgaro-com-saltos.jpg", "Remada baixa (cabo sentado)": "img/remada-baixa-cabo-sentado.jpg", "Superman com remada": "img/superman-com-remada.jpg", "Supino vertical (máquina)": "img/supino-vertical-maquina.jpg", "Flexão de braço com joelho no chão": "img/flexao-de-braco-com-joelho-no-chao.jpg", "Agachamento cossaco": "img/agachamento-cossaco.jpg", "Prancha com toque no ombro": "img/prancha-com-toque-no-ombro.jpg", "Afundo reverso": "img/afundo-reverso.jpg", "Agachamento sumô com halter": "img/agachamento-sumo-com-halter.jpg", "Leg press": "img/leg-press.jpg", "Flexão nórdica assistida": "img/flexao-nordica-assistida.jpg", "Stiff unipodal com halter": "img/stiff-unipodal-com-halter.jpg", "Mesa flexora": "img/mesa-flexora.jpg", "Afundo reverso com halteres": "img/afundo-reverso-com-halteres.jpg", "Salto no degrau ou banco baixo": "img/salto-no-degrau-ou-banco-baixo.jpg", "Salto lateral alternado (patinador)": "img/salto-lateral-alternado-patinador.jpg", "Panturrilha sentado na máquina": "img/panturrilha-sentado-na-maquina.jpg", "Remada invertida na mesa": "img/remada-invertida-na-mesa.jpg", "Remada curvada com halteres": "img/remada-curvada-com-halteres.jpg", "Salto de profundidade baixo": "img/salto-de-profundidade-baixo.jpg", "Saltos numa perna só para frente": "img/saltos-numa-perna-so-para-frente.jpg"};
+
+/* "Academia (barra, máquina, halteres)" também libera halter */
+function tem(eq){return resp.equip.has(eq) || (eq==='halter' && resp.equip.has('barra'));}
+function temEquip(ex){return ex.eq.some(tem);}
+/* exercício feito com carga externa (halter ou barra) que o aluno tem */
+function comCarga(ex){return ex.eq.some(e=>(e==='halter'||e==='barra') && tem(e));}
+
+/* classifica estágio */
+function classificar(){
+  const t=+resp.tempo, cargaOk=resp.carga==='sim', apoioOk=resp.apoio==='sim';
+  let est;
+  const reav=resp.modo==='reav';
+  if(reav) est=nivelReav();
+  else if(t===0 || !cargaOk || !apoioOk) est='base';
+  else if(t>=3 && cargaOk && apoioOk) est='potencia';
+  else if(t>=2 && cargaOk && apoioOk) est='forca';
+  else est='base';
+  const temLesao=resp.lesoes.size>0 && !resp.lesoes.has('nenhuma');
+  const regioes=[...resp.lesoes].filter(x=>x!=='nenhuma');
+  const regioesInf=regioes.filter(r=>r!=='ombro'); // ombro é só avaliativo, não afeta o estágio
+  // a pergunta agora é "dor/lesão HOJE que te limita", então marcar região = limitação atual
+  const dorAtual=temLesao;
+  const dorAtualInf=regioesInf.length>0; // limitação atual em perna/tronco restringe
+  // quem corre há menos de 6 meses ainda está adaptando o corpo ao impacto: segura na Força
+  let corridaSegurou=false;
+  const estAntesAjuste=est;
+  if((est==='potencia'||est==='avancada') && resp.corrtempo==='0'){est='forca';corridaSegurou=true;}
+  // Potência Avançada: já completou um bloco de Potência sem dor
+  if(!reav && est==='potencia' && resp.blocopot==='sim')est='avancada';
+  let rebaixou=false;
+  if(dorAtualInf){ // desce um degrau quando a limitação é de perna/tronco
+    if(est==='avancada'){est='potencia';rebaixou=true;}
+    else if(est==='potencia'){est='forca';rebaixou=true;}
+    else if(est==='forca'){est='base';rebaixou=true;}
+  }
+  return {est,estAntesAjuste,temLesao,dorAtual,dorAtualInf,rebaixou,corridaSegurou,regioes,regioesInf};
+}
+
+/* parâmetros por estágio (exercícios principais) */
+const PARAMS={
+  base:   {series:'2 a 3',reps:'8 a 12',desc:'60 a 90s',carga:'moderada, foco na execução',salto:false},
+  forca:  {series:'3 a 4',reps:'3 a 5',desc:'2 min',carga:'moderada a alta',salto:false},
+  potencia:{series:'3 a 4',reps:'3 a 5 pesadas + saltos',desc:'2 a 3 min',carga:'alta nos exercícios pesados, saltos rápidos e com volume baixo',salto:true},
+  avancada:{series:'3 a 4',reps:'3 a 5 pesadas + saltos',desc:'2 a 3 min',carga:'alta nos exercícios pesados, saltos rápidos e com volume baixo',salto:true}
+};
+
+/* séries por semana: Adaptação, Progressão, Pico, Alívio. 40+ sobe mais devagar */
+function seriesSemana(est,w){
+  const s40=(+resp.idade>=40);
+  const T={base:s40?[2,2,3,2]:[2,3,3,2], forca:s40?[3,3,4,2]:[3,4,4,2], potencia:s40?[3,3,4,2]:[3,4,4,2], avancada:s40?[3,3,4,2]:[3,4,4,2]};
+  return T[est][w];
+}
+
+/* prescrição de cada exercício: faixa certa pro tipo de exercício, séries pela semana */
+function prescricao(e,est,w,corr){
+  let n=(corr&&curto())?2:seriesSemana(est,w); // até 35: corretivo leve, 2 séries de 15
+  const kmAlto=resp.corrkm==='3'; // mais de 50 km/semana: a corrida já cansa a perna, principais de perna no máximo 3 séries e saltos com volume menor
+  if(kmAlto&&!corr&&['agachar','dobradica','unilateral','pliometria'].includes(e.pad))n=Math.min(n,3);
+  const S=n+' séries de ';
+  const principal=['agachar','dobradica','unilateral'].includes(e.pad);
+  const porPerna=(e.pad==='unilateral'||e.nm.includes('unipodal')||e.nm.includes('cossaco'))?' por perna':'';
+  if(e.iso) return {pres:S+(e.pad==='core'?'30 a 45 seg':'20 a 30 seg por lado'),desc:'45 a 60s'};
+  if(e.tempo) return {pres:S+'20 a 30 seg',desc:'45 a 60s'};
+  if(e.pad==='tibial') return {pres:S+'15 a 20 reps',desc:'45 a 60s'};
+  if(corr&&curto()) return {pres:S+'15 reps'+porPerna,desc:'45s'};
+  if(e.leve) return {pres:S+'10 a 12 reps',desc:'60 a 90s'};
+  if(e.pad==='panturrilha') return {pres:S+(est==='base'?'12 a 15':'8 a 12')+' reps'+porPerna+' lentas (2s sobe, 2s desce)',desc:'60 a 90s'};
+  if(e.pad==='core'||e.nm==='Superman com remada') return {pres:S+'10 a 12 reps',desc:'45 a 60s'};
+  if(e.pad==='gluteo') return {pres:S+'12 a 15 reps',desc:'45 a 60s'};
+  if(e.nm==='Flexão nórdica assistida') return {pres:S+'3 a 5 reps, só a descida em 4 a 5 segundos',desc:'2 min'}; // excêntrica pura: muita dor muscular no começo, volume baixo
+  if(e.nm==='Salto de profundidade baixo'||e.nm==='Saltos numa perna só para frente') return {pres:Math.min(n,3)+' séries de 5 saltos'+(e.nm.includes('perna só')?' por perna':''),desc:'2 min'}; // salto reativo: impacto maior, volume baixo e fixo
+  if(e.nm==='Salto lateral alternado (patinador)') return {pres:S+(kmAlto?'5 saltos':'6 a 8 saltos')+' para cada lado',desc:'2 min'};
+  if(e.nm==='Búlgaro com saltos') return {pres:S+(kmAlto?'4 saltos por perna':'4 a 6 saltos por perna'),desc:'2 a 3 min'};
+  if(e.pad==='pliometria') return {pres:S+(kmAlto?'5 saltos':'5 a 8 saltos')+porPerna,desc:'2 min'};
+  if(corr) return {pres:S+'10 a 12 reps'+porPerna,desc:'60s'};
+  if(!principal){ // superior
+    if(est==='base') return {pres:S+'8 a 12 reps',desc:'60 a 90s'};
+    return {pres:S+'6 a 8 reps',desc:'2 min'};
+  }
+  if(est==='base') return {pres:S+'8 a 12 reps'+porPerna,desc:'60 a 90s'};
+  const carga=comCarga(e);
+  // sem carga até a falha: 2 séries até a faixa de 60 min (cada série na falha já entrega quase todo o estímulo), 3 acima de 60
+  const semCarga=Math.min(n,TETO_MIN<=60?2:3)+' séries de até 20 reps lentas'+porPerna+', até a falha';
+  if(est==='forca') return {pres:carga?S+'3 a 5 reps'+porPerna:semCarga,desc:'2 min'};
+  return {pres:carga?S+'3 a 5 reps pesadas'+porPerna+', subida o mais rápido possível':semCarga,desc:'2 a 3 min'}; // Potência: intenção de velocidade na fase concêntrica
+}
+
+/* escolhe 1 exercício de um padrão, respeitando equip / estágio / lesão
+   usoSemana: exercícios já usados em outra sessão da semana (sessão A e B saem diferentes quando dá) */
+function escolher(padrao,est,regioes,usados,preferBand,usoSemana,evitar){
+  const estAgnostico=['gluteo','core'].includes(padrao);
+  let cand=CAT.filter(e=>e.pad===padrao && temEquip(e) && (estAgnostico || e.est.includes(est) || ((est==='potencia'||est==='avancada')&&e.est.includes('forca'))));
+  cand=cand.filter(e=>!(e.contra&&e.contra.some(r=>regioes.includes(r))));
+  cand=cand.filter(e=>!(e.soCasa&&tem('barra'))); // quem tem academia faz a versão de academia
+  cand=cand.filter(e=>!(e.semBarra&&tem('barra')&&!regioes.includes('ombro')&&est!=='potencia')); // com academia e sem dor no ombro, os halteres viram opção do supino com barra (na Potência o supino é com halteres)
+  cand=cand.filter(e=>!(e.foraDe&&e.foraDe.includes(est))); // variação entre níveis: Força e Avançada iguais, Potência diferente
+  if((est!=='potencia'&&est!=='avancada')||semSaltoReav())cand=cand.filter(e=>e.pad!=='pliometria');
+  const fresh=cand.filter(e=>!usados.has(e.nm)); // nunca repete na mesma sessão
+  if(fresh.length===0)return null;
+  const PESO={barra:4,halter:3,peso:1,band:1};
+  const rank=e=>{
+    let s=0;
+    if(usoSemana&&usoSemana.has(e.nm))s+=50;
+    if(evitar&&evitar.has(e.nm))s+=1.5; // repetindo o nível: troca pelo exercício do mesmo grupo, sem descer mais de um degrau de equipamento
+    if(preferBand){ if(e.eq.includes('band')&&tem('band'))s-=10; }
+    else s-=Math.max(...e.eq.filter(tem).map(x=>PESO[x])); // melhor equipamento que o aluno TEM
+    if(regioes.length&&e.cor&&e.cor.some(r=>regioes.includes(r)))s-=6; // prioriza corretivo
+    if(est==='avancada'&&e.pad==='pliometria'&&e.est.length===1&&e.est[0]==='avancada')s-=2; // Avançada usa primeiro os saltos do nível dela (búlgaro com saltos e os reativos)
+    return s;
+  };
+  fresh.sort((a,b)=>rank(a)-rank(b));
+  const ex=fresh[0]; usados.add(ex.nm); return ex;
+}
+
+/* bloco corretivo: uma vaga por região marcada (joelho tem duas: quadríceps + glúteo) */
+const CORRETIVO={
+  joelho:[['Step-down lento (descida do degrau)','Step-up no banco'],['Prancha lateral com elevação de perna']], // caranguejo fora: já está no aquecimento
+  lombar:[['Bird dog (perdigueiro)','Dead bug (inseto morto)']],
+  tornozelo:[['Apoio unipodal (equilíbrio)','Panturrilha unipodal']],
+  canelite:[['Elevação do tibial anterior (dorsiflexão)']],
+  quadril:[['Concha (clamshell) com mini-band','Prancha lateral com elevação de perna','Afundo no lugar']]
+};
+const byNm=Object.fromEntries(CAT.map(e=>[e.nm,e]));
+function blocoCorretivo(regioes,usados){
+  const out=[];
+  for(const r of ['joelho','lombar','tornozelo','canelite','quadril']){
+    if(!regioes.includes(r))continue;
+    for(const vaga of CORRETIVO[r]){
+      if(vaga.some(n=>out.some(e=>e.nm===n)))continue; // já coberta por outra região
+      const e=vaga.map(n=>byNm[n]).find(e=>temEquip(e) && !usados.has(e.nm) && !(e.contra&&e.contra.some(x=>regioes.includes(x))));
+      if(e){out.push(e);usados.add(e.nm);}
+    }
+  }
+  return out;
+}
+
+/* estrutura da sessão por tipo */
+function padroesDaSessao(tipo,est){
+  // salto logo no começo (depois do corretivo), com a perna descansada: sai mais explosivo e a aterrissagem fica mais segura
+  if(tipo==='FULL'){const b=['agachar','dobradica','unilateral','panturrilha','empurrar','puxar','core'];if(est==='potencia'||est==='avancada')b.unshift('pliometria');return b;}
+  if(tipo==='LOWER'){const b=['agachar','dobradica','unilateral','panturrilha','gluteo','core'];if(est==='potencia'||est==='avancada')b.unshift('pliometria');return b;}
+  if(tipo==='UPPER') return ['empurrar','puxar','gluteo','core'];
+  return [];
+}
+function focoTipo(tipo){return tipo==='FULL'?'Corpo todo':tipo==='LOWER'?'Inferior + core':'Superior + core';}
+
+/* define o split conforme dias */
+function split(dias){
+  if(dias==1)return ['FULL'];
+  if(dias==2)return ['FULL','FULL'];
+  if(dias==3)return ['LOWER','UPPER','LOWER'];
+  return ['LOWER','UPPER','LOWER','UPPER'];
+}
+
+/* monta uma sessão */
+function montarSessao(tipo,est,regioes,corretivoOn,usoSemana,evitar){
+  const usados=new Set();
+  const exs=[];
+  // até 35 minutos: 1 corretivo no começo do treino de perna e o resto do bloco no dia de braço; 2 dias leva 1 corretivo por treino
+  if(corretivoOn){
+    let bloco=null;
+    if(!curto()){if(tipo==='LOWER'||tipo==='FULL')bloco=blocoCorretivo(regioes,usados);}
+    else if(tipo==='UPPER')bloco=blocoCorretivo(regioes,usados).slice(1);
+    else if(tipo==='LOWER')bloco=blocoCorretivo(regioes,usados).slice(0,1); // prepara a perna para os principais
+    else if(tipo==='FULL')bloco=blocoCorretivo(regioes,usados).slice(0,1);
+    if(bloco)bloco.forEach(e=>exs.push({ex:e,corr:true}));
+  }
+  for(const pad of padroesDaSessao(tipo,est)){
+    const preferBand = est==='base' && (pad==='gluteo');
+    const e=escolher(pad,est,regioes,usados,preferBand,usoSemana,evitar);
+    if(e)exs.push({ex:e,corr:false});
+  }
+  exs.forEach(o=>{if(!o.corr||curto())usoSemana.add(o.ex.nm);}); // até 35: o corretivo do dia de braço não se repete como principal na perna
+  return exs;
+}
+
+/* progressão por semana */
+const SEMANAS=[
+  {fase:'Adaptação',nota:'Semana de aprender o movimento e achar a carga certa. Capricha na execução.'},
+  {fase:'Progressão',nota:'Sobe um pouco: a série a mais que aparece nos exercícios, ou um pouco mais de carga, mantendo a técnica. Sem forçar amplitude que dói.'},
+  {fase:'Pico',nota:'Semana mais forte do bloco. Carga no topo do que você controla bem. Recupera direito entre as sessões.'},
+  {fase:'Alívio',nota:'Semana leve de propósito (deload): menos séries para o corpo assimilar. Descanso é parte do treino.'}
+];
+
+/* =====================================================================
+   ONDA 1 — laudo + plano + tela de sessão (renderização)
+   ===================================================================== */
+let PLANO=null, DIAG=null, TIMER=null, SEM=0;
+
+/* helpers de apresentação */
+function svgPath(pad){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="'+(ICO[pad]||ICO.core)+'"/></svg>';}
+function icoSpan(pad){return '<span class="ico">'+svgPath(pad)+'</span>';}
+/* nº de séries a partir da prescrição, para montar os marcadores de série do player */
+function nSeries(pres){const m=pres.match(/(\d+)\s*a\s*(\d+)\s*séries/);if(m)return +m[2];const m2=pres.match(/(\d+)\s*séries/);return m2?+m2[1]:3;}
+/* segundos de descanso a partir do texto ("45 a 60s" -> 60, "2 a 3 min" -> 180) */
+/* 45 -> 45 segundos, 90 -> 1 minuto e meio, 120 -> 2 minutos */
+function fmtTempo(t){if(t<60)return t+' segundos';const m=Math.floor(t/60),r=t%60;return m+(m===1?' minuto':' minutos')+(r===30?' e meio':r?' e '+r+' segundos':'');}
+function restSecs(desc){if(/min/.test(desc)){const m=desc.match(/(\d+)\s*min/);return m?+m[1]*60:120;}const nums=desc.match(/\d+/g);return nums?+nums[nums.length-1]:60;}
+/* texto da 1ª série de aquecimento local */
+function textoAqloc(e){return e.carga?'menos de 50% da carga ou sem carga, próximo da falha':'uma série leve de 8 a 10 reps, sem cansar';}
+
+/* monta o modelo do plano */
+function gerar(){
+  const c=classificar();
+  const P=PARAMS[c.est];
+  const tipos=split(resp.dias);
+  TETO_MIN=+resp.tempotreino||60;
+  const nomeEst={base:'Base',forca:'Força',potencia:'Potência Inicial',avancada:'Potência Avançada'}[c.est];
+  const imc=(resp.peso/Math.pow(resp.altura/100,2)).toFixed(1).replace('.',',');
+  // exercícios definidos uma vez por semana-modelo (sessão A e B diferentes); a prescrição muda semana a semana
+  // quem já repetiu o nível e continua nele recebe exercícios diferentes do bloco anterior
+  const variar=resp.modo==='reav' && resp.teste.repetiu==='sim' && c.est===resp.nivelant;
+  let evitar=null;
+  if(variar){const u=new Set();tipos.forEach(tipo=>montarSessao(tipo,c.est,c.regioes,c.dorAtualInf,u));evitar=u;}
+  const usoSemana=new Set();
+  const modelo=tipos.map(tipo=>montarSessao(tipo,c.est,c.regioes,c.dorAtualInf,usoSemana,evitar));
+  const weeks=SEMANAS.map((S,w)=>({
+    fase:S.fase, nota:S.nota,
+    sessoes:tipos.map((tipo,i)=>{
+      const exs=modelo[i];
+      const idxTrab=exs.findIndex(o=>!o.corr&&o.ex.pad!=='pliometria'); // 1º exercício de força (não corretivo, não salto)
+      return {
+        tipo, foco:focoTipo(tipo), n:i+1, letra:'ABCD'[i],
+        exs:exs.map((o,j)=>{
+          const e=o.ex, p=prescricao(e,c.est,w,o.corr);
+          return {nm:e.nm,pad:e.pad,alt:e.alt||null,dica:e.dica||'',por:e.por||'',corr:o.corr,iso:!!e.iso,carga:comCarga(e),
+                  pres:p.pres,desc:p.desc,series:nSeries(p.pres),aqloc:(j===idxTrab && !e.iso)};
+        })
+      };
+    })
+  }));
+  tipos.forEach((tipo,i)=>cabeNoTempo(weeks,i,tipo));
+  weeks.forEach(W=>W.sessoes.forEach(S=>{S.dur=Math.ceil(duracao(S.exs)/5)*5;}));
+  PLANO={est:c.est,nomeEst,P,imc,weeks,variar};
+  DIAG=c;
+  if(!RESTAURANDO)novoSalvo();
+  montarLaudo();
+}
+
+/* esforço: Base e acessórios com 1 a 2 na reserva; principais da Força em diante: com carga 3 a 5 na carga mais pesada sem perder a técnica, sem carga até a falha */
+const PRINC=['agachar','dobradica','unilateral'];
+function principaisPlano(){const r={com:false,sem:false};PLANO.weeks[0].sessoes.forEach(S=>S.exs.forEach(e=>{if(!e.corr&&PRINC.includes(e.pad)&&!e.iso)r[e.carga?'com':'sem']=true;}));return r;}
+function repsPrincipais(PA){
+  if(PLANO.est==='base')return PA.series+' séries de '+PA.reps+' reps';
+  const q=principaisPlano(), sal=temSaltoPlano()?', mais os saltos':'', semS=(TETO_MIN<=60?'2':'2 a 3')+' séries de até 20 reps lentas, até a falha';
+  if(!q.com)return semS+sal;
+  return PA.series+' séries de '+PA.reps.replace(' + saltos','').replace(' pesadas','')+' reps pesadas'+(q.sem?' (sem carga: '+semS+')':'')+sal;
+}
+const TXT_RAPIDO='No seu nível, <b style="color:var(--laranja-d)">desça controlado e suba o mais rápido que conseguir</b>, mesmo que a carga não ande tão rápido: a intenção de acelerar é o que treina a potência.';
+const TXT_COM='Nos principais com carga, <b style="color:var(--laranja-d)">use a carga mais pesada que você consegue levantar nas 3 a 5 repetições sem perder a técnica</b>. Fez mais de 5, sobe o peso na próxima; não chegou a 3, alivia.';
+const TXT_SEM='Nos principais sem carga, <b style="color:var(--laranja-d)">vá até a falha em todas as séries</b>: a série acaba quando a técnica quebra (joelho entrando, quadril caindo). Passou de 20 repetições, deixe o exercício mais difícil: desça mais devagar, faça uma pausa embaixo ou passe para uma perna só.';
+function textoEsforco(){
+  const reserva='o peso certo é aquele em que, ao terminar a série, ainda sobrariam <b style="color:var(--laranja-d)">1 a 2 repetições na reserva, sem ir até a falha</b>. Sobrou muito mais, sobe o peso na próxima; travou antes, alivia.';
+  if(PLANO.est==='base')return 'Como não fazemos teste de carga, '+reserva+' Assim você fortalece a perna sem chegar detonado na corrida.';
+  const q=principaisPlano();
+  return (q.com?TXT_COM+(PLANO.est==='potencia'||PLANO.est==='avancada'?' '+TXT_RAPIDO:'')+' ':'')+(q.sem?TXT_SEM+' ':'')+'Nos demais exercícios, '+reserva.replace('o peso certo é aquele em que, ao','ao')+' Assim você fortalece a perna sem chegar detonado na corrida.';
+}
+function esforcoSessao(S){
+  if(PLANO.est==='base')return 'Deixe 1 a 2 repetições na reserva em cada série.';
+  let com=false,sem=false;S.exs.forEach(e=>{if(!e.corr&&PRINC.includes(e.pad)&&!e.iso){if(e.carga)com=true;else sem=true;}});
+  return (com?'Principais com carga: a carga mais pesada que você levanta nas 3 a 5 repetições sem perder a técnica'+(PLANO.est==='potencia'||PLANO.est==='avancada'?', descendo controlado e subindo o mais rápido possível. ':'. '):'')+(sem?'Principais sem carga: até a falha em todas as séries. ':'')+'Nos demais, 1 a 2 repetições na reserva.';
+}
+
+/* "Passei de 20": progressão dos principais sem carga. Cada toque leva para a próxima versão;
+   a última é a mochila com peso (vira carga, 3 a 5 reps). Fica salvo no celular do aluno, por exercício */
+const BULG='Búlgaro (pé de trás no banco)';
+const PROG={
+  'Agachamento com pausa (descida lenta)':[{troca:BULG},{troca:BULG,dica:'desce em 4 segundos e segura 2 segundos embaixo.'}],
+  [BULG]:[{dica:'desce em 4 segundos e segura 2 segundos embaixo.'}],
+  'Ponte de glúteo unipodal':[{dica:'desce em 3 segundos e segura 3 segundos no topo.'}],
+  'Stiff unipodal (peso do corpo)':[{dica:'desce em 4 segundos e segura 2 segundos embaixo.'}],
+  'Step-up no banco':[{dica:'banco mais alto e descida em 4 segundos.'}],
+  'Step-down lento (descida do degrau)':[{dica:'degrau mais alto.'}],
+  'Afundo reverso':[{dica:'desce em 3 segundos e segura 2 segundos embaixo.'}],
+  'Agachamento cossaco':[{dica:'desce em 4 segundos e segura 2 segundos embaixo.'}]
+};
+const MOCHILA='Coloque uma mochila com peso (livros, garrafas de água) e use o peso mais pesado que você consegue levantar nas 3 a 5 repetições sem perder a técnica.';
+const AVANCO='<b>Você está avançando.</b> O peso do corpo já ficou leve para este exercício. Uma boa sugestão agora é migrar para a academia, onde dá para seguir ganhando força com barra, halteres e aparelhos. Você tem duas opções: <b>1. Academia:</b> refaça a avaliação marcando Academia e o treino passa a usar a carga de lá. <b>2. Continuar em casa:</b> siga com a mochila com peso, como está abaixo.';
+const progMem={};
+function progNivel(nm){try{const v=localStorage.getItem('fc-prog:'+nm);if(v!==null)return +v||0;}catch(_){}return progMem[nm]||0;}
+function progSalva(nm,v){progMem[nm]=v;try{localStorage.setItem('fc-prog:'+nm,String(v));}catch(_){}}
+/* búlgaro já está no treino: o agachamento não vira búlgaro, endurece a execução */
+function passosDe(e,exs){const P=PROG[e.nm];return P[0].troca&&exs.some(x=>x.nm===BULG)?[{dica:'desce em 4 segundos e segura 3 segundos embaixo.'}]:P;}
+function podeProg(e){return !e.corr&&PROG[e.nm]&&/até a falha/.test(e.pres);}
+/* versão que o aluno vê hoje; exs = a sessão, para não repetir o búlgaro se ele já está no treino */
+function progVer(e,exs){
+  if(!podeProg(e))return e;
+  const passos=passosDe(e,exs), n=Math.min(progNivel(e.nm),passos.length+1);
+  if(!n)return e;
+  const v=Object.assign({},e,{prog:n,progMax:n>passos.length});
+  if(n>passos.length){
+    v.pres=e.pres.replace(/até 20 reps lentas( por perna)?, até a falha/,'3 a 5 reps com a mochila$1');
+    v.dica=(e.dica?e.dica+' ':'')+MOCHILA; v.avanco=AVANCO;
+    if(passos[passos.length-1].troca)Object.assign(v,trocaBulg(v));
+    return v;
+  }
+  const p=passos[n-1];
+  if(p.troca)Object.assign(v,trocaBulg(v));
+  if(p.dica)v.dica=(v.dica?v.dica+' ':'')+'Versão mais difícil: '+p.dica;
+  return v;
+}
+function trocaBulg(v){
+  const b=CAT.find(x=>x.nm===BULG);
+  return {nm:BULG,pad:b.pad,alt:null,por:b.por,dica:b.dica+(/mochila/.test(v.pres)?' '+MOCHILA:''),pres:/por perna/.test(v.pres)?v.pres:v.pres.replace(/ lentas, até a falha| com a mochila/,m=>m===' com a mochila'?' com a mochila por perna':' lentas por perna, até a falha')};
+}
+function passei20(i,d){
+  const exs=PLANO.weeks[SEM].sessoes[PL_SI].exs, e=exs[i], max=passosDe(e,exs).length+1;
+  progSalva(e.nm,Math.max(0,Math.min(max,progNivel(e.nm)+d)));
+  // redesenha sem perder as séries marcadas nem a posição da tela
+  const y=window.scrollY, feitos=[...document.querySelectorAll('#player .setdot')].map(x=>x.classList.contains('on'));
+  renderPlano(); abrirSessao(SEM,PL_SI);
+  document.querySelectorAll('#player .setdot').forEach((x,k)=>{if(feitos[k])x.click();});
+  window.scrollTo({top:y});
+}
+let PL_SI=0;
+
+/* aquecimento: 2 min aquecer + 1 mobilidade + 2 mini-band (5 min); da Força para cima, sem dor de impacto, + 1 min de saltitos */
+function aquec(){
+  const r=(DIAG&&DIAG.regioes)||[], dorImpacto=['joelho','tornozelo','canelite'].some(x=>r.includes(x));
+  const impacto=PLANO.est!=='base'&&!dorImpacto&&!semSaltoReav(), saltitos=impacto;
+  return {impacto,saltitos,min:saltitos?6:5};
+}
+
+/* plano salvo no celular do aluno: respostas da avaliação + semana atual + treinos feitos.
+   O motor é determinístico, então refazer gerar() com as mesmas respostas devolve o mesmo plano */
+const CHAVE_PLANO='fc-plano';
+let SALVO=null, RESTAURANDO=false;
+function lerPlano(){try{const v=JSON.parse(localStorage.getItem(CHAVE_PLANO)||'null');if(v&&v.v===1&&v.resp)return v;}catch(_){}return null;}
+function gravarPlano(){if(!SALVO)return;try{localStorage.setItem(CHAVE_PLANO,JSON.stringify(SALVO));}catch(_){}}
+function novoSalvo(){
+  // guarda o plano pronto: se o catálogo mudar numa atualização, o plano do aluno não muda sozinho
+  SALVO={v:1,criado:Date.now(),semana:0,feitos:{},fim:false,est:PLANO.est,plano:PLANO,diag:DIAG,teto:TETO_MIN,
+    resp:Object.assign({},resp,{equip:[...resp.equip],lesoes:[...resp.lesoes],teste:Object.assign({},resp.teste)})};
+  gravarPlano();
+}
+function continuarPlano(){
+  const v=lerPlano(); if(!v)return;
+  Object.assign(resp,v.resp,{equip:new Set(v.resp.equip),lesoes:new Set(v.resp.lesoes),teste:Object.assign({},v.resp.teste)});
+  if(v.plano){PLANO=v.plano;DIAG=v.diag;TETO_MIN=v.teto||60;}
+  else{RESTAURANDO=true; try{gerar();}finally{RESTAURANDO=false;}} // plano salvo antes desta versão: remonta pelas respostas
+  SALVO=v; SEM=v.semana; renderPlano(); ir(7);
+}
+function novaAvaliacao(reav){
+  refazer();
+  if(reav){const b=document.querySelector('[data-modo="reav"]');pick(b,'modo');ir(1);}else ir(10);
+}
+function mostraSalvo(){
+  const box=document.getElementById('salvoBox'), v=lerPlano();
+  const bc=document.getElementById('btnComecar'); bc.className=v?'btn sec':'btn pri'; bc.textContent=v?'Fazer nova avaliação':'Começar avaliação';
+  if(!v){box.innerHTML='';return;}
+  box.innerHTML='<div class="diag" style="margin:18px 0 0"><h3>Você já tem um plano</h3><p>Estágio '+NOME_EST[v.est]+' · '+(v.fim?'bloco de 4 semanas concluído':'semana '+(v.semana+1)+' de 4')+'.</p>'+
+    '<div class="nav" style="margin-top:12px"><button class="btn pri" onclick="continuarPlano()">Continuar meu plano</button></div></div>';
+}
+function feitosSemana(w){const n=PLANO.weeks[w].sessoes.length;let f=0;for(let si=0;si<n;si++)if(SALVO.feitos[w+'-'+si])f++;return {f,n};}
+function terminarSessao(){
+  if(SALVO){
+    SALVO.feitos[SEM+'-'+PL_SI]=true;
+    // fechou a semana em que o aluno está: passa para a próxima; fechou a 4ª: bloco concluído
+    if(SEM===SALVO.semana){const q=feitosSemana(SEM);if(q.f>=q.n){if(SEM<PLANO.weeks.length-1)SALVO.semana++;else SALVO.fim=true;}}
+    gravarPlano(); SEM=SALVO.semana;
+  }
+  renderPlano(); ir(7);
+}
+function mudarSemana(k){if(!SALVO)return;Object.keys(SALVO.feitos).forEach(x=>{if(+x.split('-')[0]>=k)delete SALVO.feitos[x];}); // recomeça a contagem a partir da semana escolhida
+  SALVO.semana=k;SALVO.fim=false;SEM=k;gravarPlano();renderPlano();}
+function caixaSemana(){
+  if(!SALVO)return '';
+  const W=PLANO.weeks[SALVO.semana], q=feitosSemana(SALVO.semana);
+  let h='<div class="diag semana-atual"><h3>'+(SALVO.fim?'Bloco concluído':'Você está na semana '+(SALVO.semana+1)+' de 4 · '+W.fase)+'</h3>';
+  if(SALVO.fim)h+='<p>Você fez as 4 semanas. Hora do teste de subida de nível: ele diz se você sobe de estágio ou repete este subindo a carga.</p><div class="nav" style="margin-top:10px"><button class="btn pri" onclick="novaAvaliacao(true)">Fazer o teste de subida</button></div>';
+  else h+='<p>Treinos feitos nesta semana: <b>'+q.f+' de '+q.n+'</b>. Quando fizer todos, o app passa sozinho para a semana seguinte.</p>';
+  h+='<p style="font-size:13px">Seu plano fica salvo neste celular. Quando voltar, é só abrir e continuar. Está em outra semana? <span class="chips" style="display:inline-flex;gap:6px;vertical-align:middle">'+
+    PLANO.weeks.map((X,k)=>'<button class="chip" style="padding:4px 11px;font-size:12.5px'+(k===SALVO.semana&&!SALVO.fim?';border-color:var(--laranja)':'')+'" type="button" onclick="mudarSemana('+k+')">'+(k+1)+'</button>').join('')+'</span></p></div>';
+  return h;
+}
+
+function temSaltoPlano(){return PLANO.weeks[0].sessoes.some(S=>S.exs.some(e=>e.pad==='pliometria'));}
+
+/* teto de tempo: o topo da faixa que o aluno escolheu, sem contar o aquecimento (35, 45, 60 ou 90).
+   A conta é conservadora (descanso máximo, 1 min de troca entre exercícios).
+   Até 35 é uma base: descanso de 1 min e só os principais; pode passar um pouco, o aluno decide no dia */
+let TETO_MIN=60;
+function curto(){return TETO_MIN<=35;}
+function segRep(e){if(/segura 2 segundos/.test(e.dica))return 6.5;if(/3 segundos/.test(e.dica))return 4.5;if(/lentas/.test(e.pres))return 4;return 3;}
+function duracao(exs){
+  let s=0;
+  exs.forEach(e=>{
+    const lados=/por perna|por lado|cada lado/.test(e.pres)?2:1;
+    let m=e.pres.match(/(\d+) a (\d+) seg/),t;
+    if(m)t=+m[2]*lados;
+    else{m=e.pres.match(/(\d+) a (\d+) (reps|saltos)/)||e.pres.match(/()até (\d+) reps/)||e.pres.match(/()(\d+) (saltos)/);t=((m?+m[2]:10)*segRep(e)+10)*lados;}
+    s+=e.series*t+(e.series-1)*restSecs(e.desc)+60;
+  });
+  return s/60;
+}
+/* corta até caber, nesta ordem, e para assim que couber (decide pela semana Pico, vale para as 4).
+   Nunca sai agachar, dobradiça, uma perna só, panturrilha nem saltos, e o corte nunca deixa menos de 3 séries */
+function cabeNoTempo(weeks,i,tipo){
+  const pico=()=>weeks[2].sessoes[i].exs;
+  const estoura=()=>duracao(pico())>TETO_MIN;
+  const todas=f=>weeks.forEach(W=>f(W.sessoes[i]));
+  const acess=e=>e.corr||['gluteo','core','tibial'].includes(e.pad);
+  const tira=nm=>todas(S=>{S.exs=S.exs.filter(e=>e.nm!==nm);});
+  const ultimo=f=>{const l=pico().filter(f);return l.length?l[l.length-1].nm:null;};
+  // core e glúteo saem desta sessão só se outra sessão da semana ainda tiver, para a semana não ficar sem
+  const temNaSemana=pad=>weeks[2].sessoes.some((S,k)=>k!==i&&S.exs.some(e=>e.pad===pad&&!e.corr));
+  const tiraPad=(pad,soSeTiverOutra)=>{let nm;while(estoura()&&(!soSeTiverOutra||temNaSemana(pad))&&(nm=ultimo(e=>e.pad===pad&&!e.corr)))tira(nm);};
+  // 1. descanso fixo
+  if(estoura())todas(S=>S.exs.forEach(e=>{if(acess(e))e.desc='45s';else if(curto())e.desc='60s';else if(/min/.test(e.desc))e.desc='2 min';else if(e.desc==='60 a 90s')e.desc='60s';}));
+  // 2. core e glúteo, uma sessão por vez
+  tiraPad('core',true); tiraPad('gluteo',true);
+  // 3. treino de 2 dias: sessão A empurra, B puxa
+  if(estoura()&&tipo==='FULL'&&weeks[2].sessoes.length>1&&pico().some(e=>e.pad==='empurrar')&&pico().some(e=>e.pad==='puxar'))
+    {const nm=ultimo(e=>e.pad===(i%2===0?'puxar':'empurrar'));if(nm)tira(nm);}
+  // 4. só então a 4ª série sai (as sessões curtas mantêm a progressão de séries)
+  if(estoura())todas(S=>S.exs.forEach(e=>{if(e.series>3){e.series=3;e.pres=e.pres.replace(/^\d+ séries/,'3 séries');}}));
+  // 5. corretivo no máximo 2, em último caso 1
+  for(const max of [2,1]){let nm;while(estoura()&&pico().filter(e=>e.corr).length>max&&(nm=ultimo(e=>e.corr)))tira(nm);}
+  // 6. último recurso: core e glúteo mesmo que a semana fique sem
+  if(weeks[2].sessoes.length>1)tiraPad('core',false); tiraPad('gluteo',false); // 1 dia por semana: o core nunca sai (é o único treino da semana)
+  // 8. até 45 minutos que ainda não coube: descanso de 1 minuto nos principais também
+  if(TETO_MIN<=45&&estoura())todas(S=>S.exs.forEach(e=>{if(!acess(e)&&e.desc!=='45s')e.desc='60s';}));
+}
+
+/* 1.2 LAUDO pós-anamnese (o momento "uau") */
+function ondeCorretivo(){
+  if(!curto())return 'um bloco corretivo no começo dos treinos de perna';
+  return resp.dias<=2?'um exercício corretivo no começo de cada treino':'um exercício corretivo no começo dos treinos de perna e o resto do bloco corretivo no dia de braço, para os treinos caberem no seu tempo';
+}
+function fator(k,v){return '<div class="fator"><span class="fk">'+k+'</span><span class="fv">'+v+'</span></div>';}
+function montarLaudo(){
+  const c=DIAG,P=PLANO;
+  const temSalto=P.weeks[0].sessoes.some(S=>S.exs.some(e=>e.pad==='pliometria'));
+  const tempoTxt=['Nunca fez fortalecimento','Menos de 6 meses','6 meses a 2 anos','Mais de 2 anos'][+resp.tempo];
+  const nomeReg={joelho:'joelho',lombar:'lombar/coluna',tornozelo:'tornozelo/pé',canelite:'canelite',quadril:'quadril',ombro:'ombro'};
+  const corrTempoTxt={'0':'Menos de 6 meses','1':'6 meses a 2 anos','2':'Mais de 2 anos'}[resp.corrtempo];
+  const kmTxt={'0':'Até 15 km','1':'15 a 30 km','2':'30 a 50 km','3':'Mais de 50 km'}[resp.corrkm];
+  const provaTxt={nao:'Sem prova marcada',longe:'Daqui a mais de 8 semanas',perto:'Entre 4 e 8 semanas',muito:'Em menos de 4 semanas'}[resp.prova];
+  let motivo;
+  if(c.est==='base')motivo='Primeiro a gente constrói padrão de movimento, estabilidade e controle de quadril. É a fundação para receber carga e salto depois. A Base é curta, de 4 a 6 semanas, e já te leva para Força.';
+  else if(c.est==='forca')motivo='Você já tem base e agacha com segurança, então o foco agora é carga de verdade nos padrões grandes, tendão mais forte e passada mais econômica.';
+  else if(c.est==='avancada')motivo=(resp.modo==='reav'&&resp.teste.blocos==='nao'?'Você já repetiu a Potência Inicial subindo a carga e domina os saltos básicos.':'Você já completou 2 blocos de Potência Inicial sem dor e domina os saltos básicos.')+' Agora entra a versão numa perna só, com o pé de trás apoiado no banco, mantendo os exercícios pesados junto.';
+  else motivo=temSalto?'Você tem bagagem e controle, então liberamos pliometria e velocidade em volume baixo, mantendo exercícios pesados junto, para máxima transferência para correr mais rápido.':'Você tem bagagem e controle para carga alta. Neste bloco os saltos ficam de fora por causa da dor, e o foco é carga pesada nos padrões grandes. Os saltos voltam quando a dor passar.';
+
+  let h='';
+  h+='<div class="laudo-hero">';
+  h+='<div class="passo">Sua avaliação</div>';
+  h+='<span class="estagio-badge big">Estágio: '+P.nomeEst+'</span>';
+  h+='<h1 style="font-size:clamp(24px,6vw,34px);margin:.1em 0 .35em">Seu ponto de partida é o nível <span class="pc">'+P.nomeEst+'</span></h1>';
+  h+='<p class="lead">'+motivo+'</p>';
+  h+='</div>';
+
+  h+='<div class="diag"><h3>O que pesou nessa avaliação</h3><div class="fatores">';
+  if(resp.modo==='reav'){
+    h+=fator('Nível que você terminou',NOME_EST[resp.nivelant]);
+    TESTE[resp.nivelant].forEach(t=>{h+=fator(t.q,resp.teste[t.k]==='sim'?'Sim':'Ainda não');});
+    h+=fator('Já repetiu o nível subindo a carga',resp.teste.repetiu==='sim'?'Sim':'Não');
+  }else{
+  h+=fator('Tempo de fortalecimento',tempoTxt);
+  h+=fator('Tempo por dia para o fortalecimento',{35:'Até 35 minutos',45:resp.dias==1?'Até 45 minutos':'36 a 45 minutos',60:'46 a 60 minutos',90:'Mais de 60 minutos'}[resp.tempotreino]);
+  h+=fator('Agachamento com carga, com segurança',resp.carga==='sim'?'Sim':'Ainda não');
+  h+=fator('Equilíbrio 15s numa perna só',resp.apoio==='sim'?'Consegue':'Ainda não');
+  }
+  if(resp.modo!=='reav' && podePot())h+=fator('2 blocos de Potência Inicial (8 semanas) sem dor',resp.blocopot==='sim'?'Sim':'Ainda não');
+  h+=fator('Tempo de corrida',corrTempoTxt);
+  h+=fator('Volume de corrida',kmTxt+' por semana');
+  h+=fator('Prova',provaTxt);
+  const lesTxt=c.temLesao ? c.regioes.map(r=>nomeReg[r]).join(', ') : 'Nada que te limite hoje';
+  h+=fator('Dor ou lesão hoje',lesTxt);
+  h+='</div>';
+  if(resp.modo==='reav'){
+    const ant=resp.nivelant, nv=nivelReav(), topo=ant==='avancada';
+    const falta=itensFalhos(), novos=PLANO&&PLANO.variar?' Como você já repetiu esse nível, os exercícios deste bloco mudam para o treino não ficar igual.':'';
+    const av=t=>{h+='<p class="aviso" style="margin-top:14px">'+t+'</p>';};
+    const resto=listaItens(falta.filter(k=>k!=='blocos'));
+    if(topo&&falta.includes('saltos'))av('Você ainda não fechou '+listaItens(falta)+'. Por segurança, volta para a Potência Inicial: sai o búlgaro com saltos e ficam os saltos básicos até a dor passar.');
+    else if(semSaltoReav())av('Você ainda não fechou '+listaItens(falta)+', então repete o nível Potência Inicial, mas sem os saltos neste bloco, só com os exercícios pesados. Com dor nos saltos, segurança primeiro: eles voltam quando a dor passar.'+novos);
+    else if(topo&&(passouTeste()||subiuPorRepeticao()))av('Você segue na Potência Avançada, o nível mais alto. Agora é manter e subir a carga dos exercícios pesados.'+(falta.length?' Continue trabalhando '+listaItens(falta)+'.':'')+novos);
+    else if(!passouTeste()&&subiuPorRepeticao())av('Você ainda não fechou '+listaItens(falta)+', mas como já repetiu o nível '+NOME_EST[ant]+' subindo a carga, liberou o nível '+NOME_EST[nv]+'.'+(resto?' Continue trabalhando '+resto+' neste bloco.':''));
+    else if(!passouTeste())av('Você ainda não fechou '+listaItens(falta)+', então repete o nível '+NOME_EST[ant]+' subindo a carga.'+novos+' No fim do próximo bloco, faz o teste de novo.');
+    else av('Você passou no teste do nível '+NOME_EST[ant]+' e liberou o nível '+NOME_EST[nv]+'.');
+    if(c.est!==nv && !c.rebaixou && !c.corridaSegurou)av('Neste bloco você treina no nível '+NOME_EST[c.est]+'.');
+  }
+  if(c.rebaixou)h+='<p class="aviso" style="margin-top:14px">Como você marcou limitação hoje em '+c.regioesInf.map(r=>nomeReg[r]).join(', ')+', a gente desceu um degrau de propósito e colocou '+ondeCorretivo()+'. Segurança primeiro.</p>';
+  else if(c.regioesInf.length)h+='<p class="aviso" style="margin-top:14px">Como você marcou limitação hoje em '+c.regioesInf.map(r=>nomeReg[r]).join(', ')+', a gente colocou '+ondeCorretivo()+'. Segurança primeiro.</p>';
+  if(c.regioes.includes('ombro'))h+='<p class="aviso" style="margin-top:14px">Você marcou o ombro. Tiramos os exercícios acima da cabeça, a elevação lateral e o supino com barra (no lugar entra o supino com halteres). O resto do treino de braço fica. Se sentir incômodo em algum movimento, reduz a carga ou pula.</p>';
+  if(c.corridaSegurou)h+='<p class="aviso" style="margin-top:14px">Seu fortalecimento já dava para o nível '+NOME_EST[c.estAntesAjuste]+', mas como você corre há menos de 6 meses, seguramos na Força. O corpo ainda está se adaptando ao impacto da corrida, e os saltos ficam para depois.</p>';
+  if(resp.prova==='muito')h+='<p class="aviso" style="margin-top:14px">Sua prova está a menos de 4 semanas. Nada de perna pesada nos 3 dias antes dela, e faça a semana da prova como semana de Alívio.</p>';
+  else if(resp.prova==='perto')h+='<p class="aviso" style="margin-top:14px">Sua prova está entre 4 e 8 semanas. Siga o bloco normalmente, e nos 3 dias antes da prova nada de perna pesada.</p>';
+  if(resp.corrkm==='3'&&c.est!=='base')h+='<p class="aviso" style="margin-top:14px">Você corre mais de 50 km por semana. Por isso os exercícios principais de perna ficam em no máximo 3 séries'+((c.est==='potencia'||c.est==='avancada')&&!semSaltoReav()?' e os saltos com volume menor':'')+'. A corrida já cansa bastante a perna, e 3 séries pesadas bastam para manter e ganhar força.</p>';
+  if(+resp.idade>=40)h+='<p class="aviso" style="margin-top:14px">Com '+resp.idade+' anos, a progressão do seu plano sobe mais devagar e você precisa de pelo menos 48 horas entre dois treinos de perna. Idade não te limita a carga leve, só pede mais recuperação.</p>';
+  h+='<p style="font-size:13px;margin-top:14px;color:var(--tinta-2)">Perfil: '+resp.idade+' anos · '+String(resp.peso).replace('.',',')+' kg · '+String(resp.altura).replace('.',',')+' cm · IMC '+P.imc+' · '+resp.dias+'x por semana · '+[...resp.equip].map(e=>({peso:'peso do corpo',band:'elástico',halter:'halteres',barra:'academia'}[e])).join(', ')+'.</p>';
+  h+='</div>';
+
+  h+='<div class="nav"><button class="btn sec" onclick="ir(5)">Voltar</button><button class="btn pri" onclick="renderPlano();ir(7)">Ver meu treino</button></div>';
+  document.getElementById('laudo').innerHTML=h;
+}
+
+/* 1.1 + 1.3 PLANO: cada treino uma vez (séries por semana), com porquê e botão de treinar */
+function renderPlano(){
+  const c=DIAG,P=PLANO,PA=PLANO.P;
+  let h='';
+  h+='<div class="res-top"><span class="estagio-badge">Estágio: '+P.nomeEst+'</span><h1 style="font-size:26px;margin:0">Seu treino de fortalecimento</h1></div>';
+  h+=caixaSemana();
+
+  // aquecimento (mini-band SEMPRE presente)
+  const temElastico=resp.equip.has('band');
+  const A=aquec();
+  h+='<div class="aquecimento"><b>ATENÇÃO!</b> Faça sempre antes de treinar, uns '+A.min+' minutos:'+
+     '<div style="margin-top:8px"><b>1. Aquecer, 2 min:</b> '+(A.impacto?'polichinelo.':'marcha no lugar elevando o joelho, sem impacto.')+' Se você acabou de correr, pule esta parte: a corrida já aqueceu.</div>'+
+     '<div style="margin-top:6px"><b>2. Mobilidade, 1 min:</b> quadril e tornozelo.</div>'+
+     '<div style="margin-top:6px"><b>3. Ativação com mini-band, 2 min (em todo treino):</b> deslocamento lateral "caranguejo" (10 a 20 segundos, passos curtos e controlados) + agachamento sem carga (10 a 15 repetições), tudo com mini-band, duas rodadas. Ativa o glúteo médio, que ajuda a estabilizar quadril e joelho na corrida. É aquecimento, termina sem cansar.'+
+     (temElastico?'':' Ainda não tem o elástico? Vale ter, é baratinho e faz diferença de verdade. Por enquanto dá para ativar sem carga, só com o peso do corpo.')+'</div>'+
+     (A.saltitos?'<div style="margin-top:6px"><b>4. Saltitos, 1 min:</b> 2 séries de 20 segundos de pulinhos curtos na ponta do pé, como pular corda sem corda, com 20 segundos de pausa. Prepara tendão e panturrilha para o treino.</div>':'')+
+     '<div style="margin-top:8px">O fortalecimento é <b>complemento</b> da corrida, não substitui seus treinos de rua.</div></div>';
+
+  // como executar (inclui RIR)
+  h+='<div class="diag"><h3>Como executar neste estágio</h3>'+
+     '<p><b style="color:var(--laranja-d)">Exercícios principais:</b> '+repsPrincipais(PA)+' &nbsp;·&nbsp; <b style="color:var(--laranja-d)">Descanso:</b> '+PA.desc+'</p>'+
+     '<p>Panturrilha, core, glúteo e corretivo têm séries, repetições e descanso próprios, que aparecem em cada exercício. As séries e a carga sobem ao longo do bloco e caem no Alívio. '+(TETO_MIN>=90?'Quando a sessão passa de 90 minutos':'Para a sessão caber no seu tempo ('+({35:'até 35',45:'até 45',60:'até 60'}[TETO_MIN])+' minutos, fora o aquecimento)')+', o descanso e as séries de alguns exercícios ficam menores: vale sempre o que aparece em cada exercício.'+(curto()?' Com até 35 minutos o treino fica com os exercícios principais e 1 minuto de descanso. Se algum dia passar um pouco do seu tempo, você decide: faz completo ou deixa o último exercício para a próxima.':'')+'</p>'+
+     '<p>Carga '+PA.carga+'. '+(PA.salto&&temSaltoPlano()?'Pliometria com aterrissagem suave e volume baixo, qualidade acima de quantidade.':'Prioriza a técnica antes de subir carga.')+' '+textoEsforco()+'</p></div>';
+
+  // encaixe com a corrida
+  h+='<div class="diag"><h3>Como encaixar com a corrida</h3>'+
+     '<p>A corrida vem primeiro, o fortalecimento é o complemento que te deixa mais forte e mais resistente. Para um não atrapalhar o outro:</p>'+
+     '<p>· Faça a força <b style="color:var(--laranja-d)">sempre depois da corrida</b>, no mesmo dia dos treinos de corrida mais fortes. Assim você concentra o esforço e deixa os dias leves realmente leves.</p>'+
+     '<p>· <b style="color:var(--laranja-d)">Não</b> faça treino pesado de perna na véspera de um treino de corrida importante, do longão ou de uma prova. Deixe pelo menos um dia entre a perna pesada e o treino que importa.</p>'+
+     '<p>· Se as pernas ainda estiverem cansadas no dia da corrida, tira carga da força, não da corrida.</p>'+
+     (+resp.idade>=40?'<p>· Com 40 anos ou mais, deixe <b style="color:var(--laranja-d)">pelo menos 48 horas</b> entre dois treinos de perna.</p>':'')+'</div>';
+
+  // treinos: cada um aparece uma vez; o que muda de uma semana para outra são só as séries
+  const nS=P.weeks[0].sessoes.length, totalSes=nS*P.weeks.length;
+  const seq=P.weeks[0].sessoes.map(S=>S.letra).join(', ');
+  h+='<div class="diag"><h3>Seus treinos</h3>'+
+     '<p>'+(nS===1?'É 1 treino (A), de corpo todo. Faça uma vez por semana. ':'São '+nS+' treinos ('+seq+'). Faça um por dia de fortalecimento, nessa ordem, e repita a sequência. ')+'Os exercícios são os mesmos o bloco inteiro. O que muda de uma semana para a outra são as séries, que aparecem em cada exercício.</p>'+
+     '<p class="contador"><b>'+totalSes+' sessões</b> até a reavaliação ('+P.weeks.length+' semanas de '+nS+(nS===1?' treino':' treinos')+').</p>'+
+     '<div class="fases">'+P.weeks.map((W,wi)=>'<p><b>Semana '+(wi+1)+' · '+W.fase+':</b> '+W.nota+'</p>').join('')+'</div></div>';
+  P.weeks[0].sessoes.forEach((S0,si)=>{
+    const durs=P.weeks.map(W=>W.sessoes[si].dur), dMin=Math.min(...durs), dMax=Math.max(...durs);
+    h+='<div class="sessao"><div class="sessao-cab"><span class="n">'+S0.letra+'</span><span class="t">Treino '+S0.letra+'</span><span class="foco">'+S0.foco+' · ~'+(dMin===dMax?dMax:dMin+' a '+dMax)+' min + aquecimento</span></div>';
+    S0.exs.forEach((e0,ei)=>{
+      const e=progVer(e0,S0.exs);
+      h+='<div class="ex">'+icoSpan(e.pad)+'<span class="corpo"><span class="nome">'+e.nm+(e.corr?'<span class="tag-cor">corretivo</span>':'')+'</span>';
+      if(IMG[e.nm]&&e.alt&&IMG[e.alt.nm])h+='<span class="ex-img duo"><span><img src="'+IMG[e.nm]+'" alt="Execução: '+e.nm+'" loading="lazy"><small>'+e.alt.cap1+'</small></span><span><img src="'+IMG[e.alt.nm]+'" alt="Execução: '+e.alt.nm+'" loading="lazy"><small>'+e.alt.cap2+'</small></span></span>';
+      else if(IMG[e.nm])h+='<span class="ex-img"><img src="'+IMG[e.nm]+'" alt="Execução: '+e.nm+'" loading="lazy"></span>';
+      if(e.aqloc)h+='<span class="meta aqloc"><b>1ª série, aquecimento local:</b> '+textoAqloc(e)+'</span>';
+      if(e.avanco)h+='<span class="pl-avanco">'+e.avanco+'</span>';
+      h+='<span class="meta"><b>'+e.pres.replace(/^\d+ séries de /,'')+'</b><span class="desc">descanso '+e.desc+'</span></span>';
+      h+='<span class="meta series-sem">Séries: '+P.weeks.map((W,wi)=>'<span>sem '+(wi+1)+(W.fase==='Alívio'?' (alívio)':'')+': <b>'+W.sessoes[si].exs[ei].series+'</b></span>').join('')+'</span>';
+      if(e.por)h+='<span class="por">Na corrida: '+e.por+'</span>';
+      if(e.dica)h+='<span class="dica">'+e.dica+'</span>';
+      h+='</span></div>';
+    });
+    const feito=SALVO&&!SALVO.fim&&SALVO.feitos[SALVO.semana+'-'+si];
+    h+='<div class="sessao-foot">'+(feito?'<span style="margin-right:auto;align-self:center;font-size:13px;font-weight:700;color:var(--ok)">Feito nesta semana</span>':'')+'<button class="btn '+(feito?'sec':'pri')+' mini2" onclick="abrirSessao('+(SALVO?'SALVO.semana':'SEM')+','+si+')">Treinar o treino '+S0.letra+'</button></div>';
+    h+='</div>';
+  });
+
+  h+='<div class="diag"><h3>Depois das 4 semanas</h3><p>'+({base:'A Base é curta, de 4 a 6 semanas. Ao fim deste bloco, refaça a avaliação e escolha "Estou terminando um bloco". Para subir para Força: agachar com carga com boa técnica, ficar 15 segundos numa perna só, fazer 20 elevações de panturrilha numa perna só (em cada perna) e estar sem dor.',forca:'Ao fim do bloco, refaça a avaliação e escolha "Estou terminando um bloco". Para liberar a Potência Inicial: agachar com carga moderada a alta com boa técnica, 25 elevações de panturrilha numa perna só (em cada perna), equilíbrio firme e sem dor. Se ainda não bater, repete a Força subindo a carga.',potencia:'Repita o bloco subindo a carga dos exercícios pesados. Depois de 2 blocos completos (8 semanas) sem dor, refaça a avaliação, escolha "Estou terminando um bloco" e faça o teste: passando, libera a Potência Avançada, com o búlgaro com saltos. As 25 elevações de panturrilha numa perna só (em cada perna) continuam sendo o seu teste de controle.',avancada:'Repita o bloco subindo a carga dos exercícios pesados. Refaça a avaliação a cada 4 semanas, escolhendo "Estou terminando um bloco". Se aparecer dor no joelho, na canela ou no tornozelo, volta para a Potência Inicial: sai o búlgaro com saltos e ficam os saltos básicos até a dor passar.'}[P.est])+' Progressão é degrau por degrau, não pressa.</p></div>';
+
+  document.getElementById('plano').innerHTML=h;
+}
+
+/* 1.1 TELA DE SESSÃO (player): faz o treino do dia, com timer e progresso */
+function abrirSessao(wi,si){
+  const W=PLANO.weeks[wi], S=W.sessoes[si];
+  let h='';
+  h+='<div class="pl-top"><button class="btn sec mini2" onclick="ir(7)">‹ Plano</button>'+
+     '<div class="pl-title">Treino '+S.letra+' · Semana '+(wi+1)+'<span class="pl-foco">'+S.foco+' · '+W.fase+' · ~'+S.dur+' min + aquecimento</span></div></div>';
+  SEM=wi;
+  h+='<div class="pl-sem"><span>Em que semana do bloco você está?</span><div class="chips">'+PLANO.weeks.map((X,k)=>'<button class="chip'+(k===wi?' sel':'')+'" type="button" onclick="abrirSessao('+k+','+si+')">'+(k+1)+(X.fase==='Alívio'?' (alívio)':'')+'</button>').join('')+'</div></div>';
+  h+='<div class="pl-prog"><div class="pl-prog-bar"><i id="plBar"></i></div><span id="plCount">0/'+S.exs.length+' feitos</span></div>';
+  const A=aquec();
+  h+='<div class="pl-warm">Aquecimento primeiro, uns '+A.min+' min: 2 min de '+(A.impacto?'polichinelo':'marcha no lugar')+', 1 min de mobilidade, 2 min de mini-band (caranguejo e agachamento)'+(A.saltitos?' e 2 séries de 20 segundos de saltitos':'')+'. Correu antes? Pule a primeira parte. Só então comece. '+esforcoSessao(S)+'</div>';
+
+  PL_SI=si;
+  S.exs.forEach((e0,i)=>{
+    const e=progVer(e0,S.exs);
+    h+='<div class="pl-ex" id="plex'+i+'" data-done="0">';
+    // SLOT DO GIF (placeholder): trocar por <img>/<video> quando o pacote for licenciado
+    if(IMG[e.nm]&&e.alt&&IMG[e.alt.nm])h+='<div class="media foto" data-pad="'+e.pad+'"><div class="duo"><span><img src="'+IMG[e.nm]+'" alt="Execução: '+e.nm+'"><small>'+e.alt.cap1+'</small></span><span><img src="'+IMG[e.alt.nm]+'" alt="Execução: '+e.alt.nm+'"><small>'+e.alt.cap2+'</small></span></div><span class="media-cap">Demonstração em vídeo na versão final</span></div>';
+    else if(IMG[e.nm])h+='<div class="media foto" data-pad="'+e.pad+'"><img src="'+IMG[e.nm]+'" alt="Execução: '+e.nm+'"><span class="media-cap">Demonstração em vídeo na versão final</span></div>';
+    else h+='<div class="media" data-pad="'+e.pad+'"><span class="media-ico">'+svgPath(e.pad)+'</span><span class="media-cap">Demonstração em vídeo na versão final</span></div>';
+    h+='<div class="pl-body">';
+    h+='<div class="pl-nome">'+(i+1)+'. '+e.nm+(e.corr?'<span class="tag-cor">corretivo</span>':'')+'</div>';
+    if(e.por)h+='<div class="por">Na corrida: '+e.por+'</div>';
+    if(e.aqloc)h+='<div class="meta aqloc" style="margin-top:8px"><b>1ª série, aquecimento local:</b> '+textoAqloc(e)+'</div>';
+    if(e.avanco)h+='<div class="pl-avanco">'+e.avanco+'</div>';
+    h+='<div class="pl-pres"><b>'+e.pres+'</b> · descanso '+e.desc+'</div>';
+    if(e.dica)h+='<div class="dica">'+e.dica+'</div>';
+    h+='<div class="sets">';
+    for(let s=0;s<e.series;s++)h+='<button class="setdot" type="button" onclick="toggleSet(this,'+i+','+S.exs.length+')">'+(s+1)+'</button>';
+    h+='</div>';
+    h+='<button class="btn sec descbtn" type="button" onclick="descansar('+restSecs(e.desc)+')">Descansar '+fmtTempo(restSecs(e.desc))+'</button>';
+    if(podeProg(e0)){
+      if(!e.progMax)h+='<button class="btn sec descbtn" type="button" onclick="passei20('+i+',1)">Passei de 20 repetições neste exercício</button>';
+      if(e.prog)h+='<button class="btn sec descbtn" type="button" style="font-size:13px;padding:8px" onclick="passei20('+i+',-1)">Voltar para a versão anterior</button>';
+    }
+    h+='</div></div>';
+  });
+
+  h+='<div class="pl-fim"><button class="btn pri" onclick="terminarSessao()">Terminei a sessão</button></div>';
+  document.getElementById('player').innerHTML=h;
+  ir(8);
+}
+
+/* marca/desmarca uma série; exercício "feito" quando todas as séries estão marcadas */
+function toggleSet(btn,exi,total){
+  btn.classList.toggle('on');
+  const card=document.getElementById('plex'+exi);
+  const dots=card.querySelectorAll('.setdot');
+  const done=[...dots].every(d=>d.classList.contains('on'));
+  card.dataset.done=done?'1':'0';
+  card.classList.toggle('feito',done);
+  const feitos=document.querySelectorAll('.pl-ex[data-done="1"]').length;
+  document.getElementById('plBar').style.width=(feitos/total*100)+'%';
+  document.getElementById('plCount').textContent=feitos+'/'+total+' feitos';
+}
+
+/* timer de descanso */
+function descansar(secs){
+  clearInterval(TIMER);
+  const ov=document.getElementById('rest'), num=document.getElementById('restNum');
+  const mmss=t=>t>=60?Math.floor(t/60)+':'+String(t%60).padStart(2,'0'):String(t); // 120 aparece 2:00
+  let left=secs; num.textContent=mmss(left); ov.classList.add('on');
+  TIMER=setInterval(()=>{
+    left--; num.textContent=mmss(left);
+    if(left<=0){clearInterval(TIMER);fecharRest();}
+  },1000);
+}
+function fecharRest(){clearInterval(TIMER);document.getElementById('rest').classList.remove('on');}
+
+mostraSalvo();
+
+/* tema */
+document.getElementById('btnTema').onclick=()=>{
+  const r=document.documentElement;
+  const atual=r.getAttribute('data-theme')|| (matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  r.setAttribute('data-theme',atual==='dark'?'light':'dark');
+};
+</script>
+
+</body></html>
