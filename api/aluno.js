@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
       plano: ativo ? tipo : null,
       ultimo_plano: aluno ? tipo : null,
       vence_em: venceEm,
-      bonus: !!bonus || (!!aluno && aluno.plano === 'anual'),
+      bonus: !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined),
     }));
   } catch (err) {
     res.statusCode = 502;

@@ -31,8 +31,12 @@ function novaValidade(ant, plano, transacao, agora, recuperador) {
   const vistos = (ant && ant.trans) || [];
   const repetido = !!ant && (transacao ? vistos.includes(transacao) : (ant.pago_em && agora - ant.pago_em < DIA));
   if (repetido && ant.vence_em) return { vence_em: ant.vence_em, pago_em: ant.pago_em, trans: vistos };
-  if (recuperador && ant && ant.vence_em && ant.vence_em > agora) {
-    return { vence_em: ant.vence_em, pago_em: agora, trans: [...vistos, transacao].filter(Boolean).slice(-20) };
+  if (recuperador) {
+    // Paulo 30/10: no recuperador o aluno costuma parar no meio; cada parcela paga
+    // libera so 1 mes (nunca o ano inteiro de uma vez)
+    const base = ant && ant.vence_em && ant.vence_em > agora ? ant.vence_em : agora;
+    return { vence_em: base + PERIODO.mensal, pago_em: agora, trans: [...vistos, transacao].filter(Boolean).slice(-20),
+      rec_pagas: ((ant && ant.rec_pagas) || 0) + 1 };
   }
   const base = ant && ant.vence_em && ant.vence_em > agora ? ant.vence_em : agora;
   return { vence_em: base + PERIODO[plano], pago_em: agora, trans: [...vistos, transacao].filter(Boolean).slice(-20) };
@@ -156,8 +160,10 @@ module.exports = async (req, res) => {
     const val = novaValidade(ant, plano, transacao, atualizado.pago_em, ehRecuperador(body));
     const ttl = Math.max(TTL_ACESSO, Math.ceil((val.vence_em - Date.now()) / 1000) + 60 * 60 * 24 * 30);
     await redisSet(alunoKey(email), { email, plano, ...val }, ttl);
-    // anual libera os bonus para sempre (sem prazo); renovacoes nao mexem na data original
-    if (plano === 'anual' && !(await redisGet(bonusKey(email)))) {
+    // anual libera os bonus para sempre (sem prazo); renovacoes nao mexem na data original.
+    // Pelo recuperador, so depois das 12 parcelas pagas.
+    const anualQuitado = plano === 'anual' && (!ehRecuperador(body) || (val.rec_pagas || 0) >= 12);
+    if (anualQuitado && !(await redisGet(bonusKey(email)))) {
       await redisSet(bonusKey(email), { email, desde: atualizado.pago_em });
     }
     res.statusCode = 200;
