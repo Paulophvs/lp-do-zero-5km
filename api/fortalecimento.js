@@ -1,7 +1,9 @@
 // Guarda e devolve o plano do fortalecimento do aluno (avaliacao, plano pronto,
 // semana atual e treinos feitos), para ele continuar em qualquer aparelho.
 // So para quem comprou o anual (o fortalecimento e bonus vitalicio do anual).
-const { redisGet, redisSet, alunoKey, bonusKey, fortalecimentoKey, normalizeEmail } = require('./_redis');
+// 30/10: o e-mail vem da sessao do login (cabecalho Authorization), nao do pedido.
+const { redisGet, redisSet, alunoKey, bonusKey, fortalecimentoKey } = require('./_redis');
+const { emailDaSessao } = require('./_sessao');
 
 const TTL = 60 * 60 * 24 * 400;
 const MAX_BYTES = 200 * 1024; // plano salvo tem ~20-60 KB
@@ -21,13 +23,12 @@ module.exports = async (req, res) => {
     try { body = JSON.parse(body); } catch { body = {}; }
   }
   body = body || {};
-  const email = normalizeEmail(req.method === 'GET' ? req.query?.email : body.email);
-  if (!email || !email.includes('@')) {
-    res.statusCode = 400;
-    return res.end(JSON.stringify({ ok: false, error: 'email invalido' }));
-  }
-
   try {
+    const email = await emailDaSessao(req);
+    if (!email) {
+      res.statusCode = 401;
+      return res.end(JSON.stringify({ ok: false, error: 'sem login' }));
+    }
     if (!(await anual(email))) {
       res.statusCode = 403;
       return res.end(JSON.stringify({ ok: false, error: 'sem plano anual' }));

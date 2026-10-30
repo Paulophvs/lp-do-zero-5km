@@ -36,6 +36,17 @@ async function redisGet(key) {
   }
 }
 
+async function redisDel(key) {
+  return call(['del', key]);
+}
+
+// contador com prazo (limite de tentativas de senha): devolve o valor novo
+async function redisIncr(key, ttlSeconds) {
+  const n = await call(['incr', key]);
+  if (n === 1 && ttlSeconds) await call(['expire', key, String(ttlSeconds)]);
+  return n;
+}
+
 function normalizeEmail(e) {
   return String(e || '').trim().toLowerCase();
 }
@@ -61,4 +72,4 @@ function fortalecimentoKey(email) {
   return 'fc:' + normalizeEmail(email);
 }
 
-module.exports = { redisSet, redisGet, normalizeEmail, pedidoKey, alunoKey, bonusKey, fortalecimentoKey };
+module.exports = { redisSet, redisGet, redisDel, redisIncr, normalizeEmail, pedidoKey, alunoKey, bonusKey, fortalecimentoKey };

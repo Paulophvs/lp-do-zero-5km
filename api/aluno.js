@@ -1,6 +1,8 @@
 // Diz se um e-mail tem acesso a area de membros (/pacepodio/treinos): plano
 // ativo e se tem os bonus vitalicios do anual. So devolve plano e status, nunca nome nem WhatsApp.
-const { redisGet, alunoKey, bonusKey, normalizeEmail } = require('./_redis');
+// 30/10: o e-mail vem da sessao do login (cabecalho Authorization), nao da URL.
+const { redisGet, alunoKey, bonusKey } = require('./_redis');
+const { emailDaSessao } = require('./_sessao');
 
 const DIA = 24 * 60 * 60 * 1000;
 // validade conta do ultimo pagamento aprovado (cada renovacao da Hotmart manda
@@ -16,13 +18,12 @@ module.exports = async (req, res) => {
     return res.end(JSON.stringify({ ok: false, error: 'metodo' }));
   }
 
-  const email = normalizeEmail(req.query?.email);
-  if (!email || !email.includes('@')) {
-    res.statusCode = 400;
-    return res.end(JSON.stringify({ ok: false, error: 'email invalido' }));
-  }
-
   try {
+    const email = await emailDaSessao(req);
+    if (!email) {
+      res.statusCode = 401;
+      return res.end(JSON.stringify({ ok: false, error: 'sem login' }));
+    }
     const [aluno, bonus] = await Promise.all([redisGet(alunoKey(email)), redisGet(bonusKey(email))]);
     if (!aluno && !bonus) {
       res.statusCode = 404;
@@ -36,6 +37,7 @@ module.exports = async (req, res) => {
     res.statusCode = 200;
     return res.end(JSON.stringify({
       ok: true,
+      email,
       plano: ativo ? tipo : null,
       ultimo_plano: aluno ? tipo : null,
       vence_em: venceEm,

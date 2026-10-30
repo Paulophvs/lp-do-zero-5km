@@ -1346,16 +1346,17 @@ document.getElementById('btnTema').onclick=()=>{
 (function(){
   var aluno = null;
   try { aluno = JSON.parse(localStorage.getItem('pp-aluno') || 'null'); } catch(_){}
-  if (!aluno || !aluno.email || !aluno.bonus){ location.replace('/pacepodio/treinos/'); return; } // bonus vitalicio do anual
-  var email = aluno.email;
+  // 30/10: login com senha; as chamadas levam o token da sessao, a API sabe o e-mail por ele
+  if (!aluno || !aluno.token || !aluno.bonus){ location.replace('/pacepodio/treinos/'); return; } // bonus vitalicio do anual
+  var AUTH = 'Bearer ' + aluno.token;
 
   // 1) toda gravacao local tambem vai para o banco (espera 1,5 s para juntar cliques seguidos)
   var gravarLocal = gravarPlano, timer = null;
   function enviar(){
     timer = null;
     if (!SALVO) return;
-    fetch('/api/fortalecimento', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email, salvo: SALVO }), keepalive: true }).catch(function(){});
+    fetch('/api/fortalecimento', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: AUTH },
+      body: JSON.stringify({ salvo: SALVO }), keepalive: true }).catch(function(){});
   }
   gravarPlano = function(){
     if (SALVO) SALVO.atualizado = Date.now();
@@ -1365,9 +1366,9 @@ document.getElementById('btnTema').onclick=()=>{
   addEventListener('pagehide', function(){ if (timer){ clearTimeout(timer); enviar(); } });
 
   // 2) plano do banco: se for mais novo que o do aparelho (ou o aparelho nao tem), usa o do banco
-  fetch('/api/fortalecimento?email=' + encodeURIComponent(email), { cache: 'no-store' })
+  fetch('/api/fortalecimento', { cache: 'no-store', headers: { Authorization: AUTH } })
     .then(function(r){
-      if (r.status === 403){ location.replace('/pacepodio/treinos/'); return null; }
+      if (r.status === 401 || r.status === 403){ location.replace('/pacepodio/treinos/'); return null; }
       return r.ok ? r.json() : null;
     })
     .then(function(j){

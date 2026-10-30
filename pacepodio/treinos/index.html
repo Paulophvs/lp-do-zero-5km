@@ -47,6 +47,14 @@
   .entrar input{width:100%;padding:14px;border-radius:12px;border:1.5px solid var(--linha);background:var(--carvao);color:var(--texto);font:inherit;font-size:16px}
   .entrar input:focus{outline:2px solid var(--laranja);border-color:var(--laranja)}
   .entrar .btn{margin-top:16px}
+  .entrar .modo{display:none}
+  .entrar .modo.on{display:block}
+  .campo-senha{position:relative}
+  .campo-senha input{padding-right:64px}
+  .ver-senha{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--texto-fraco);font:inherit;font-size:13px;font-weight:700;padding:8px;cursor:pointer}
+  .entrar-links{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-top:18px;font-size:14px}
+  .entrar-links a{color:var(--texto);font-weight:600}
+  .aviso-enviado p{color:var(--texto);line-height:1.5;margin:14px 0}
   .entrar-erro{min-height:20px;margin-top:10px;font-size:13.5px;font-weight:600;color:#ff8a65}
   /* cadeado do mensal: o card leva para o checkout do anual */
   .card.travado{filter:saturate(.35)}
@@ -68,14 +76,56 @@
   <img class="logo" src="/pacepodio/logo-pace-podio.png" alt="Pace Pódio">
 
   <section class="entrar">
-    <h1 class="saudacao">Área do aluno</h1>
-    <p class="saudacao-sub">Entre com o mesmo e-mail que você usou na compra.</p>
-    <form id="form-entrar" novalidate>
+    <h1 class="saudacao" id="entrar-titulo">Área do aluno</h1>
+    <p class="saudacao-sub" id="entrar-sub">Entre com o e-mail da compra e a sua senha.</p>
+
+    <!-- formularios separados de proposito: o navegador e o celular so oferecem
+         "salvar senha" e preenchem sozinhos com username + current/new-password -->
+    <form id="form-entrar" class="modo" data-modo="entrar" novalidate>
       <label for="email-aluno">Seu e-mail</label>
-      <input id="email-aluno" type="email" inputmode="email" autocomplete="email" placeholder="seu@email.com">
-      <button class="btn" type="submit" id="btn-entrar">ENTRAR</button>
-      <div class="entrar-erro" id="erro-entrar"></div>
+      <input id="email-aluno" name="email" type="email" inputmode="email" autocomplete="username" placeholder="seu@email.com">
+      <label for="senha-aluno">Sua senha</label>
+      <div class="campo-senha"><input id="senha-aluno" name="password" type="password" autocomplete="current-password" placeholder="sua senha"><button type="button" class="ver-senha" aria-label="Mostrar senha">ver</button></div>
+      <button class="btn" type="submit">ENTRAR</button>
+      <div class="entrar-erro"></div>
+      <p class="entrar-links"><a href="#" data-ir="criar">Primeiro acesso? Crie sua senha</a><a href="#" data-ir="esqueci">Esqueci minha senha</a></p>
     </form>
+
+    <form id="form-criar" class="modo" data-modo="criar" novalidate>
+      <label for="email-criar">E-mail da compra</label>
+      <input id="email-criar" name="email" type="email" inputmode="email" autocomplete="username" placeholder="seu@email.com">
+      <label for="senha-criar">Crie uma senha</label>
+      <div class="campo-senha"><input id="senha-criar" name="new-password" type="password" autocomplete="new-password" placeholder="mínimo de 6 caracteres"><button type="button" class="ver-senha" aria-label="Mostrar senha">ver</button></div>
+      <label for="senha-criar2">Repita a senha</label>
+      <input id="senha-criar2" type="password" autocomplete="new-password" placeholder="a mesma senha">
+      <button class="btn" type="submit">CRIAR SENHA E ENTRAR</button>
+      <div class="entrar-erro"></div>
+      <p class="entrar-links"><a href="#" data-ir="entrar">Já tenho senha</a></p>
+    </form>
+
+    <form id="form-esqueci" class="modo" data-modo="esqueci" novalidate>
+      <label for="email-esqueci">E-mail da compra</label>
+      <input id="email-esqueci" name="email" type="email" inputmode="email" autocomplete="username" placeholder="seu@email.com">
+      <button class="btn" type="submit">ENVIAR LINK</button>
+      <div class="entrar-erro"></div>
+      <p class="entrar-links"><a href="#" data-ir="entrar">Voltar</a></p>
+    </form>
+
+    <form id="form-redefinir" class="modo" data-modo="redefinir" novalidate>
+      <input id="email-redefinir" name="email" type="email" autocomplete="username" hidden>
+      <label for="senha-redefinir">Nova senha</label>
+      <div class="campo-senha"><input id="senha-redefinir" name="new-password" type="password" autocomplete="new-password" placeholder="mínimo de 6 caracteres"><button type="button" class="ver-senha" aria-label="Mostrar senha">ver</button></div>
+      <label for="senha-redefinir2">Repita a senha</label>
+      <input id="senha-redefinir2" type="password" autocomplete="new-password" placeholder="a mesma senha">
+      <button class="btn" type="submit">SALVAR SENHA E ENTRAR</button>
+      <div class="entrar-erro"></div>
+    </form>
+
+    <div class="modo aviso-enviado" data-modo="enviado">
+      <p>Se esse e-mail tiver uma compra, o link chega em instantes. Ele vale por 1 hora.</p>
+      <p>Não chegou? Olhe a caixa de spam e a aba Promoções.</p>
+      <p class="entrar-links"><a href="#" data-ir="entrar">Voltar para entrar</a></p>
+    </div>
   </section>
 
   <div class="area">
@@ -125,10 +175,10 @@
   <p class="rodape-treinos">PH Corridas · Pace Pódio</p>
 </div>
 <script>
-/* Area de membros: entra com o e-mail da compra (confere em /api/aluno, que
-   so existe depois do aviso de pagamento da Hotmart). Quem comprou o anual tem
-   os bonus para sempre; mensal ve os bonus com cadeado (checkout do anual);
-   assinatura vencida trava so o card do Pace Podio (RENOVAR). */
+/* Area de membros: login com e-mail e senha (30/10). A sessao e um token que
+   fica no aparelho; /api/aluno devolve o plano so com esse token. Quem comprou o
+   anual tem os bonus para sempre; mensal ve os bonus com cadeado (checkout do
+   anual); assinatura vencida trava so o card do Pace Podio (RENOVAR). */
 var CHAVE_ALUNO = 'pp-aluno';
 var CHECKOUT_ANUAL = 'https://pay.hotmart.com/H107169811Q?off=b4d6ajy8&checkoutMode=10';
 var CADEADO = '<span class="cadeado" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>';
@@ -197,38 +247,170 @@ function montarArea(aluno){
   liberarGrupo(aluno.grupo);
 }
 
-function consultar(email, aoTerminar){
-  fetch('/api/aluno?email=' + encodeURIComponent(email), { cache: 'no-store' })
-    .then(function(r){ return r.json().then(function(j){ return { status: r.status, j: j }; }); })
-    .then(function(x){ aoTerminar(x.status === 200 && x.j.ok ? { email: email, plano: x.j.plano, bonus: !!x.j.bonus, vence: x.j.vence_em || null, ultimo: x.j.ultimo_plano || null, grupo: x.j.grupo || null } : null, x.status); })
-    .catch(function(){ aoTerminar(null, 0); });
+// sessao do login: o token vai no cabecalho; a API descobre o e-mail por ele
+function api(caminho, opcoes){
+  var a = lerAluno() || {}, o = opcoes || {};
+  o.cache = 'no-store';
+  o.headers = o.headers || {};
+  if (a.token) o.headers.Authorization = 'Bearer ' + a.token;
+  return fetch(caminho, o).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return { status: r.status, j: j }; }); });
+}
+
+function conta(dados){
+  return api('/api/conta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
+}
+
+function consultar(token, aoTerminar){
+  api('/api/aluno').then(function(x){
+    var j = x.j;
+    aoTerminar(x.status === 200 && j.ok ? { email: j.email, token: token, plano: j.plano, bonus: !!j.bonus, vence: j.vence_em || null, ultimo: j.ultimo_plano || null, grupo: j.grupo || null } : null, x.status);
+  }).catch(function(){ aoTerminar(null, 0); });
+}
+
+// ---- telas de entrar / criar senha / esqueci / redefinir ----
+var EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+var TEXTOS = {
+  entrar: ['Área do aluno', 'Entre com o e-mail da compra e a sua senha.'],
+  criar: ['Crie sua senha', 'Use o mesmo e-mail da compra na Hotmart. Você só faz isso uma vez.'],
+  esqueci: ['Esqueci minha senha', 'Digite o e-mail da compra. Vamos mandar um link para você criar uma senha nova.'],
+  redefinir: ['Nova senha', 'Crie a sua senha nova.'],
+  enviado: ['Confira seu e-mail', '']
+};
+function irPara(modo, email){
+  var ms = document.querySelectorAll('.entrar .modo');
+  for (var i = 0; i < ms.length; i++) ms[i].classList.toggle('on', ms[i].getAttribute('data-modo') === modo);
+  document.getElementById('entrar-titulo').textContent = TEXTOS[modo][0];
+  document.getElementById('entrar-sub').textContent = TEXTOS[modo][1];
+  var f = document.querySelector('.modo.on');
+  if (email && f){ var e = f.querySelector('input[type=email]'); if (e) e.value = email; }
+  var erros = document.querySelectorAll('.entrar-erro');
+  for (var k = 0; k < erros.length; k++) erros[k].textContent = '';
+}
+function emailAtual(){
+  var e = document.querySelector('.modo.on input[type=email]');
+  return e ? e.value.trim().toLowerCase() : '';
+}
+document.querySelector('.entrar').addEventListener('click', function(ev){
+  var ir = ev.target.closest('[data-ir]');
+  if (ir){ ev.preventDefault(); irPara(ir.getAttribute('data-ir'), emailAtual()); return; }
+  var ver = ev.target.closest('.ver-senha');
+  if (ver){
+    var inp = ver.parentNode.querySelector('input');
+    var mostrar = inp.type === 'password';
+    inp.type = mostrar ? 'text' : 'password';
+    ver.textContent = mostrar ? 'ocultar' : 'ver';
+  }
+});
+
+function ocupado(form, sim, rotulo){
+  var b = form.querySelector('.btn');
+  if (!b.getAttribute('data-txt')) b.setAttribute('data-txt', b.textContent);
+  b.disabled = sim; b.textContent = sim ? rotulo : b.getAttribute('data-txt');
+}
+function erro(form, msg){ form.querySelector('.entrar-erro').textContent = msg; }
+var FALHA = 'Não conseguimos conferir agora. Tente de novo em instantes.';
+var SEM_COMPRA = 'Não achamos compra com esse e-mail. Use o mesmo e-mail da Hotmart. Se acabou de pagar, espere 1 minuto e tente de novo.';
+
+// login deu certo: guarda o token, deixa o navegador oferecer "salvar senha" e abre a area
+function logado(token, form){
+  gravarAluno({ token: token });
+  consultar(token, function(aluno){
+    if (!aluno){ ocupado(form, false); erro(form, FALHA); return; }
+    gravarAluno(aluno);
+    if (location.search) history.replaceState(null, '', location.pathname);
+    montarArea(aluno);
+  });
+}
+
+function senhasOk(form, s1, s2){
+  if (s1.length < 6){ erro(form, 'A senha precisa ter pelo menos 6 caracteres.'); return false; }
+  if (s1 !== s2){ erro(form, 'As duas senhas não estão iguais.'); return false; }
+  return true;
+}
+
+function pedirLink(form, email, primeiro){
+  conta({ acao: 'esqueci', email: email }).then(function(x){
+    ocupado(form, false);
+    if (x.status === 200){ irPara('enviado'); if (primeiro) document.getElementById('entrar-sub').textContent = 'Como a sua compra não é recente, por segurança a senha é criada pelo link que mandamos no seu e-mail.'; return; }
+    erro(form, x.status === 429 ? 'Você já pediu vários links. Espere alguns minutos e confira o e-mail, inclusive o spam.' : FALHA);
+  }).catch(function(){ ocupado(form, false); erro(form, FALHA); });
 }
 
 document.getElementById('form-entrar').addEventListener('submit', function(ev){
   ev.preventDefault();
-  var email = document.getElementById('email-aluno').value.trim().toLowerCase();
-  var erro = document.getElementById('erro-entrar'), btn = document.getElementById('btn-entrar');
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ erro.textContent = 'Digite um e-mail válido.'; return; }
-  erro.textContent = ''; btn.disabled = true; btn.textContent = 'CONFERINDO...';
-  consultar(email, function(aluno, status){
-    btn.disabled = false; btn.textContent = 'ENTRAR';
-    if (aluno){ gravarAluno(aluno); montarArea(aluno); return; }
-    erro.textContent = status === 404
-      ? 'Não achamos compra com esse e-mail. Use o mesmo e-mail da Hotmart. Se acabou de pagar, espere 1 minuto e tente de novo.'
-      : 'Não conseguimos conferir agora. Tente de novo em instantes.';
-  });
+  var form = this, email = document.getElementById('email-aluno').value.trim().toLowerCase(), senha = document.getElementById('senha-aluno').value;
+  if (!EMAIL_OK.test(email)){ erro(form, 'Digite um e-mail válido.'); return; }
+  if (!senha){ erro(form, 'Digite a sua senha.'); return; }
+  erro(form, ''); ocupado(form, true, 'CONFERINDO...');
+  conta({ acao: 'entrar', email: email, senha: senha }).then(function(x){
+    if (x.status === 200) return logado(x.j.token, form);
+    ocupado(form, false);
+    if (x.status === 409){ // ainda nao criou senha
+      if (x.j.cadastro_direto){ irPara('criar', email); erro(document.getElementById('form-criar'), 'Você ainda não criou a sua senha. Crie agora.'); }
+      else { ocupado(form, true, 'ENVIANDO...'); pedirLink(form, email, true); }
+      return;
+    }
+    erro(form, x.status === 401 ? 'Senha errada. Confira ou clique em "Esqueci minha senha".'
+      : x.status === 404 ? SEM_COMPRA
+      : x.status === 429 ? 'Muitas tentativas. Espere 15 minutos ou clique em "Esqueci minha senha".' : FALHA);
+  }).catch(function(){ ocupado(form, false); erro(form, FALHA); });
 });
 
-function sair(){ try { localStorage.removeItem(CHAVE_ALUNO); } catch(e){} location.reload(); }
+document.getElementById('form-criar').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var form = this, email = document.getElementById('email-criar').value.trim().toLowerCase();
+  var s1 = document.getElementById('senha-criar').value, s2 = document.getElementById('senha-criar2').value;
+  if (!EMAIL_OK.test(email)){ erro(form, 'Digite um e-mail válido.'); return; }
+  if (!senhasOk(form, s1, s2)) return;
+  erro(form, ''); ocupado(form, true, 'CRIANDO...');
+  conta({ acao: 'cadastrar', email: email, senha: s1 }).then(function(x){
+    if (x.status === 200) return logado(x.j.token, form);
+    if (x.status === 403){ ocupado(form, true, 'ENVIANDO...'); pedirLink(form, email, true); return; }
+    ocupado(form, false);
+    if (x.status === 409){ irPara('entrar', email); erro(document.getElementById('form-entrar'), 'Esse e-mail já tem senha. Entre com ela ou clique em "Esqueci minha senha".'); return; }
+    erro(form, x.status === 404 ? SEM_COMPRA : FALHA);
+  }).catch(function(){ ocupado(form, false); erro(form, FALHA); });
+});
+
+document.getElementById('form-esqueci').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var form = this, email = document.getElementById('email-esqueci').value.trim().toLowerCase();
+  if (!EMAIL_OK.test(email)){ erro(form, 'Digite um e-mail válido.'); return; }
+  erro(form, ''); ocupado(form, true, 'ENVIANDO...');
+  pedirLink(form, email, false);
+});
+
+document.getElementById('form-redefinir').addEventListener('submit', function(ev){
+  ev.preventDefault();
+  var form = this, s1 = document.getElementById('senha-redefinir').value, s2 = document.getElementById('senha-redefinir2').value;
+  if (!senhasOk(form, s1, s2)) return;
+  erro(form, ''); ocupado(form, true, 'SALVANDO...');
+  var token = new URLSearchParams(location.search).get('redefinir');
+  conta({ acao: 'redefinir', token: token, senha: s1 }).then(function(x){
+    if (x.status === 200){ document.getElementById('email-redefinir').value = x.j.email; return logado(x.j.token, form); }
+    ocupado(form, false);
+    if (x.status === 410){ irPara('esqueci'); erro(document.getElementById('form-esqueci'), 'Esse link venceu ou já foi usado. Peça um novo.'); return; }
+    erro(form, FALHA);
+  }).catch(function(){ ocupado(form, false); erro(form, FALHA); });
+});
+
+function sair(){
+  var a = lerAluno();
+  if (a && a.token) conta({ acao: 'sair' }).catch(function(){});
+  try { localStorage.removeItem(CHAVE_ALUNO); } catch(e){}
+  setTimeout(function(){ location.href = location.pathname; }, 150);
+}
 
 (function iniciar(){
+  if (new URLSearchParams(location.search).get('redefinir')){ irPara('redefinir'); return; }
   var a = lerAluno();
-  if (!a || !a.email) return;
+  // sessao antiga, de antes do login com senha (so tinha o e-mail): pede para entrar
+  if (!a || !a.token){ try { localStorage.removeItem(CHAVE_ALUNO); } catch(e){} irPara('entrar', a && a.email); return; }
   montarArea(a);
   // confere de novo em segundo plano: plano pode ter mudado (ex: mensal virou anual)
-  consultar(a.email, function(novo, status){
+  consultar(a.token, function(novo, status){
     if (novo && (novo.plano !== a.plano || novo.bonus !== a.bonus || novo.vence !== a.vence || novo.grupo !== a.grupo)){ gravarAluno(novo); location.reload(); }
-    else if (!novo && status === 404){ sair(); }
+    else if (!novo && (status === 401 || status === 404)){ try { localStorage.removeItem(CHAVE_ALUNO); } catch(e){} location.href = location.pathname; }
   });
 })();
 </script>
