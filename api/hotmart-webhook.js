@@ -90,14 +90,14 @@ function achaPlano(body) {
 }
 
 // 'anual' so quando a Hotmart diz que e anual (nome do plano ou codigo da oferta
-// anual 3ww7ii10); senao null, e quem chama decide o que usar
+// anual b4d6ajy8, cobranca unica desde 30/10; 3ww7ii10 e o anual antigo recorrente); senao null, e quem chama decide o que usar
 function achaPlanoHotmart(body) {
   const txt = JSON.stringify([
     body?.data?.subscription?.plan?.name,
     body?.data?.purchase?.offer?.code,
     body?.data?.plan?.name,
   ]).toLowerCase();
-  if (txt.includes('anual') || txt.includes('annual') || txt.includes('yearly') || txt.includes('3ww7ii10')) return 'anual';
+  if (txt.includes('anual') || txt.includes('annual') || txt.includes('yearly') || txt.includes('b4d6ajy8') || txt.includes('3ww7ii10')) return 'anual';
   if (txt.includes('mensal') || txt.includes('monthly') || txt.includes('hmpbwfsz')) return 'mensal';
   return null;
 }

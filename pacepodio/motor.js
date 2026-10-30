@@ -664,7 +664,7 @@ function verPlano(){
 /* ---------------- checkout (Hotmart) ---------------- */
 var HOTMART_LINKS = {
   mensal: 'https://pay.hotmart.com/H107169811Q?off=hmpbwfsz&checkoutMode=10',
-  anual:  'https://pay.hotmart.com/H107169811Q?off=3ww7ii10&checkoutMode=10',
+  anual:  'https://pay.hotmart.com/H107169811Q?off=b4d6ajy8&checkoutMode=10',
 };
 var CHAVE_PEDIDO_LOCAL = 'pacebaixo_pedido';
 
