@@ -19,10 +19,21 @@ const PERIODO = { anual: 365 * DIA, mensal: 31 * DIA };
 // atual (nao perde os dias pagos). Mesmo aviso repetido (reenvio da Hotmart ou
 // 2 eventos de aprovado da mesma compra) nao soma de novo: confere a transacao
 // e, sem transacao no payload, ignora aviso a menos de 24 h do anterior.
-function novaValidade(ant, plano, transacao, agora) {
+// Recuperador de Adesao da Hotmart: sem limite para 12x, ela cria um plano
+// mensal "Rec_<nome do anual>" e cobra o anual em 12 vezes por mes. Cada parcela
+// manda um aviso de aprovado: so a primeira (ou uma depois de vencido) abre o ano.
+function ehRecuperador(body) {
+  const nome = String(body?.data?.subscription?.plan?.name || body?.data?.plan?.name || '').toLowerCase();
+  return nome.startsWith('rec_');
+}
+
+function novaValidade(ant, plano, transacao, agora, recuperador) {
   const vistos = (ant && ant.trans) || [];
   const repetido = !!ant && (transacao ? vistos.includes(transacao) : (ant.pago_em && agora - ant.pago_em < DIA));
   if (repetido && ant.vence_em) return { vence_em: ant.vence_em, pago_em: ant.pago_em, trans: vistos };
+  if (recuperador && ant && ant.vence_em && ant.vence_em > agora) {
+    return { vence_em: ant.vence_em, pago_em: agora, trans: [...vistos, transacao].filter(Boolean).slice(-20) };
+  }
   const base = ant && ant.vence_em && ant.vence_em > agora ? ant.vence_em : agora;
   return { vence_em: base + PERIODO[plano], pago_em: agora, trans: [...vistos, transacao].filter(Boolean).slice(-20) };
 }
@@ -142,7 +153,7 @@ module.exports = async (req, res) => {
     const plano = achaPlanoHotmart(body) || atualizado.plano || 'mensal';
     const transacao = body?.data?.purchase?.transaction || body?.data?.transaction || null;
     const ant = await redisGet(alunoKey(email));
-    const val = novaValidade(ant, plano, transacao, atualizado.pago_em);
+    const val = novaValidade(ant, plano, transacao, atualizado.pago_em, ehRecuperador(body));
     const ttl = Math.max(TTL_ACESSO, Math.ceil((val.vence_em - Date.now()) / 1000) + 60 * 60 * 24 * 30);
     await redisSet(alunoKey(email), { email, plano, ...val }, ttl);
     // anual libera os bonus para sempre (sem prazo); renovacoes nao mexem na data original
