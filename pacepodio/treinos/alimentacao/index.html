@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pace Pódio | Alimentação e suplementação</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/pacepodio/estilo.css?v=1">
+<style>
+  /* modulo de alimentacao (bonus do anual, 30/10): lista de aulas em cards; clicou, abre a aula
+     com o video em cima, o material embaixo e os botoes de proxima aula e voltar */
+  .logo{max-width:220px;margin-bottom:24px}
+  .voltar-area{display:inline-block;margin-bottom:18px;color:var(--texto-fraco);font-size:14px;font-weight:600;text-decoration:none}
+  .voltar-area:hover{color:var(--texto)}
+  .tit{font-size:clamp(24px,6vw,32px);font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+  .sub{font-size:15px;line-height:1.6;color:var(--texto-fraco);margin-bottom:24px}
+  .lista{display:grid;gap:12px}
+  .aula-card{display:flex;gap:14px;align-items:center;padding:10px;border-radius:14px;background:var(--carvao);border:1px solid var(--linha);color:var(--texto);text-decoration:none;transition:border-color .15s}
+  .aula-card:hover{border-color:var(--laranja)}
+  .aula-thumb{position:relative;flex:0 0 132px;aspect-ratio:16/9;border-radius:10px;background:#000 center/cover no-repeat;overflow:hidden}
+  .aula-thumb::after{content:"";position:absolute;inset:0;margin:auto;width:34px;height:34px;border-radius:50%;background:rgba(248,104,0,.92) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E") center/18px no-repeat}
+  .aula-num{font-size:12px;font-weight:800;letter-spacing:.6px;color:var(--laranja-claro);text-transform:uppercase}
+  .aula-nome{font-size:15.5px;font-weight:700;line-height:1.3;margin:3px 0}
+  .aula-dur{font-size:13px;color:var(--texto-fraco)}
+  .visto{display:none;margin-left:6px;color:var(--verde);font-weight:700}
+  .aula-card.assistida .visto{display:inline}
+  @media (max-width:400px){.aula-thumb{flex-basis:104px}.aula-nome{font-size:14.5px}}
+
+  .aula{display:none}
+  body.vendo .aula{display:block}
+  body.vendo .indice{display:none}
+  video{display:block;width:100%;aspect-ratio:16/9;background:#000;border-radius:14px}
+  .aula h2{font-size:clamp(20px,5vw,26px);font-weight:800;letter-spacing:-.01em;margin:18px 0 4px}
+  .aula .aula-dur{margin-bottom:18px}
+  .material{border-top:1px solid var(--linha);padding-top:18px}
+  .material-tit{font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--texto-fraco);margin-bottom:12px}
+  .material a.link-texto{display:inline-block;color:var(--laranja-claro);font-weight:700;font-size:16px;margin-bottom:12px}
+  .btn-sec{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:12px;border:1.5px solid var(--linha);background:var(--carvao);color:var(--texto);font:inherit;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:10px}
+  .btn-sec:hover{border-color:var(--laranja)}
+  .btn-sec svg{width:20px;height:20px;flex:0 0 auto;stroke:var(--laranja-claro);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .navega{display:grid;gap:10px;margin-top:26px}
+  .navega .btn{display:block;text-align:center;text-decoration:none}
+  .rodape{margin-top:32px;text-align:center;font-size:12px;line-height:1.6;color:var(--texto-fraco)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="logo" src="/pacepodio/logo-pace-podio.png" alt="Pace Pódio">
+
+  <section class="indice">
+    <a class="voltar-area" href="/pacepodio/treinos/">‹ Seus treinos</a>
+    <h1 class="tit">Alimentação e suplementação</h1>
+    <p class="sub">Como comer e se suplementar para correr melhor. Assista na ordem e use o material de cada aula.</p>
+    <div class="lista" id="lista"></div>
+  </section>
+
+  <section class="aula">
+    <a class="voltar-area" href="#" data-voltar>‹ Todas as aulas</a>
+    <video id="video" controls playsinline preload="metadata"></video>
+    <div class="aula-num" id="aula-num" style="margin-top:18px"></div>
+    <h2 id="aula-nome"></h2>
+    <div class="aula-dur" id="aula-dur"></div>
+    <div class="material" id="material"></div>
+    <div class="navega">
+      <a class="btn" href="#" id="proxima">PRÓXIMA AULA</a>
+      <a class="btn-sec" href="#" data-voltar>Voltar para as aulas</a>
+    </div>
+  </section>
+
+  <div class="rodape">Conteúdo educativo. Para um plano individual, procure um nutricionista.<br>PH Corridas · Pace Pódio</div>
+</div>
+
+<script>
+/* acesso: so quem tem o anual (bonus vitalicio), igual ao fortalecimento. A sessao
+   do login fica em pp-aluno; quem nao tem cai na area de membros. */
+var aluno = null;
+try { aluno = JSON.parse(localStorage.getItem('pp-aluno') || 'null'); } catch(e){}
+if (!aluno || !aluno.token || !aluno.bonus) location.replace('/pacepodio/treinos/');
+
+// onde ficam os videos. Trocar so aqui quando mudar de servidor (Cloudflare R2).
+var VIDEOS = '/pacepodio/treinos/alimentacao/video/';
+var MAT = '/pacepodio/treinos/alimentacao/material/';
+var CALC = 'https://phcorridas.com/cc';
+var ICO_PDF = '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/></svg>';
+var ICO_CALC = '<svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 19h8"/></svg>';
+
+var AULAS = [
+  { nome: 'Alimentação para corredores', dur: '21 min', video: 'aula01-alimentacao.mp4',
+    pdf: { arq: 'aula01-nutricao-e-corrida.pdf', rot: 'Baixar o material da aula (PDF)' } },
+  { nome: 'Dica de ouro: creatina', dur: '3 min', video: 'aula02-creatina.mp4',
+    pdf: { arq: 'aula02-creatina.pdf', rot: 'Baixar o artigo sobre creatina (PDF)' } },
+  // aula 3: no video o Paulo fala do link e do PDF; o link vem primeiro, o PDF e a reserva (pedido 30/10)
+  { nome: 'Vitaminas, minerais e suplementos', dur: '12 min', video: 'aula03-vitaminas-minerais-suplementos.mp4',
+    link: 'https://drive.google.com/file/d/18rp2Gi9lfbf6bEJET27BRiPyYE7x1Vf9/view',
+    pdf: { arq: 'aula03-vitaminas-minerais-suplementos.pdf', rot: 'Baixar o material da aula (PDF)' } },
+  { nome: 'Calculadora de calorias e proteínas, parte 1', dur: '11 min', video: 'aula04-calculadora-parte1.mp4', calc: true },
+  { nome: 'Calculadora de calorias e proteínas, parte 2', dur: '11 min', video: 'aula05-calculadora-parte2.mp4', calc: true }
+];
+
+var CHAVE_VISTAS = 'pp-alim-vistas';
+function vistas(){ try { return JSON.parse(localStorage.getItem(CHAVE_VISTAS) || '[]'); } catch(e){ return []; } }
+function marcarVista(i){
+  var v = vistas(); if (v.indexOf(i) >= 0) return;
+  v.push(i); try { localStorage.setItem(CHAVE_VISTAS, JSON.stringify(v)); } catch(e){}
+  var c = document.querySelector('[data-aula="' + i + '"]'); if (c) c.classList.add('assistida');
+}
+
+function num(i){ return (i < 9 ? '0' : '') + (i + 1); }
+
+function montarLista(){
+  var v = vistas(), h = '';
+  AULAS.forEach(function(a, i){
+    h += '<a class="aula-card' + (v.indexOf(i) >= 0 ? ' assistida' : '') + '" data-aula="' + i + '" href="#aula-' + (i + 1) + '">' +
+      '<div class="aula-thumb" style="background-image:url(/pacepodio/treinos/alimentacao/img/aula' + num(i) + '.jpg)"></div>' +
+      '<div><div class="aula-num">Aula ' + num(i) + '<span class="visto">✓ assistida</span></div>' +
+      '<div class="aula-nome">' + a.nome + '</div><div class="aula-dur">' + a.dur + '</div></div></a>';
+  });
+  document.getElementById('lista').innerHTML = h;
+}
+
+function material(a){
+  var h = '<div class="material-tit">Material da aula</div>';
+  if (a.link) h += '<a class="link-texto" href="' + a.link + '" target="_blank" rel="noopener">Material da aula ›</a>';
+  if (a.pdf) h += '<a class="btn-sec" href="' + MAT + a.pdf.arq + '" download>' + ICO_PDF + a.pdf.rot + '</a>';
+  if (a.calc) h += '<a class="btn-sec" href="' + CALC + '" target="_blank" rel="noopener">' + ICO_CALC + 'Abrir a calculadora de calorias e proteínas</a>';
+  return h;
+}
+
+var video = document.getElementById('video');
+function abrir(i){
+  var a = AULAS[i];
+  document.body.classList.add('vendo');
+  video.pause();
+  video.poster = '/pacepodio/treinos/alimentacao/img/aula' + num(i) + '.jpg';
+  video.src = VIDEOS + a.video;
+  video.setAttribute('data-aula', i);
+  document.getElementById('aula-num').textContent = 'Aula ' + num(i) + ' de ' + num(AULAS.length - 1);
+  document.getElementById('aula-nome').textContent = a.nome;
+  document.getElementById('aula-dur').textContent = a.dur;
+  document.getElementById('material').innerHTML = material(a);
+  var prox = document.getElementById('proxima');
+  if (i < AULAS.length - 1){ prox.style.display = ''; prox.href = '#aula-' + (i + 2); }
+  else prox.style.display = 'none';
+  scrollTo(0, 0);
+}
+function fechar(){
+  video.pause(); video.removeAttribute('src'); video.load();
+  document.body.classList.remove('vendo');
+}
+
+// assistida: chegou no fim ou passou de 90% do video
+video.addEventListener('timeupdate', function(){
+  if (video.duration && video.currentTime / video.duration > 0.9) marcarVista(+video.getAttribute('data-aula'));
+});
+video.addEventListener('ended', function(){ marcarVista(+video.getAttribute('data-aula')); });
+
+function rota(){
+  var m = /^#aula-(\d+)$/.exec(location.hash), i = m ? +m[1] - 1 : -1;
+  if (i >= 0 && i < AULAS.length) abrir(i); else fechar();
+}
+document.addEventListener('click', function(ev){
+  if (ev.target.closest('[data-voltar]')){ ev.preventDefault(); history.pushState(null, '', location.pathname); rota(); }
+});
+addEventListener('hashchange', rota);
+addEventListener('popstate', rota);
+
+montarLista();
+rota();
+
+// confere o acesso no servidor: sessao vencida ou sem o anual volta para a area
+fetch('/api/aluno', { cache: 'no-store', headers: { Authorization: 'Bearer ' + (aluno && aluno.token) } })
+  .then(function(r){ return r.status === 401 || r.status === 404 ? null : r.json(); })
+  .then(function(j){ if (j === null || (j && j.ok && !j.bonus)) location.replace('/pacepodio/treinos/'); })
+  .catch(function(){});
+</script>
+</body>
+</html>
