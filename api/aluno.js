@@ -32,13 +32,16 @@ module.exports = async (req, res) => {
     const tipo = aluno && aluno.plano === 'anual' ? 'anual' : 'mensal';
     const venceEm = aluno ? (aluno.vence_em || (aluno.pago_em ? aluno.pago_em + PERIODO[tipo] : null)) : null;
     const ativo = !!aluno && (!venceEm || Date.now() <= venceEm + FOLGA[tipo]);
+    const temBonus = !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined);
     res.statusCode = 200;
     return res.end(JSON.stringify({
       ok: true,
       plano: ativo ? tipo : null,
       ultimo_plano: aluno ? tipo : null,
       vence_em: venceEm,
-      bonus: !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined),
+      bonus: temBonus,
+      // link do grupo do WhatsApp so para quem tem o anual; fica em variavel de ambiente, nunca no HTML
+      grupo: temBonus ? (process.env.GRUPO_WHATSAPP_URL || null) : null,
     }));
   } catch (err) {
     res.statusCode = 502;
