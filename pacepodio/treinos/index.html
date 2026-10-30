@@ -190,7 +190,11 @@ function montarArea(aluno){
   if (!aluno.plano) travar(pp, anual, 'RENOVAR');
   if (aluno.bonus){ liberarGrupo(aluno.grupo); return; }
   var bonus = document.querySelectorAll('[data-bonus]');
-  for (var i = 0; i < bonus.length; i++) travar(bonus[i], anual, 'LIBERE NO ANUAL');
+  for (var i = 0; i < bonus.length; i++){
+    if (bonus[i].id === 'card-grupo' && aluno.grupo) continue; // grupo liberado ao mensal no lancamento
+    travar(bonus[i], anual, 'LIBERE NO ANUAL');
+  }
+  liberarGrupo(aluno.grupo);
 }
 
 function consultar(email, aoTerminar){

@@ -40,8 +40,10 @@ module.exports = async (req, res) => {
       ultimo_plano: aluno ? tipo : null,
       vence_em: venceEm,
       bonus: temBonus,
-      // link do grupo do WhatsApp so para quem tem o anual; fica em variavel de ambiente, nunca no HTML
-      grupo: temBonus ? (process.env.GRUPO_WHATSAPP_URL || null) : null,
+      // link do grupo do WhatsApp: fica em variavel de ambiente, nunca no HTML. E do
+      // anual, mas no lancamento (Paulo 30/10) o mensal ativo tambem recebe, de
+      // surpresa, para juntar feedback. Desligar: GRUPO_LIBERADO_MENSAL=0 + redeploy.
+      grupo: (temBonus || (ativo && process.env.GRUPO_LIBERADO_MENSAL === '1')) ? (process.env.GRUPO_WHATSAPP_URL || null) : null,
     }));
   } catch (err) {
     res.statusCode = 502;
