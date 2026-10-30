@@ -6,7 +6,7 @@ const DIA = 24 * 60 * 60 * 1000;
 // validade conta do ultimo pagamento aprovado (cada renovacao da Hotmart manda
 // um aviso novo e atualiza pago_em). Folga para a cobranca da renovacao entrar.
 const PERIODO = { anual: 365 * DIA, mensal: 31 * DIA };
-const FOLGA = { anual: 7 * DIA, mensal: 5 * DIA };
+const FOLGA = { anual: 7 * DIA, mensal: 4 * DIA }; // mensal: 35 dias no total (Paulo 30/10)
 
 module.exports = async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
