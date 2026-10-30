@@ -8,7 +8,10 @@
 // no Redis (chave "webhook:ultimo") pra eu conferir contra uma notificacao
 // REAL (ou o botao "Enviar teste" do painel da Hotmart) antes de confiar
 // nisso de vez em producao. Nao apagar esse log ate validar.
-const { redisSet, redisGet, pedidoKey, normalizeEmail } = require('./_redis');
+const { redisSet, redisGet, pedidoKey, alunoKey, normalizeEmail } = require('./_redis');
+
+// anual dura 12 meses; guarda 400 dias para sobrar margem (antes era 30 e o anual perdia o acesso)
+const TTL_ACESSO = 60 * 60 * 24 * 400;
 
 const HOTTOK = process.env.HOTMART_HOTTOK;
 
@@ -55,6 +58,19 @@ function achaPlano(body) {
     ''
   ).toLowerCase();
   return nome.includes('anual') || nome.includes('annual') || nome.includes('yearly') ? 'anual' : 'mensal';
+}
+
+// 'anual' so quando a Hotmart diz que e anual (nome do plano ou codigo da oferta
+// anual 3ww7ii10); senao null, e quem chama decide o que usar
+function achaPlanoHotmart(body) {
+  const txt = JSON.stringify([
+    body?.data?.subscription?.plan?.name,
+    body?.data?.purchase?.offer?.code,
+    body?.data?.plan?.name,
+  ]).toLowerCase();
+  if (txt.includes('anual') || txt.includes('annual') || txt.includes('yearly') || txt.includes('3ww7ii10')) return 'anual';
+  if (txt.includes('mensal') || txt.includes('monthly') || txt.includes('hmpbwfsz')) return 'mensal';
+  return null;
 }
 
 module.exports = async (req, res) => {
@@ -108,7 +124,9 @@ module.exports = async (req, res) => {
       plano: existente.plano || achaPlano(body),
       pago_em: Date.now(),
     };
-    await redisSet(key, atualizado, 60 * 60 * 24 * 30);
+    await redisSet(key, atualizado, TTL_ACESSO);
+    const plano = achaPlanoHotmart(body) || atualizado.plano || 'mensal';
+    await redisSet(alunoKey(email), { email, plano, pago_em: atualizado.pago_em }, TTL_ACESSO);
     res.statusCode = 200;
     return res.end(JSON.stringify({ ok: true }));
   } catch (err) {

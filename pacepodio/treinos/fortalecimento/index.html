@@ -1338,4 +1338,48 @@ document.getElementById('btnTema').onclick=()=>{
 };
 </script>
 
+<script>
+/* ===== Area de membros (30/10): acesso so para o anual + plano guardado no banco =====
+   Bloco separado de proposito: o motor e o resto da pagina sao a copia exata do
+   Artifact v64. Aqui so (1) confere o acesso, (2) puxa o plano salvo no banco e
+   (3) manda para o banco toda vez que o plano e gravado no aparelho. */
+(function(){
+  var aluno = null;
+  try { aluno = JSON.parse(localStorage.getItem('pp-aluno') || 'null'); } catch(_){}
+  if (!aluno || !aluno.email || aluno.plano !== 'anual'){ location.replace('/pacepodio/treinos/'); return; }
+  var email = aluno.email;
+
+  // 1) toda gravacao local tambem vai para o banco (espera 1,5 s para juntar cliques seguidos)
+  var gravarLocal = gravarPlano, timer = null;
+  function enviar(){
+    timer = null;
+    if (!SALVO) return;
+    fetch('/api/fortalecimento', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, salvo: SALVO }), keepalive: true }).catch(function(){});
+  }
+  gravarPlano = function(){
+    if (SALVO) SALVO.atualizado = Date.now();
+    gravarLocal();
+    clearTimeout(timer); timer = setTimeout(enviar, 1500);
+  };
+  addEventListener('pagehide', function(){ if (timer){ clearTimeout(timer); enviar(); } });
+
+  // 2) plano do banco: se for mais novo que o do aparelho (ou o aparelho nao tem), usa o do banco
+  fetch('/api/fortalecimento?email=' + encodeURIComponent(email), { cache: 'no-store' })
+    .then(function(r){
+      if (r.status === 403){ location.replace('/pacepodio/treinos/'); return null; }
+      return r.ok ? r.json() : null;
+    })
+    .then(function(j){
+      if (!j || !j.ok) return;
+      var local = lerPlano(), banco = j.salvo;
+      if (banco && banco.v === 1 && banco.resp && (!local || (banco.atualizado || 0) > (local.atualizado || 0))){
+        try { localStorage.setItem(CHAVE_PLANO, JSON.stringify(banco)); } catch(_){}
+        if (telaAtual === 0) mostraSalvo();
+      } else if (local && (!banco || (local.atualizado || 0) > (banco.atualizado || 0))){
+        SALVO = SALVO || local; enviar(); // aparelho tem plano que o banco nao tem: sobe
+      }
+    }).catch(function(){});
+})();
+</script>
 </body></html>
