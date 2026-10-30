@@ -12,6 +12,20 @@ const { redisSet, redisGet, pedidoKey, alunoKey, bonusKey, normalizeEmail } = re
 
 // anual dura 12 meses; guarda 400 dias para sobrar margem (antes era 30 e o anual perdia o acesso)
 const TTL_ACESSO = 60 * 60 * 24 * 400;
+const DIA = 24 * 60 * 60 * 1000;
+const PERIODO = { anual: 365 * DIA, mensal: 31 * DIA };
+
+// Validade do aluno. Renovou antes de vencer: o periodo novo conta do vencimento
+// atual (nao perde os dias pagos). Mesmo aviso repetido (reenvio da Hotmart ou
+// 2 eventos de aprovado da mesma compra) nao soma de novo: confere a transacao
+// e, sem transacao no payload, ignora aviso a menos de 24 h do anterior.
+function novaValidade(ant, plano, transacao, agora) {
+  const vistos = (ant && ant.trans) || [];
+  const repetido = !!ant && (transacao ? vistos.includes(transacao) : (ant.pago_em && agora - ant.pago_em < DIA));
+  if (repetido && ant.vence_em) return { vence_em: ant.vence_em, pago_em: ant.pago_em, trans: vistos };
+  const base = ant && ant.vence_em && ant.vence_em > agora ? ant.vence_em : agora;
+  return { vence_em: base + PERIODO[plano], pago_em: agora, trans: [...vistos, transacao].filter(Boolean).slice(-20) };
+}
 
 const HOTTOK = process.env.HOTMART_HOTTOK;
 
@@ -126,7 +140,11 @@ module.exports = async (req, res) => {
     };
     await redisSet(key, atualizado, TTL_ACESSO);
     const plano = achaPlanoHotmart(body) || atualizado.plano || 'mensal';
-    await redisSet(alunoKey(email), { email, plano, pago_em: atualizado.pago_em }, TTL_ACESSO);
+    const transacao = body?.data?.purchase?.transaction || body?.data?.transaction || null;
+    const ant = await redisGet(alunoKey(email));
+    const val = novaValidade(ant, plano, transacao, atualizado.pago_em);
+    const ttl = Math.max(TTL_ACESSO, Math.ceil((val.vence_em - Date.now()) / 1000) + 60 * 60 * 24 * 30);
+    await redisSet(alunoKey(email), { email, plano, ...val }, ttl);
     // anual libera os bonus para sempre (sem prazo); renovacoes nao mexem na data original
     if (plano === 'anual' && !(await redisGet(bonusKey(email)))) {
       await redisSet(bonusKey(email), { email, desde: atualizado.pago_em });

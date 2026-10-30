@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
     }
     // plano = assinatura ativa (null se venceu); bonus = sem prazo para quem ja comprou o anual
     const tipo = aluno && aluno.plano === 'anual' ? 'anual' : 'mensal';
-    const venceEm = aluno && aluno.pago_em ? aluno.pago_em + PERIODO[tipo] : null;
+    const venceEm = aluno ? (aluno.vence_em || (aluno.pago_em ? aluno.pago_em + PERIODO[tipo] : null)) : null;
     const ativo = !!aluno && (!venceEm || Date.now() <= venceEm + FOLGA[tipo]);
     res.statusCode = 200;
     return res.end(JSON.stringify({

@@ -157,11 +157,14 @@ function avisoPlano(aluno, anual){
   }
   if (!aluno.plano || !aluno.vence) return;
   var dias = Math.ceil((aluno.vence - Date.now()) / DIA);
+  // anual sem renovacao automatica (decisao do Paulo 30/10): avisa e o aluno renova no botao.
+  // Renovar antes nao perde dias: o ano novo conta do vencimento atual.
   if (aluno.plano === 'anual' && dias <= 30){
     el.className = 'aviso-plano renova on';
-    el.textContent = dias > 1 ? 'Seu plano anual renova em ' + dias + ' dias, no mesmo cartão.'
-                   : dias === 1 ? 'Seu plano anual renova amanhã, no mesmo cartão.'
-                   : 'Seu plano anual renova hoje, no mesmo cartão.';
+    el.innerHTML = (dias > 1 ? 'Seu plano anual vence em ' + dias + ' dias.'
+                   : dias === 1 ? 'Seu plano anual vence amanhã.' : 'Seu plano anual vence hoje.') +
+      ' Renove agora e seus 12 meses novos começam a contar só depois do vencimento.' +
+      '<br><a href="' + anual + '">RENOVAR</a>';
   }
 }
 
