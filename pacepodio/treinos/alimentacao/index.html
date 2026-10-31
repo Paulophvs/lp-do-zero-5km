@@ -80,7 +80,8 @@ var aluno = null;
 try { aluno = JSON.parse(localStorage.getItem('pp-aluno') || 'null'); } catch(e){}
 if (!aluno || !aluno.token || !aluno.bonus) location.replace('/pacepodio/treinos/');
 
-// onde ficam os videos. Trocar so aqui quando mudar de servidor (Cloudflare R2).
+// onde ficam os videos: na propria Vercel, junto com o site (Paulo 31/10, sem cartao). Se
+// um dia passar do limite de trafego do plano gratis, trocar so aqui (ex: R2 ou YouTube).
 var VIDEOS = '/pacepodio/treinos/alimentacao/video/';
 var MAT = '/pacepodio/treinos/alimentacao/material/';
 var CALC = 'https://phcorridas.com/cc';
