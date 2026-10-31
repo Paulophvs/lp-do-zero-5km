@@ -40,6 +40,7 @@
   .material a.link-texto{display:inline-block;color:var(--laranja-claro);font-weight:700;font-size:16px;margin-bottom:12px}
   .btn-sec{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px;border-radius:12px;border:1.5px solid var(--linha);background:var(--carvao);color:var(--texto);font:inherit;font-weight:700;font-size:15px;text-decoration:none;margin-bottom:10px}
   .btn-sec:hover{border-color:var(--laranja)}
+  .material a.baixar{display:block;text-align:center;color:var(--texto-fraco);font-size:14px;margin:-2px 0 12px}
   .btn-sec svg{width:20px;height:20px;flex:0 0 auto;stroke:var(--laranja-claro);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
   .navega{display:grid;gap:10px;margin-top:26px}
   .navega .btn{display:block;text-align:center;text-decoration:none}
@@ -90,13 +91,12 @@ var ICO_CALC = '<svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20
 
 var AULAS = [
   { nome: 'Alimentação para corredores', dur: '21 min', video: 'aula01-alimentacao.mp4',
-    pdf: { arq: 'aula01-nutricao-e-corrida.pdf', rot: 'Baixar o material da aula (PDF)' } },
+    pdf: { arq: 'aula01-nutricao-e-corrida.pdf', rot: 'Abrir o material da aula (PDF)' } },
   { nome: 'Dica de ouro: creatina', dur: '3 min', video: 'aula02-creatina.mp4',
-    pdf: { arq: 'aula02-creatina.pdf', rot: 'Baixar o artigo sobre creatina (PDF)' } },
-  // aula 3: no video o Paulo fala do link e do PDF; o link vem primeiro, o PDF e a reserva (pedido 30/10)
+    pdf: { arq: 'aula02-creatina.pdf', rot: 'Abrir o artigo sobre creatina (PDF)' } },
+  // aula 3: so o PDF, igual as outras (Paulo 31/10 tirou o link do Drive)
   { nome: 'Vitaminas, minerais e suplementos', dur: '12 min', video: 'aula03-vitaminas-minerais-suplementos.mp4',
-    link: 'https://drive.google.com/file/d/18rp2Gi9lfbf6bEJET27BRiPyYE7x1Vf9/view',
-    pdf: { arq: 'aula03-vitaminas-minerais-suplementos.pdf', rot: 'Baixar o material da aula (PDF)' } },
+    pdf: { arq: 'aula03-vitaminas-minerais-suplementos.pdf', rot: 'Abrir o material da aula (PDF)' } },
   { nome: 'Calculadora de calorias e proteínas, parte 1', dur: '11 min', video: 'aula04-calculadora-parte1.mp4', calc: true },
   { nome: 'Calculadora de calorias e proteínas, parte 2', dur: '11 min', video: 'aula05-calculadora-parte2.mp4', calc: true }
 ];
@@ -125,7 +125,9 @@ function montarLista(){
 function material(a){
   var h = '<div class="material-tit">Material da aula</div>';
   if (a.link) h += '<a class="link-texto" href="' + a.link + '" target="_blank" rel="noopener">Material da aula ›</a>';
-  if (a.pdf) h += '<a class="btn-sec" href="' + MAT + a.pdf.arq + '" download>' + ICO_PDF + a.pdf.rot + '</a>';
+  // PDF abre na tela (Paulo 31/10); quem quiser guardar usa o "baixar" logo abaixo
+  if (a.pdf) h += '<a class="btn-sec" href="' + MAT + a.pdf.arq + '" target="_blank" rel="noopener">' + ICO_PDF + a.pdf.rot + '</a>' +
+    '<a class="baixar" href="' + MAT + a.pdf.arq + '" download>Baixar o PDF</a>';
   if (a.calc) h += '<a class="btn-sec" href="' + CALC + '" target="_blank" rel="noopener">' + ICO_CALC + 'Abrir a calculadora de calorias e proteínas</a>';
   return h;
 }
