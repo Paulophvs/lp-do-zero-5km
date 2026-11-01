@@ -72,7 +72,26 @@ function fortalecimentoKey(email) {
   return 'fc:' + normalizeEmail(email);
 }
 
+// codigo do pedido (Paulo 01/11): vai no link da Hotmart (sck) e liga a compra ao
+// formulario mesmo se a pessoa trocar o e-mail no checkout
+function pedidoCodKey(cod) {
+  return 'pedidocod:' + String(cod || '');
+}
+
+// dados novos de quem ja pagou e refez o formulario: so valem no proximo pagamento
+function pedidoNovoKey(email) {
+  return 'pedido-novo:' + normalizeEmail(email);
+}
+
+// mostra so o comeco e o dominio (jo***@gmail.com), para nao expor o e-mail inteiro
+function mascararEmail(e) {
+  const [u, d] = normalizeEmail(e).split('@');
+  if (!u || !d) return '';
+  return u.slice(0, 2) + '***@' + d;
+}
+
 // comando livre (ex.: SCAN do aviso diario das planilhas)
 const redisCmd = call;
 
-module.exports = { redisSet, redisGet, redisDel, redisIncr, redisCmd, normalizeEmail, pedidoKey, alunoKey, bonusKey, fortalecimentoKey };
+module.exports = { redisSet, redisGet, redisDel, redisIncr, redisCmd, normalizeEmail, pedidoKey, alunoKey, bonusKey, fortalecimentoKey,
+  pedidoCodKey, pedidoNovoKey, mascararEmail };

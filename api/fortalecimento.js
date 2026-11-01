@@ -11,7 +11,7 @@ const MAX_BYTES = 200 * 1024; // plano salvo tem ~20-60 KB
 // bonus vitalicio: quem comprou o anual uma vez (chave bonus:) ou tem o anual ativo
 async function anual(email) {
   const [bonus, aluno] = await Promise.all([redisGet(bonusKey(email)), redisGet(alunoKey(email))]);
-  return !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined);
+  return !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined && !aluno.revogado_em);
 }
 
 module.exports = async (req, res) => {

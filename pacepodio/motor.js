@@ -700,6 +700,12 @@ function irCheckout(plano){
     if (erro) erro.textContent = 'Digita um e-mail válido pra gente mandar sua planilha.';
     return;
   }
+  // 01/11 (Paulo): confirmar o e-mail reduz erro de digitacao (e-mail errado = planilha que nao chega)
+  var campoEmail2 = document.getElementById('preco-email2');
+  if (campoEmail2 && campoEmail2.value.trim().toLowerCase() !== email.toLowerCase()){
+    if (erro) erro.textContent = 'Os dois e-mails estão diferentes. Confere e digita igual nos dois campos.';
+    return;
+  }
   if (!telefoneValido(whatsapp)){
     if (erro) erro.textContent = 'Digita seu WhatsApp com DDD, ex: (11) 99999-9999.';
     return;
@@ -711,7 +717,14 @@ function irCheckout(plano){
   if (btnMensal) btnMensal.disabled = true;
   if (btnAnual) btnAnual.disabled = true;
 
+  // codigo do pedido: vai junto pro servidor e no link da Hotmart (sck). Se a pessoa
+  // trocar o e-mail no checkout, o webhook acha o pedido por ele (Paulo 01/11)
+  var cod = '';
+  try { var b = new Uint8Array(9); crypto.getRandomValues(b); cod = Array.prototype.map.call(b, function(x){ return 'abcdefghijkmnpqrstuvwxyz23456789'[x % 32]; }).join(''); }
+  catch(e){ cod = Math.random().toString(36).slice(2, 12); }
+
   var pedido = {
+    cod: cod,
     nome: nome,
     email: email,
     whatsapp: whatsapp.replace(/\D/g, ''),
@@ -735,7 +748,7 @@ function irCheckout(plano){
     pagina de obrigado tenta de novo consultando o pedido */ }).finally(function(){
     var base = HOTMART_LINKS[plano] || HOTMART_LINKS.mensal;
     var sep = base.indexOf('?') === -1 ? '?' : '&';
-    window.location.href = base + sep + 'email=' + encodeURIComponent(email);
+    window.location.href = base + sep + 'email=' + encodeURIComponent(email) + '&sck=PP' + cod;
   });
 }
 

@@ -18,6 +18,7 @@
   }
   @keyframes girar{ to{ transform:rotate(360deg); } }
   .busca-campo{ max-width:360px; margin:0 auto; }
+  .cd-rot{ font-weight:700; margin:22px 0 10px; }
   /* ===== 2 cards de acesso (planilha + area de membros), pedido do Paulo 01/11 =====
      o bloco fica mais largo que o .wrap (560px) no PC para os cards caberem lado a lado */
   .ac{width:min(860px,calc(100vw - 32px));margin:0 0 32px calc(50% - min(430px,50vw - 16px))}
@@ -112,6 +113,42 @@
   </section>
 
   <!-- ===== PAGAMENTO NAO CONFIRMADO AINDA (timeout) ===== -->
+  <!-- ===== PAGO SEM OS DADOS DO TREINO (Paulo 01/11): 3 perguntas e a planilha sai aqui ===== -->
+  <section class="tela" id="tela-dados">
+    <h2 class="pergunta">Pagamento confirmado! Falta só montar sua planilha</h2>
+    <p class="ajuda">Responde 3 perguntas rápidas e a sua planilha sai na hora.</p>
+    <p class="cd-rot">1. Qual corrida você quer baixar o tempo?</p>
+    <div class="opcoes">
+      <button class="opcao" data-cdist="5" onclick="cdDist(5)">5 km</button>
+      <button class="opcao" data-cdist="10" onclick="cdDist(10)">10 km</button>
+    </div>
+    <p class="cd-rot">2. Quais dias da semana você consegue treinar?</p>
+    <div class="dias" id="cd-dias">
+      <button class="opcao" data-cdia="1" onclick="cdDia(1)">Segunda</button>
+      <button class="opcao" data-cdia="2" onclick="cdDia(2)">Terça</button>
+      <button class="opcao" data-cdia="3" onclick="cdDia(3)">Quarta</button>
+      <button class="opcao" data-cdia="4" onclick="cdDia(4)">Quinta</button>
+      <button class="opcao" data-cdia="5" onclick="cdDia(5)">Sexta</button>
+      <button class="opcao" data-cdia="6" onclick="cdDia(6)">Sábado</button>
+      <button class="opcao" data-cdia="7" onclick="cdDia(7)">Domingo</button>
+    </div>
+    <p class="cd-rot" id="cd-rot-tempo">3. Qual o seu tempo exato hoje?</p>
+    <p class="ajuda">Use seu melhor tempo dos últimos 15 dias. Recorde de meses atrás deixa o treino forte demais.</p>
+    <div class="tripla" id="cd-caixas">
+      <div class="campo" id="cd-campo-hora"><label for="cd-hora">Horas</label><input id="cd-hora" type="number" inputmode="numeric" min="1" max="2" placeholder="0"></div>
+      <div class="campo"><label for="cd-min">Minutos</label><input id="cd-min" type="number" inputmode="numeric" min="0" max="59" placeholder="00"></div>
+      <div class="campo"><label for="cd-seg">Segundos</label><input id="cd-seg" type="number" inputmode="numeric" min="0" max="59" placeholder="00"></div>
+    </div>
+    <p class="erro" id="cd-erro"></p>
+    <button class="btn" id="cd-btn" onclick="cdEnviar()">MONTAR MINHA PLANILHA</button>
+  </section>
+
+  <!-- ===== REEMBOLSADO ===== -->
+  <section class="tela" id="tela-reembolso">
+    <h2 class="pergunta">Esse pedido foi reembolsado</h2>
+    <p class="ajuda">O pagamento foi devolvido, então a planilha e a área do aluno não estão mais liberadas. Se foi engano, chama a gente no WhatsApp.</p>
+  </section>
+
   <section class="tela" id="tela-demorando">
     <h2 class="pergunta">Seu pagamento ainda não foi confirmado</h2>
     <p class="ajuda">Às vezes a confirmação demora um pouco mais. Se você já pagou, espera mais um minuto e atualiza a página. Se preferir, chama a gente no WhatsApp que já resolvemos.</p>
@@ -120,6 +157,8 @@
 
   <!-- ===== PLANILHA COMPLETA (mesma estrutura do index.html, nao duplicar logica) ===== -->
   <section class="tela" id="tela-plano">
+    <!-- compra feita com outro e-mail: avisa com qual entrar (mascarado, LGPD) -->
+    <div class="pp-faixa" id="aviso-email" style="display:none"></div>
     <!-- 2 cards de acesso: escondido quando o aluno chega pela propria area de membros -->
     <div class="ac" id="acessos" style="display:none">
       <div class="ac-topo">
@@ -289,6 +328,48 @@ function cardPronta(j, aluno){
     '<button class="pp-esperar" onclick="document.getElementById(\'pp-pronta\').classList.remove(\'aberta\')">Prefiro esperar a renovação</button></div></div>';
 }
 
+// ===== pago sem dados do treino: 3 perguntas (Paulo 01/11) =====
+var cdEmail = null, cd = { distancia: null, dias: [] };
+function cdDist(d){
+  cd.distancia = d;
+  var ops = document.querySelectorAll('[data-cdist]');
+  for (var i=0;i<ops.length;i++) ops[i].classList.toggle('marcada', Number(ops[i].dataset.cdist) === d);
+  document.getElementById('cd-campo-hora').style.display = d === 10 ? '' : 'none';
+  document.getElementById('cd-caixas').className = d === 10 ? 'tripla' : 'dupla';
+  document.getElementById('cd-rot-tempo').textContent = '3. Qual o seu tempo exato nos ' + d + ' km hoje?';
+}
+function cdDia(n){
+  var i = cd.dias.indexOf(n), e = document.getElementById('cd-erro');
+  if (i >= 0) cd.dias.splice(i, 1);
+  else { if (cd.dias.length >= 6){ e.textContent = 'Um dia de descanso geral na semana faz parte do método.'; return; } cd.dias.push(n); }
+  cd.dias.sort(function(a,b){ return a-b; }); e.textContent = '';
+  var ops = document.querySelectorAll('[data-cdia]');
+  for (var k=0;k<ops.length;k++) ops[k].classList.toggle('marcada', cd.dias.indexOf(Number(ops[k].dataset.cdia)) >= 0);
+}
+function cdEnviar(){
+  var e = document.getElementById('cd-erro'), d = cd.distancia;
+  if (!d){ e.textContent = 'Escolhe a distância: 5 km ou 10 km.'; return; }
+  if (cd.dias.length < 2){ e.textContent = 'Marque pelo menos 2 dias da semana.'; return; }
+  var hh = d === 5 ? 0 : Number(document.getElementById('cd-hora').value || 0);
+  var minRaw = document.getElementById('cd-min').value, ss = Number(document.getElementById('cd-seg').value || 0);
+  if (hh !== 0 && hh !== 1 && hh !== 2){ e.textContent = 'A hora só pode ser 1 ou 2. Correu abaixo de 1 hora? Deixe a hora em branco.'; return; }
+  if (minRaw === ''){ e.textContent = 'Coloque os minutos do seu tempo, tipo 43.'; return; }
+  var mm = Number(minRaw);
+  if (isNaN(mm) || mm < 0 || mm > 59 || ss < 0 || ss > 59 || !Number.isInteger(ss)){ e.textContent = 'Confere o tempo: minutos e segundos vão de 0 a 59.'; return; }
+  var tot = hh*60 + mm, recorde = d === 5 ? 12*60+35 : 26*60+11;
+  if (tot*60 + ss < recorde){ e.textContent = 'Esse tempo é mais rápido que o recorde mundial. Confere aí.'; return; }
+  if ((tot + ss/60)/d > 15){ e.textContent = 'Esse tempo parece de caminhada. Confere aí.'; return; }
+  e.textContent = '';
+  var b = document.getElementById('cd-btn'); b.disabled = true; b.textContent = 'Montando sua planilha...';
+  fetch('/api/salvar-pedido', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ acao: 'completar', email: cdEmail, distancia: d, minutos: tot, segundos: ss, qtdDias: cd.dias.length, diasSemana: cd.dias }) })
+    .then(function(r){
+      if (!r.ok && r.status !== 409) throw new Error('falhou');
+      tentativas = 0; mostrarTela('tela-espera'); consultarEEsperar(cdEmail);
+    })
+    .catch(function(){ e.textContent = 'Não consegui salvar agora. Tenta de novo em instantes.'; b.disabled = false; b.textContent = 'MONTAR MINHA PLANILHA'; });
+}
+
 function mostrarTela(id){
   var telas = document.querySelectorAll('.tela');
   for (var i=0;i<telas.length;i++) telas[i].classList.remove('ativa');
@@ -305,7 +386,14 @@ function consultarEEsperar(email){
       if (!out) return;
       if (!out.ok) { mostrarTela('tela-buscar'); return; }
       var pedido = out.pedido;
+      if (pedido.status === 'reembolsado'){ mostrarTela('tela-reembolso'); return; }
+      if (pedido.status === 'pago' && pedido.sem_dados){ cdEmail = email; mostrarTela('tela-dados'); return; }
       if (pedido.status === 'pago'){
+        if (pedido.email_compra){
+          var av = document.getElementById('aviso-email');
+          av.innerHTML = 'Sua compra foi feita com o e-mail <b>' + pedido.email_compra + '</b>. Use esse e-mail pra entrar na área do aluno.';
+          av.style.display = '';
+        }
         preencherRespComPedido(pedido);
         verPlano();
         // o seletor de ciclo (M1-M4) e ferramenta interna de teste do Paulo;

@@ -146,7 +146,7 @@
   <section class="tela" id="tela-preco">
     <p class="passo">ÚLTIMO PASSO</p>
     <h2 class="pergunta">Escolhe o plano pra receber sua planilha completa</h2>
-    <p class="ajuda">Manda pro seu e-mail o link com a planilha das 4 semanas, com botão pra baixar em PDF.</p>
+    <p class="ajuda">Assim que o pagamento for confirmado, sua planilha das 4 semanas abre na hora e também chega no seu e-mail, com botão pra baixar em PDF.</p>
     <div class="campos">
       <div class="campo">
         <label for="preco-nome">Seu nome</label>
@@ -154,7 +154,11 @@
       </div>
       <div class="campo">
         <label for="preco-email">Seu e-mail</label>
-        <input id="preco-email" type="email" inputmode="email" placeholder="seuemail@exemplo.com">
+        <input id="preco-email" type="email" inputmode="email" autocomplete="email" placeholder="seuemail@exemplo.com">
+      </div>
+      <div class="campo">
+        <label for="preco-email2">Confirme seu e-mail</label>
+        <input id="preco-email2" type="email" inputmode="email" autocomplete="off" placeholder="digite o e-mail de novo">
       </div>
       <div class="campo">
         <label for="preco-whatsapp">Seu WhatsApp (com DDD)</label>

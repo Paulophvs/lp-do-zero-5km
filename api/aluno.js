@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
     const tipo = aluno && aluno.plano === 'anual' ? 'anual' : 'mensal';
     const venceEm = aluno ? (aluno.vence_em || (aluno.pago_em ? aluno.pago_em + PERIODO[tipo] : null)) : null;
     const ativo = !!aluno && (!venceEm || Date.now() <= venceEm + FOLGA[tipo]);
-    const temBonus = !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined);
+    const temBonus = !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined && !aluno.revogado_em);
     res.statusCode = 200;
     return res.end(JSON.stringify({
       ok: true,

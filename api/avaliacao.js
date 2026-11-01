@@ -25,7 +25,7 @@ function avaliacaoKey(email) {
 // mesmo criterio do /api/fortalecimento (bonus vitalicio do anual)
 async function anual(email) {
   const [bonus, aluno] = await Promise.all([redisGet(bonusKey(email)), redisGet(alunoKey(email))]);
-  return !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined);
+  return !!bonus || (!!aluno && aluno.plano === 'anual' && aluno.rec_pagas === undefined && !aluno.revogado_em);
 }
 
 // janela vencida (ou nunca aberta) = conta zerada
