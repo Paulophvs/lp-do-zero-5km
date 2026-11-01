@@ -227,7 +227,7 @@ input:focus{outline:2px solid var(--laranja);outline-offset:1px;border-color:var
   <!-- TIPO DE AVALIAÇÃO -->
   <section class="tela" id="t10">
     <p class="perg">É sua primeira avaliação?</p>
-    <p class="ajuda">Se você está terminando um bloco de 4 semanas, a gente faz o teste de subida de nível.</p>
+    <p class="ajuda">Se você está terminando um bloco de 4 semanas, a gente faz o teste para mudar de nível.</p>
     <div class="grid">
       <button class="opcao" data-modo="primeira" type="button" onclick="pick(this,'modo')"><span><span class="k">Primeira avaliação</span><span class="d">Nunca usei o app, ou quero começar do zero.</span></span></button>
       <button class="opcao" data-modo="reav" type="button" onclick="pick(this,'modo')"><span><span class="k">Estou terminando um bloco</span><span class="d">Fiz as 4 semanas e quero saber se subo de nível.</span></span></button>
@@ -338,7 +338,7 @@ input:focus{outline:2px solid var(--laranja);outline-offset:1px;border-color:var
   <!-- 4b. REAVALIAÇÃO (teste de subida) -->
   <section class="tela" id="t11">
     <div class="passo">Passo 4 de 6</div>
-    <p class="perg">Teste de subida de nível</p>
+    <p class="perg">Teste para mudar de nível</p>
     <p class="ajuda">Responde com sinceridade. Se ainda não passou em tudo, você repete o nível subindo a carga, e isso também é evolução.</p>
     <p style="font-weight:650;margin:16px 0 8px;font-size:15px">Qual nível você acabou de terminar?</p>
     <div class="grid g2">
@@ -1065,7 +1065,7 @@ function caixaSemana(){
   if(!SALVO)return '';
   const W=PLANO.weeks[SALVO.semana], q=feitosSemana(SALVO.semana);
   let h='<div class="diag semana-atual"><h3>'+(SALVO.fim?'Bloco concluído':'Você está na semana '+(SALVO.semana+1)+' de 4 · '+W.fase)+'</h3>';
-  if(SALVO.fim)h+='<p>Você fez as 4 semanas. Hora do teste de subida de nível: ele diz se você sobe de estágio ou repete este subindo a carga.</p><div class="nav" style="margin-top:10px"><button class="btn pri" onclick="novaAvaliacao(true)">Fazer o teste de subida</button></div>';
+  if(SALVO.fim)h+='<p>Você fez as 4 semanas. Hora do teste para mudar de nível: ele diz se você sobe de estágio ou repete este subindo a carga.</p><div class="nav" style="margin-top:10px"><button class="btn pri" onclick="novaAvaliacao(true)">Fazer o teste para mudar de nível</button></div>';
   else h+='<p>Treinos feitos nesta semana: <b>'+q.f+' de '+q.n+'</b>. Quando fizer todos, o app passa sozinho para a semana seguinte.</p>';
   h+='<p style="font-size:13px">Seu plano fica salvo neste celular. Quando voltar, é só abrir e continuar. Está em outra semana? <span class="chips" style="display:inline-flex;gap:6px;vertical-align:middle">'+
     PLANO.weeks.map((X,k)=>'<button class="chip" style="padding:4px 11px;font-size:12.5px'+(k===SALVO.semana&&!SALVO.fim?';border-color:var(--laranja)':'')+'" type="button" onclick="mudarSemana('+k+')">'+(k+1)+'</button>').join('')+'</span></p></div>';
