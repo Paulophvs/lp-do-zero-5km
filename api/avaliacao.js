@@ -3,7 +3,7 @@
 // - no dia 27 libera de novo, todo mes;
 // - a reavaliacao do FIM DO BLOCO (as 4 semanas feitas) nao gasta a conta e abre
 //   uma janela nova. So vale como reavaliacao se o plano guardado no banco
-//   (fc:<email>) esta marcado como concluido (fim); senao conta como avaliacao normal,
+//   (fc:<email>) esta marcado como concluido (fim) ou tem 30 dias ou mais; senao conta como avaliacao normal,
 //   para ninguem burlar escolhendo "Estou terminando um bloco" no meio do bloco.
 // GET: situacao (pode, usadas, libera_em). POST { modo }: registra a avaliacao que
 // esta sendo feita agora (429 se ja usou as 2). E-mail vem da sessao do login.
@@ -13,6 +13,9 @@ const { emailDaSessao } = require('./_sessao');
 const DIA = 24 * 60 * 60 * 1000;
 const JANELA = 27 * DIA;
 const LIMITE = 2;
+// fim do bloco por tempo (Paulo 01/11): quem nao marca os treinos pode fazer a
+// reavaliacao livre 30 dias depois de montar o plano (28 do bloco + 2 de folga)
+const BLOCO_TEMPO = 30 * DIA;
 const TTL = 60 * 60 * 24 * 400;
 
 function avaliacaoKey(email) {
@@ -67,7 +70,7 @@ module.exports = async (req, res) => {
     let reavFim = false;
     if (body.modo === 'reav') {
       const salvo = await redisGet(fortalecimentoKey(email));
-      reavFim = !!(salvo && salvo.fim);
+      reavFim = !!(salvo && (salvo.fim || (salvo.criado && agora >= salvo.criado + BLOCO_TEMPO)));
     }
     const st = situacao(reg, agora);
     let novo;

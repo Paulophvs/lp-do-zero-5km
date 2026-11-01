@@ -1422,11 +1422,41 @@ document.getElementById('btnTema').onclick=()=>{
       [[temPlano ? 'CONTINUAR MEU PLANO' : 'VOLTAR', function(){ if (temPlano) continuarPlano(); else { refazer(); } }]]);
   }
 
+  // fim do bloco por tempo: 30 dias desde que o plano foi montado (o servidor confere igual)
+  var BLOCO_TEMPO = 30 * 86400000;
+  function blocoPorTempo(v){ return !!(v && !v.fim && v.criado && Date.now() >= v.criado + BLOCO_TEMPO); }
+
+  // 3) pergunta na tela do plano para quem nao marcou tudo e ja passou dos 30 dias (Paulo 01/11).
+  //    Mostra quantos treinos ele marcou: faz pensar antes do SIM e lembra que e para marcar.
+  var renderOriginal = renderPlano;
+  renderPlano = function(){
+    renderOriginal();
+    if (!SALVO || !blocoPorTempo(SALVO)) return;
+    try { if (sessionStorage.getItem('fc-bloco-ainda') === String(SALVO.criado)) return; } catch(_){}
+    var tot = 0, fe = 0;
+    for (var w = 0; w < PLANO.weeks.length; w++){ var q = feitosSemana(w); tot += q.n; fe += q.f; }
+    var marcou = fe === 0 ? 'Você não marcou nenhum dos ' + tot + ' treinos deste bloco.' : 'Você marcou ' + fe + ' de ' + tot + ' treinos deste bloco.';
+    var box = document.createElement('div');
+    box.className = 'diag'; box.id = 'perguntaBloco';
+    box.style.cssText = 'border:2px solid var(--laranja);margin:0 0 18px';
+    box.innerHTML = '<h3 style="margin-bottom:6px">' + marcou + '</h3><p>Já fez as 4 semanas?</p>' +
+      '<div class="nav" style="margin-top:14px;display:flex;flex-direction:column;gap:10px">' +
+      '<button class="btn pri" type="button" style="width:100%" id="blocoSim">SIM, FAZER O TESTE PARA MUDAR DE NÍVEL</button>' +
+      '<button class="btn sec" type="button" style="width:100%" id="blocoNao">AINDA NÃO, CONTINUAR</button></div>';
+    var alvo = document.getElementById('plano');
+    alvo.insertBefore(box, alvo.firstChild);
+    document.getElementById('blocoSim').onclick = function(){ novaAvaliacao(true); };
+    document.getElementById('blocoNao').onclick = function(){
+      try { sessionStorage.setItem('fc-bloco-ainda', String(SALVO.criado)); } catch(_){}
+      box.remove();
+    };
+  };
+
   // 1) ao comecar a avaliacao (botao da tela inicial; o "Refazer" do plano volta para ela)
   var btn = document.getElementById('btnComecar');
   if (btn) btn.onclick = function(){
     var v = lerPlano();
-    if (v && v.fim){ ir(10); return; }   // bloco concluido: o caminho e a reavaliacao, que nao gasta a conta
+    if (v && (v.fim || blocoPorTempo(v))){ ir(10); return; }   // bloco concluido (marcado ou 30 dias): reavaliacao, nao gasta a conta
     api('GET').then(function(x){
       if (x.s !== 200 || !x.j.ok){ ir(10); return; }   // sem resposta: segue; o registro no fim confere de novo
       if (!x.j.pode){ bloqueio(x.j); return; }
