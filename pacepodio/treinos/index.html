@@ -61,6 +61,9 @@
   .card.travado .card-acao{color:#fff}
   .cadeado{position:absolute;top:10px;left:10px;width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,.65);display:grid;place-items:center}
   .cadeado svg{width:17px;height:17px;stroke:#fff}
+  /* selo da regra das planilhas no card Pace Podio (Paulo 01/11) */
+  .selo-planilha{position:absolute;top:10px;left:10px;right:10px;width:max-content;max-width:calc(100% - 20px);background:#fff;color:#0A0A0A;font-size:10.5px;font-weight:900;letter-spacing:.4px;padding:5px 8px;border-radius:7px;line-height:1.2;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+  .selo-planilha.verde{background:var(--verde)}
   .sair{display:block;margin:22px auto 0;background:none;border:none;color:var(--texto-fraco);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
   /* aviso de renovacao / vencimento */
   .aviso-plano{display:none;margin:0 0 18px;padding:13px 14px;border-radius:12px;font-size:14px;line-height:1.45;font-weight:600}
@@ -238,6 +241,7 @@ function montarArea(aluno){
   pp.href = '/pacepodio/obrigado.html?email=' + encodeURIComponent(aluno.email);
   // assinatura vencida: a planilha trava, os bonus vitalicios continuam
   if (!aluno.plano) travar(pp, anual, 'RENOVAR');
+  else seloPlanilha(pp);
   if (aluno.bonus){ liberarGrupo(aluno.grupo); return; }
   var bonus = document.querySelectorAll('[data-bonus]');
   for (var i = 0; i < bonus.length; i++){
@@ -245,6 +249,22 @@ function montarArea(aluno){
     travar(bonus[i], anual, 'LIBERE NO ANUAL');
   }
   liberarGrupo(aluno.grupo);
+}
+
+// selo no card Pace Podio: ajuste disponivel (7 dias), contagem, nova liberada ou pronta com cadeado (mensal)
+function seloPlanilha(pp){
+  api('/api/planilha').then(function(x){
+    if (x.status !== 200 || !x.j.ok) return;
+    var j = x.j, txt = '', cls = '';
+    if (j.ajuste.pode) txt = 'AJUSTE DISPONÍVEL';
+    else if (j.nova.pode){ txt = 'NOVA PLANILHA LIBERADA'; cls = ' verde'; }
+    else if (j.nova.travada) txt = 'NOVA PLANILHA PRONTA \uD83D\uDD12';
+    else if (j.nova.faltam_dias >= 1 && j.nova.faltam_dias <= 3) txt = j.nova.faltam_dias === 1 ? 'FALTA 1 DIA' : 'FALTAM ' + j.nova.faltam_dias + ' DIAS';
+    if (!txt) return;
+    var s = document.createElement('span');
+    s.className = 'selo-planilha' + cls; s.textContent = txt;
+    pp.appendChild(s);
+  });
 }
 
 // sessao do login: o token vai no cabecalho; a API descobre o e-mail por ele

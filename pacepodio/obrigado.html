@@ -60,6 +60,27 @@
   .ac-bt{margin-top:10px;display:block;text-align:center;padding:15px;border-radius:12px;font-weight:800;font-size:15px;letter-spacing:.3px}
   .ac-c.um .ac-bt{background:var(--laranja)}
   .ac-c.dois .ac-bt{background:#fff;color:#0A0A0A}
+  /* ===== regra das planilhas (Paulo 01/11): so para quem esta logado na area =====
+     ajuste (1a planilha, 7 dias), contagem dos dias 24-26, nova liberada no dia 27,
+     mensal com a nova "pronta" travada ate a renovacao. Regras no /api/planilha. */
+  .pp-faixa{border-radius:14px;padding:16px;margin:0 0 22px;font-size:15px;line-height:1.5;background:rgba(248,104,0,.1);border:1px solid rgba(248,104,0,.45)}
+  .pp-faixa .pp-tit{font-weight:900;font-size:17px;letter-spacing:.3px;margin-bottom:4px}
+  .pp-faixa.liberada{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.5)}
+  .pp-faixa.liberada .pp-tit{color:var(--verde)}
+  .pp-faixa .btn{margin-top:12px}
+  .pp-lembrete{margin:-4px 0 12px;padding:10px 14px;border-radius:10px;border:1px dashed rgba(248,104,0,.6);font-size:14px;color:var(--texto-fraco)}
+  .pp-lembrete a{color:var(--laranja-claro);font-weight:700}
+  .pp-pronta{position:relative;border:2px solid var(--laranja);border-radius:16px;padding:16px;margin:0 0 22px;background:var(--carvao);cursor:pointer}
+  .pp-pronta-tit{font-size:19px;font-weight:900;margin-bottom:4px}
+  .pp-pronta-prev{font-size:15px;color:var(--texto-fraco);margin-bottom:12px}
+  .pp-pronta-prev b{color:var(--verde);font-size:18px}
+  .pp-borrado{filter:blur(5px);pointer-events:none;user-select:none;max-height:260px;overflow:hidden;opacity:.85}
+  .pp-abrir{display:block;text-align:center;margin-top:12px;font-weight:800;color:var(--laranja-claro);letter-spacing:.3px}
+  .pp-oferta{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--linha);font-size:15px;line-height:1.55;cursor:default}
+  .pp-pronta.aberta .pp-oferta{display:block}
+  .pp-pronta.aberta .pp-abrir{display:none}
+  .pp-oferta .btn{margin-top:14px}
+  .pp-esperar{display:block;margin:12px auto 0;background:none;border:0;color:var(--texto-fraco);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer}
 </style>
 </head>
 <body>
@@ -124,6 +145,7 @@
         </a>
       </div>
     </div>
+    <div id="pp-regra"></div>
     <div class="plano-topo" id="planilha">
       <div class="plano-head">
         <img class="plano-logo" src="/pacepodio/logo-pace-podio.png" alt="Pace Pódio">
@@ -168,7 +190,7 @@ function preencherRespComPedido(p){
   resp.dias = p.qtdDias;
   resp.diasSemana = p.diasSemana || [];
   resp.obsDias = '';
-  resp.ciclo = 1;
+  resp.ciclo = Number(p.ciclo) || 1;   // 01/11: planilha nova avanca o modelo M1-M4 (gravado pelo /api/planilha)
 }
 
 // 2 cards de acesso no topo da planilha. Quem veio da propria area de membros
@@ -188,6 +210,81 @@ function mostrarAcessos(plano){
     ev.preventDefault();
     document.getElementById('planilha').scrollIntoView({ behavior:'smooth', block:'start' });
   });
+}
+
+// ===== regra das planilhas (Paulo 01/11) =====
+var NP_URL = '/pacepodio/treinos/planilha-nova/';
+function ddmm(ts){ var d = new Date(ts); return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0'); }
+function mostrarRegraPlanilha(emailPedido){
+  var aluno = null;
+  try { aluno = JSON.parse(localStorage.getItem('pp-aluno') || 'null'); } catch(e){}
+  if (!aluno || !aluno.token) return;   // so quem esta logado na area de membros
+  if (String(aluno.email || '').toLowerCase() !== String(emailPedido || '').toLowerCase()) return;
+  fetch('/api/planilha', { cache: 'no-store', headers: { Authorization: 'Bearer ' + aluno.token } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(j){ if (j && j.ok) pintarRegra(j, aluno); })
+    .catch(function(){});
+}
+function pintarRegra(j, aluno){
+  var box = document.getElementById('pp-regra'), html = '';
+  if (j.ajuste.pode){
+    html = '<div class="pp-faixa"><div>Os treinos ficaram fortes ou leves demais? Você pode ajustar sua planilha 1 vez até <b>' +
+      ddmm(j.ajuste.ate) + '</b>.</div><a class="btn" href="' + NP_URL + '?modo=ajuste">AJUSTAR MINHA PLANILHA</a></div>';
+    lembreteSemana1();
+  } else if (j.nova.pode){
+    html = '<div class="pp-faixa liberada"><div class="pp-tit">NOVA PLANILHA LIBERADA</div><div>Suas 4 semanas fecharam. ' +
+      'A nova é montada com o seu tempo de agora.</div><a class="btn" href="' + NP_URL + '?modo=nova">GERAR MINHA NOVA PLANILHA</a></div>';
+  } else if (j.nova.travada){
+    html = cardPronta(j, aluno);
+  } else if (j.ativo && j.nova.faltam_dias >= 1 && j.nova.faltam_dias <= 3){
+    var n = j.nova.faltam_dias;
+    html = '<div class="pp-faixa"><div class="pp-tit">' + (n === 1 ? 'Falta 1 dia' : 'Faltam ' + n + ' dias') +
+      ' para liberar sua nova planilha</div><div>Já vai pensando no seu tempo atual.</div></div>';
+  }
+  box.innerHTML = html;
+}
+// lembrete embaixo do 1o treino forte da semana 1: e quando ele percebe que errou o tempo
+function lembreteSemana1(){
+  var sem = document.querySelector('#plano-corpo .semana');
+  if (!sem) return;
+  var ts = sem.querySelectorAll('.treino'), alvo = null;
+  for (var i=0;i<ts.length && !alvo;i++){
+    var tx = ts[i].textContent;
+    if (/forte|contínuo|Ritmo de prova|Tiros/.test(tx)) alvo = ts[i];
+  }
+  if (!alvo) return;
+  var d = document.createElement('div');
+  d.className = 'pp-lembrete';
+  d.innerHTML = 'Não conseguiu manter o pace? <a href="' + NP_URL + '?modo=ajuste">Ajuste sua planilha aqui.</a>';
+  alvo.parentNode.insertBefore(d, alvo.nextSibling);
+}
+// mensal no dia 27 sem renovacao paga: a nova aparece pronta, com a semana 1 borrada e a previsao nitida
+function cardPronta(j, aluno){
+  var a = j.atual, d = a.distancia;
+  var base = prever(d, a.minutos, a.segundos).segNovo;          // o tempo dele ao fim desta planilha
+  var mm = Math.floor(base/60), ss = base % 60;
+  var prevNova = prever(d, mm, ss).segNovo;
+  var pl = montarPlano(d, mm, ss, a.qtdDias, a.diasSemana, (a.ciclo % 4) + 1);
+  var s1 = pl.semanas[0], semana = '<div class="semana"><div class="semana-tit">Semana 1</div>';
+  s1.treinos.forEach(function(t){ semana += '<div class="treino"><div class="treino-dia">' + (t.rotulo || ('DIA ' + t.dia)) +
+    '</div><div class="treino-corpo">' + frasesTreino(t) + '</div></div>'; });
+  semana += '</div>';
+  var dias = j.vence_em ? Math.ceil((j.vence_em - Date.now()) / 86400000) : 0;
+  var quando = dias > 1 ? 'Sua nova planilha libera na renovação, em ' + dias + ' dias.'
+             : dias === 1 ? 'Sua nova planilha libera na renovação, em 1 dia.'
+             : 'Sua nova planilha libera assim que a renovação for paga.';
+  // o grupo so entra na oferta quando o mensal NAO tem o grupo (liberacao do lancamento desligada)
+  var bonus = 'fortalecimento muscular e alimentação e suplementação para corredores' + (aluno.grupo ? '' : ' e o grupo VIP');
+  var link = HOTMART_LINKS.anual + '&email=' + encodeURIComponent(aluno.email);
+  return '<div class="pp-pronta" id="pp-pronta" onclick="this.classList.add(\'aberta\')">' +
+    '<div class="pp-pronta-tit">Sua nova planilha está pronta &#128274;</div>' +
+    '<div class="pp-pronta-prev">Previsão da nova planilha: <b>' + segParaTempo(prevNova) + '</b></div>' +
+    '<div class="pp-borrado" aria-hidden="true">' + semana + '</div>' +
+    '<span class="pp-abrir">VER MINHA NOVA PLANILHA</span>' +
+    '<div class="pp-oferta" onclick="event.stopPropagation()"><div>' + quando + '</div>' +
+    '<div style="margin-top:10px"><b>Quer agora?</b> No anual você troca de planilha todo mês e ainda leva ' + bonus + '.</div>' +
+    '<a class="btn" href="' + link + '">QUERO O ANUAL</a>' +
+    '<button class="pp-esperar" onclick="document.getElementById(\'pp-pronta\').classList.remove(\'aberta\')">Prefiro esperar a renovação</button></div></div>';
 }
 
 function mostrarTela(id){
@@ -214,6 +311,7 @@ function consultarEEsperar(email){
         var blocoCiclo = document.getElementById('bloco-ciclo');
         if (blocoCiclo) blocoCiclo.style.display = 'none';
         mostrarAcessos(pedido.plano);
+        mostrarRegraPlanilha(pedido.email || email);
         mostrarTela('tela-plano');
         return;
       }

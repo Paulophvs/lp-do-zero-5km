@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pace Pódio | Sua planilha</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/pacepodio/estilo.css?v=1">
+<style>
+  /* ajuste (1a planilha, 7 dias) e nova planilha (dia 27): regra do Paulo 01/11.
+     As regras valem no servidor (/api/planilha); aqui so o formulario e a confirmacao. */
+  .np-topo{margin-bottom:22px}
+  .np-topo h1{font-size:26px;margin-bottom:8px}
+  .np-topo p{color:var(--texto-fraco);font-size:15px;line-height:1.5}
+  .sugestao{font-size:13px;color:var(--texto-fraco);margin:-6px 0 14px;line-height:1.5}
+  .conf-linha{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--linha);font-size:15px}
+  .conf-linha span:first-child{color:var(--texto-fraco)}
+  .conf-linha b{text-align:right}
+  .conf-linha .antes{color:var(--texto-fraco);font-weight:500;text-decoration:line-through;margin-right:6px}
+  .checks{margin:22px 0 8px;display:flex;flex-direction:column;gap:12px}
+  .check{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1.5px solid var(--linha);border-radius:12px;cursor:pointer;font-size:15px;line-height:1.45}
+  .check input{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--laranja)}
+  .check:has(input:checked){border-color:var(--laranja)}
+  .aviso-final{font-size:14px;color:#ffc4c4;background:rgba(255,82,82,.1);border:1px solid rgba(255,82,82,.4);border-radius:12px;padding:12px 14px;margin:14px 0 18px;line-height:1.5}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .msg{text-align:center;padding:30px 0}
+  .msg p{color:var(--texto-fraco);line-height:1.6;margin:10px 0 24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="logo" src="/pacepodio/logo-pace-podio.png" alt="Pace Pódio">
+
+  <section class="tela ativa" id="tela-carregando"><div class="msg"><p>Carregando...</p></div></section>
+
+  <section class="tela" id="tela-msg">
+    <div class="msg"><h2 class="pergunta" id="msg-tit"></h2><p id="msg-txt"></p>
+      <a class="btn" href="/pacepodio/treinos/">VOLTAR PARA A ÁREA</a></div>
+  </section>
+
+  <section class="tela" id="tela-dist">
+    <div class="np-topo"><h1 id="np-tit"></h1><p id="np-sub"></p></div>
+    <p class="passo">PERGUNTA 1 DE 3</p>
+    <h2 class="pergunta">Qual corrida você quer baixar o tempo?</h2>
+    <div class="opcoes">
+      <button class="opcao" data-dist="5" onclick="escolherDist(5)">5 km</button>
+      <button class="opcao" data-dist="10" onclick="escolherDist(10)">10 km</button>
+    </div>
+    <a class="voltar" href="/pacepodio/treinos/">Voltar</a>
+  </section>
+
+  <section class="tela" id="tela-dias">
+    <p class="passo">PERGUNTA 2 DE 3</p>
+    <h2 class="pergunta">Quais dias da semana você consegue treinar?</h2>
+    <p class="ajuda">Marque só os dias que você consegue manter toda semana.</p>
+    <div class="dias" id="opcoes-dias">
+      <button class="opcao" data-dia="1" onclick="marcarDia(1)">Segunda</button>
+      <button class="opcao" data-dia="2" onclick="marcarDia(2)">Terça</button>
+      <button class="opcao" data-dia="3" onclick="marcarDia(3)">Quarta</button>
+      <button class="opcao" data-dia="4" onclick="marcarDia(4)">Quinta</button>
+      <button class="opcao" data-dia="5" onclick="marcarDia(5)">Sexta</button>
+      <button class="opcao" data-dia="6" onclick="marcarDia(6)">Sábado</button>
+      <button class="opcao" data-dia="7" onclick="marcarDia(7)">Domingo</button>
+    </div>
+    <p class="obs-dias" id="obs-dias"></p>
+    <p class="erro" id="erro-dias"></p>
+    <button class="btn" id="btn-dias" onclick="seguirDias()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-dist')">Voltar</button>
+  </section>
+
+  <section class="tela" id="tela-tempo">
+    <p class="passo">PERGUNTA 3 DE 3</p>
+    <h2 class="pergunta" id="np-pergunta-tempo"></h2>
+    <p class="ajuda" id="np-ajuda-tempo"></p>
+    <p class="sugestao" id="np-sugestao" style="display:none"></p>
+    <div class="tripla" id="caixas-tempo">
+      <div class="campo" id="campo-hora">
+        <label for="hora">Horas</label>
+        <input id="hora" type="number" inputmode="numeric" min="1" max="2" placeholder="0"
+               oninput="this.value=this.value.replace(/[^12]/g,'').slice(0,1)">
+      </div>
+      <div class="campo"><label for="min">Minutos</label><input id="min" type="number" inputmode="numeric" min="0" max="59" placeholder="00"></div>
+      <div class="campo"><label for="seg">Segundos</label><input id="seg" type="number" inputmode="numeric" min="0" max="59" placeholder="00"></div>
+    </div>
+    <p class="erro" id="erro-tempo"></p>
+    <button class="btn" onclick="seguirTempo()">CONTINUAR</button>
+    <button class="voltar" onclick="irPara('tela-dias')">Voltar</button>
+  </section>
+
+  <section class="tela" id="tela-conf">
+    <h2 class="pergunta">Confere antes de confirmar</h2>
+    <div id="conf-resumo"></div>
+    <div class="checks" id="conf-checks"></div>
+    <p class="aviso-final" id="conf-aviso"></p>
+    <p class="erro" id="erro-conf"></p>
+    <button class="btn" id="btn-confirmar" disabled onclick="confirmar()"></button>
+    <button class="voltar" onclick="irPara('tela-dist')">VOLTAR E CORRIGIR</button>
+  </section>
+</div>
+
+<script src="/pacepodio/motor.js?v=1"></script>
+<script>
+var MODO = new URLSearchParams(location.search).get('modo') === 'nova' ? 'nova' : 'ajuste';
+var aluno = null, est = null;
+var np = { distancia: null, min: null, seg: 0, dias: [], obsVista: false };
+try { aluno = JSON.parse(localStorage.getItem('pp-aluno') || 'null'); } catch(e){}
+
+function mensagem(tit, txt){
+  document.getElementById('msg-tit').textContent = tit;
+  document.getElementById('msg-txt').textContent = txt;
+  irPara('tela-msg');
+}
+function nomesDias(ds){ return ds.map(function(d){ return NOMES_DIAS[d].slice(0,3); }).join(', '); }
+function tempoTxt(min, seg){ return segParaTempo(min*60 + seg); }
+
+function escolherDist(d){
+  np.distancia = d;
+  var ops = document.querySelectorAll('.opcao[data-dist]');
+  for (var i=0;i<ops.length;i++) ops[i].classList.toggle('marcada', Number(ops[i].dataset.dist) === d);
+  prepararTempo();
+  setTimeout(function(){ irPara('tela-dias'); }, 180);
+}
+
+function pintarDias(){
+  var ops = document.querySelectorAll('.opcao[data-dia]');
+  for (var k=0;k<ops.length;k++) ops[k].classList.toggle('marcada', np.dias.indexOf(Number(ops[k].dataset.dia)) >= 0);
+}
+function marcarDia(n){
+  var i = np.dias.indexOf(n), e = document.getElementById('erro-dias');
+  if (i >= 0) np.dias.splice(i, 1);
+  else {
+    if (np.dias.length >= 6){ e.textContent = 'Um dia de descanso geral na semana faz parte do método pra sua evolução na corrida.'; return; }
+    np.dias.push(n);
+  }
+  np.dias.sort(function(a,b){ return a-b; });
+  e.textContent = ''; np.obsVista = false;
+  var o = document.getElementById('obs-dias'); o.textContent = ''; o.classList.remove('on');
+  document.getElementById('btn-dias').textContent = 'CONTINUAR';
+  pintarDias();
+}
+// mesma trava mole do formulario de compra (obsDias do motor.js)
+function seguirDias(){
+  var e = document.getElementById('erro-dias'), o = document.getElementById('obs-dias'), b = document.getElementById('btn-dias');
+  if (np.dias.length < 2){ e.textContent = 'Marque pelo menos 2 dias da semana.'; return; }
+  e.textContent = '';
+  var obs = obsDias(np.dias);
+  if (obs && !np.obsVista){ o.textContent = obs; o.classList.add('on'); b.textContent = 'SEGUIR ASSIM MESMO'; np.obsVista = true; return; }
+  irPara('tela-tempo');
+}
+
+function prepararTempo(){
+  var d = np.distancia, t10 = d === 10;
+  document.getElementById('np-pergunta-tempo').textContent = 'Qual o seu tempo exato nos ' + d + ' km hoje?';
+  document.getElementById('np-ajuda-tempo').textContent = 'Use seu melhor tempo dos últimos 15 dias, ou o da última vez que você correu ' + d +
+    ' km. Se você usar um recorde pessoal de meses atrás, o treino vai sair forte demais para você.';
+  document.getElementById('campo-hora').style.display = t10 ? '' : 'none';
+  document.getElementById('caixas-tempo').className = t10 ? 'tripla' : 'dupla';
+  // sugestao: no ajuste, o tempo que ele colocou; na nova, a previsao da planilha que terminou
+  var a = est.atual, totSeg;
+  if (MODO === 'nova' && d === a.distancia){
+    totSeg = prever(a.distancia, a.minutos, a.segundos).segNovo;
+    var s = document.getElementById('np-sugestao');
+    s.textContent = 'Preenchemos com a previsão da sua última planilha (' + segParaTempo(totSeg) + '). Troque pelo seu tempo real de hoje.';
+    s.style.display = '';
+  } else if (d === a.distancia){
+    totSeg = a.minutos*60 + a.segundos;
+  } else { totSeg = null; document.getElementById('np-sugestao').style.display = 'none'; }
+  var h = document.getElementById('hora'), m = document.getElementById('min'), sg = document.getElementById('seg');
+  if (totSeg === null){ h.value = ''; m.value = ''; sg.value = ''; return; }
+  var mm = Math.floor(totSeg/60), ss = totSeg % 60;
+  h.value = (t10 && mm >= 60) ? String(Math.floor(mm/60)) : '';
+  m.value = String(t10 ? mm % 60 : mm); sg.value = String(ss).padStart(2,'0');
+}
+
+// mesma validacao do formulario de compra (calcular no motor.js)
+function seguirTempo(){
+  var d = np.distancia, e = document.getElementById('erro-tempo');
+  var hh = d === 5 ? 0 : Number(document.getElementById('hora').value || 0);
+  var minRaw = document.getElementById('min').value, ss = Number(document.getElementById('seg').value || 0);
+  if (hh !== 0 && hh !== 1 && hh !== 2){ e.textContent = 'A hora só pode ser 1 ou 2. Correu abaixo de 1 hora? Deixe a hora em branco.'; return; }
+  if (minRaw === ''){ e.textContent = 'Coloque os minutos do seu tempo, tipo 43.'; return; }
+  var mm = Number(minRaw);
+  if (isNaN(mm) || mm < 0 || mm > 59){ e.textContent = 'Os minutos vão de 0 a 59.'; return; }
+  if (ss < 0 || ss > 59 || !Number.isInteger(ss)){ e.textContent = 'Os segundos vão de 0 a 59.'; return; }
+  var tot = hh*60 + mm;
+  var recorde = d === 5 ? 12*60+35 : 26*60+11;
+  if (tot*60 + ss < recorde){ e.textContent = 'Esse tempo é mais rápido que o recorde mundial. Confere aí.'; return; }
+  if ((tot + ss/60)/d > 15){ e.textContent = 'Esse tempo parece de caminhada. Confere aí.'; return; }
+  e.textContent = '';
+  np.min = tot; np.seg = ss;
+  montarConfirmacao();
+  irPara('tela-conf');
+}
+
+function linha(rotulo, antes, depois){
+  var mudou = antes !== depois;
+  return '<div class="conf-linha"><span>' + rotulo + '</span><b>' + (mudou ? '<span class="antes">' + antes + '</span>' : '') +
+    depois + '</b></div>';
+}
+function montarConfirmacao(){
+  var a = est.atual, prev = prever(np.distancia, np.min, np.seg);
+  var html = '';
+  if (a.distancia !== np.distancia) html += linha('Corrida', a.distancia + ' km', np.distancia + ' km');
+  html += linha('Tempo atual nos ' + np.distancia + ' km', a.distancia === np.distancia ? tempoTxt(a.minutos, a.segundos) : '-', tempoTxt(np.min, np.seg));
+  html += linha('Dias de treino', a.qtdDias + ' (' + nomesDias(a.diasSemana) + ')', np.dias.length + ' (' + nomesDias(np.dias) + ')');
+  var prevAntes = a.distancia === np.distancia ? segParaTempo(prever(a.distancia, a.minutos, a.segundos).segNovo) : '-';
+  html += linha('Previsão em 4 semanas', MODO === 'ajuste' ? prevAntes : segParaTempo(prev.segNovo), segParaTempo(prev.segNovo));
+  document.getElementById('conf-resumo').innerHTML = html;
+  var checks = ['Esse tempo é de uma prova ou treino forte dos últimos 30 dias (não é chute nem meta)',
+                'Esses são os dias que eu consigo treinar de verdade, toda semana'];
+  if (MODO === 'ajuste') checks.push('Entendi que esse ajuste pode ser feito somente uma vez');
+  document.getElementById('conf-checks').innerHTML = checks.map(function(c){
+    return '<label class="check"><input type="checkbox" onchange="conferirChecks()"><span>' + c + '</span></label>';
+  }).join('');
+  document.getElementById('conf-aviso').textContent = MODO === 'ajuste'
+    ? 'Depois de confirmar, sua planilha atual é trocada pela nova. Não dá pra voltar.'
+    : 'Depois de confirmar, sua nova planilha substitui a atual.';
+  var b = document.getElementById('btn-confirmar');
+  b.textContent = MODO === 'ajuste' ? 'CONFIRMAR AJUSTE' : 'GERAR MINHA NOVA PLANILHA';
+  conferirChecks();
+}
+function conferirChecks(){
+  var cs = document.querySelectorAll('#conf-checks input'), tudo = cs.length > 0;
+  for (var i=0;i<cs.length;i++) if (!cs[i].checked) tudo = false;
+  document.getElementById('btn-confirmar').disabled = !tudo;
+}
+
+function confirmar(){
+  var b = document.getElementById('btn-confirmar'), e = document.getElementById('erro-conf');
+  b.disabled = true; var txt = b.textContent; b.textContent = 'Montando sua planilha...';
+  fetch('/api/planilha', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + aluno.token },
+    body: JSON.stringify({ acao: MODO === 'ajuste' ? 'ajustar' : 'gerar', distancia: np.distancia, minutos: np.min, segundos: np.seg,
+      qtdDias: np.dias.length, diasSemana: np.dias }) })
+    .then(function(r){ return r.json().then(function(j){ return { s: r.status, j: j }; }); })
+    .then(function(x){
+      if (x.s === 200 && x.j.ok){
+        try { localStorage.setItem('pacebaixo_pedido', JSON.stringify({ email: aluno.email })); } catch(err){}
+        location.href = '/pacepodio/obrigado.html?email=' + encodeURIComponent(aluno.email);
+        return;
+      }
+      if (x.s === 401){ location.replace('/pacepodio/treinos/'); return; }
+      e.textContent = x.s === 403 ? (MODO === 'ajuste' ? 'O prazo do ajuste acabou ou ele já foi usado.' : 'Sua nova planilha ainda não está liberada.')
+                                  : 'Não consegui salvar agora. Tenta de novo em instantes.';
+      b.textContent = txt; conferirChecks();
+    })
+    .catch(function(){ e.textContent = 'Sem conexão. Tenta de novo.'; b.textContent = txt; conferirChecks(); });
+}
+
+(function iniciar(){
+  if (!aluno || !aluno.token){ location.replace('/pacepodio/treinos/'); return; }
+  document.getElementById('np-tit').textContent = MODO === 'ajuste' ? 'Ajustar minha planilha' : 'Sua nova planilha';
+  document.getElementById('np-sub').textContent = MODO === 'ajuste'
+    ? 'Confira as respostas e mude só o que estava errado.'
+    : 'Suas 4 semanas fecharam. Coloque o seu tempo de agora e a evolução entra no treino novo.';
+  fetch('/api/planilha', { cache: 'no-store', headers: { Authorization: 'Bearer ' + aluno.token } })
+    .then(function(r){ if (r.status === 401){ location.replace('/pacepodio/treinos/'); return null; } return r.json(); })
+    .then(function(j){
+      if (!j) return;
+      if (!j.ok){ mensagem('Planilha não encontrada', 'Não achamos uma planilha ligada a esta conta. Fale com a gente no WhatsApp.'); return; }
+      est = j;
+      if (MODO === 'ajuste' && !j.ajuste.pode){ mensagem('Ajuste indisponível', j.ajuste.usado ? 'Você já usou o seu ajuste.' : 'O ajuste vale só nos 7 primeiros dias da primeira planilha.'); return; }
+      if (MODO === 'nova' && !j.nova.pode){ mensagem('Ainda não liberou', j.nova.faltam_dias > 0 ? 'Sua nova planilha libera em ' + j.nova.faltam_dias + (j.nova.faltam_dias === 1 ? ' dia.' : ' dias.') : 'Sua nova planilha libera na renovação do plano.'); return; }
+      np.dias = (j.atual.diasSemana || []).slice(); pintarDias();
+      var ops = document.querySelectorAll('.opcao[data-dist]');
+      for (var i=0;i<ops.length;i++) ops[i].classList.toggle('marcada', Number(ops[i].dataset.dist) === j.atual.distancia);
+      np.distancia = j.atual.distancia; prepararTempo();
+      irPara('tela-dist');
+    })
+    .catch(function(){ mensagem('Sem conexão', 'Não consegui carregar sua planilha. Tenta de novo em instantes.'); });
+})();
+</script>
+</body>
+</html>
