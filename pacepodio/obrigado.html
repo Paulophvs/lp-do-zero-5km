@@ -18,6 +18,36 @@
   }
   @keyframes girar{ to{ transform:rotate(360deg); } }
   .busca-campo{ max-width:360px; margin:0 auto; }
+  /* ===== 2 cards de acesso (planilha + area de membros), pedido do Paulo 01/11 =====
+     o bloco fica mais largo que o .wrap (560px) no PC para os cards caberem lado a lado */
+  .ac{width:min(860px,calc(100vw - 32px));margin:0 0 32px calc(50% - min(430px,50vw - 16px))}
+  .ac-topo{text-align:center;margin-bottom:22px}
+  .ac-ok{display:inline-block;margin:0 0 8px;padding:6px 12px;border-radius:99px;background:rgba(0,230,118,.12);color:var(--verde);font-size:13px;font-weight:700}
+  .ac-topo h1{font-size:24px;font-weight:900;line-height:1.2;margin:4px 0 8px}
+  .ac-topo p{color:var(--texto-fraco);font-size:15px;line-height:1.5;margin:0}
+  .ac-duo{display:grid;grid-template-columns:1fr;gap:14px}
+  @media(min-width:720px){.ac-duo{grid-template-columns:1fr 1fr}}
+  .ac-c{display:flex;flex-direction:column;border-radius:18px;overflow:hidden;background:var(--carvao);border:1px solid var(--linha);text-decoration:none;color:#fff}
+  .ac-c.um{border:2px solid var(--laranja)}
+  .ac-foto{position:relative;height:240px;background:center/cover no-repeat}
+  .ac-foto::after,.ac-mos::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(20,20,20,1) 100%)}
+  .ac-selo{position:absolute;top:12px;left:12px;z-index:2;background:rgba(0,0,0,.65);border-radius:10px;padding:6px 9px}
+  .ac-selo img{height:20px;display:block}
+  .ac-mos{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;height:240px;position:relative}
+  .ac-mos div{background:center/cover no-repeat;position:relative}
+  .ac-mos .trava{filter:saturate(.3) brightness(.7)}
+  .ac-mos .trava::before{content:"\1F512";position:absolute;top:8px;right:8px;font-size:15px;background:rgba(0,0,0,.6);border-radius:99px;padding:3px 6px}
+  .ac-mos .trava.esq::before{top:34px;left:10px;right:auto}
+  .ac-tag{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:3;white-space:nowrap;background:var(--laranja);color:#fff;font-size:14px;font-weight:900;letter-spacing:.7px;padding:8px 14px;border-radius:9px;box-shadow:0 6px 20px rgba(0,0,0,.55);border:2px solid #fff}
+  .ac-wa{position:absolute;right:14px;bottom:14px;z-index:3;width:78px;height:78px}
+  .ac-wa svg{width:100%;height:100%;fill:#fff;filter:drop-shadow(0 2px 8px rgba(0,0,0,.75))}
+  @media(min-width:720px){.ac-wa{width:86px;height:86px}.ac-tag{font-size:15.5px}}
+  .ac-txt{padding:4px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .ac-tit{font-size:20px;font-weight:800;line-height:1.2}
+  .ac-sub{font-size:14px;line-height:1.45;color:rgba(255,255,255,.8);flex:1}
+  .ac-bt{margin-top:10px;display:block;text-align:center;padding:15px;border-radius:12px;font-weight:800;font-size:15px;letter-spacing:.3px}
+  .ac-c.um .ac-bt{background:var(--laranja)}
+  .ac-c.dois .ac-bt{background:#fff;color:#0A0A0A}
 </style>
 </head>
 <body>
@@ -57,7 +87,32 @@
 
   <!-- ===== PLANILHA COMPLETA (mesma estrutura do index.html, nao duplicar logica) ===== -->
   <section class="tela" id="tela-plano">
-    <div class="plano-topo">
+    <!-- 2 cards de acesso: escondido quando o aluno chega pela propria area de membros -->
+    <div class="ac" id="acessos" style="display:none">
+      <div class="ac-topo">
+        <span class="ac-ok">&#10003; Pagamento confirmado</span>
+        <h1>Bem-vindo ao Pace Pódio</h1>
+        <p>Tudo que é seu está aqui embaixo.</p>
+      </div>
+      <div class="ac-duo">
+        <a class="ac-c um" href="#planilha" id="ac-planilha">
+          <div class="ac-foto" style="background-image:url(/pacepodio/treinos/img/card-pacepodio.jpg)"><span class="ac-selo"><img src="/pacepodio/logo-pace-podio.png" alt=""></span></div>
+          <div class="ac-txt"><div class="ac-tit">Sua planilha de corrida</div><div class="ac-sub">Montada para o seu tempo de prova e os seus dias de treino. Abre aqui e baixa em PDF.</div><span class="ac-bt">VER MINHA PLANILHA</span></div>
+        </a>
+        <a class="ac-c dois" href="/pacepodio/treinos/">
+          <div class="ac-mos">
+            <div style="background-image:url(/pacepodio/treinos/img/card-pacepodio.jpg)"></div>
+            <div class="bonus" style="background-image:url(/pacepodio/treinos/img/card-fortalecimento.jpg)"></div>
+            <div class="bonus esq" style="background-image:url(/pacepodio/treinos/img/card-alimentacao.jpg)"></div>
+            <div style="background-image:url(/pacepodio/treinos/img/card-grupo.jpg)"></div>
+            <span class="ac-tag">ÁREA DE MEMBROS</span>
+            <span class="ac-wa" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></span>
+          </div>
+          <div class="ac-txt"><div class="ac-tit">Área de Membros Pace Pódio</div><div class="ac-sub" id="ac-linha">Treinos, fortalecimento, alimentação e grupo VIP.</div><span class="ac-bt">ENTRAR NA MINHA ÁREA</span></div>
+        </a>
+      </div>
+    </div>
+    <div class="plano-topo" id="planilha">
       <div class="plano-head">
         <img class="plano-logo" src="/pacepodio/logo-pace-podio.png" alt="Pace Pódio">
         <h2>Sua planilha completa</h2>
@@ -104,6 +159,25 @@ function preencherRespComPedido(p){
   resp.ciclo = 1;
 }
 
+// 2 cards de acesso no topo da planilha. Quem veio da propria area de membros
+// (card Pace Podio) ja esta logado la, entao nao repete o "pagamento confirmado".
+// Mensal: fortalecimento e alimentacao com cadeado e linha sem prometer os bonus.
+function mostrarAcessos(plano){
+  var bloco = document.getElementById('acessos');
+  if (!bloco) return;
+  if ((document.referrer || '').indexOf('/pacepodio/treinos') > -1) return;
+  if (plano === 'mensal'){
+    var b = bloco.querySelectorAll('.bonus');
+    for (var i=0;i<b.length;i++) b[i].classList.add('trava');
+    document.getElementById('ac-linha').textContent = 'Treinos, grupo VIP e bônus do anual.';
+  }
+  bloco.style.display = 'block';
+  document.getElementById('ac-planilha').addEventListener('click', function(ev){
+    ev.preventDefault();
+    document.getElementById('planilha').scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+}
+
 function mostrarTela(id){
   var telas = document.querySelectorAll('.tela');
   for (var i=0;i<telas.length;i++) telas[i].classList.remove('ativa');
@@ -127,6 +201,7 @@ function consultarEEsperar(email){
         // quem pagou ve so o mes 1, nao faz sentido mostrar isso pro aluno.
         var blocoCiclo = document.getElementById('bloco-ciclo');
         if (blocoCiclo) blocoCiclo.style.display = 'none';
+        mostrarAcessos(pedido.plano);
         mostrarTela('tela-plano');
         return;
       }
