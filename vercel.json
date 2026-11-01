@@ -1,4 +1,7 @@
 {
+  "crons": [
+    { "path": "/api/aviso-planilhas", "schedule": "0 12 * * *" }
+  ],
   "redirects": [
     { "source": "/pacebaixo", "destination": "/pacepodio", "permanent": false },
     { "source": "/pacebaixo/", "destination": "/pacepodio/", "permanent": false },

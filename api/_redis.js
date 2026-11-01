@@ -72,4 +72,7 @@ function fortalecimentoKey(email) {
   return 'fc:' + normalizeEmail(email);
 }
 
-module.exports = { redisSet, redisGet, redisDel, redisIncr, normalizeEmail, pedidoKey, alunoKey, bonusKey, fortalecimentoKey };
+// comando livre (ex.: SCAN do aviso diario das planilhas)
+const redisCmd = call;
+
+module.exports = { redisSet, redisGet, redisDel, redisIncr, redisCmd, normalizeEmail, pedidoKey, alunoKey, bonusKey, fortalecimentoKey };
