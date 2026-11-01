@@ -42,6 +42,17 @@
   .ac-wa{position:absolute;right:14px;bottom:14px;z-index:3;width:78px;height:78px}
   .ac-wa svg{width:100%;height:100%;fill:#fff;filter:drop-shadow(0 2px 8px rgba(0,0,0,.75))}
   @media(min-width:720px){.ac-wa{width:86px;height:86px}.ac-tag{font-size:15.5px}}
+  /* celular: os 2 cards cabem na primeira tela (o da area nao pode ficar escondido embaixo) */
+  @media(max-width:719px){
+    .ac-topo{margin-bottom:16px}.ac-topo h1{font-size:22px}
+    .ac-foto{height:150px;background-position:center 22%}.ac-mos{height:170px}
+    .ac-c.um .ac-sub{display:none}
+    .ac-txt{padding:2px 16px 16px;gap:4px}.ac-tit{font-size:18px}
+    .ac-bt{margin-top:8px;padding:13px}
+    .ac-wa{width:54px;height:54px;right:10px;bottom:10px}
+    .ac-tag{font-size:13px;padding:7px 12px}
+    .ac-mos .trava.esq::before{top:26px}
+  }
   .ac-txt{padding:4px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
   .ac-tit{font-size:20px;font-weight:800;line-height:1.2}
   .ac-sub{font-size:14px;line-height:1.45;color:rgba(255,255,255,.8);flex:1}
