@@ -228,7 +228,9 @@ function mostrarRegraPlanilha(emailPedido){
 function pintarRegra(j, aluno){
   var box = document.getElementById('pp-regra'), html = '';
   if (j.ajuste.pode){
-    html = '<div class="pp-faixa"><div>Os treinos ficaram fortes ou leves demais? Você pode ajustar sua planilha 1 vez até <b>' +
+    // Paulo 01/11: alem da intensidade, pergunta se os dias cabem na rotina (numero real de dias dele)
+    html = '<div class="pp-faixa"><div>Os treinos ficaram fortes ou leves demais? Ou os <b>' + j.atual.qtdDias +
+      ' dias por semana</b> não estão cabendo na sua rotina? Você pode ajustar sua planilha 1 vez até <b>' +
       ddmm(j.ajuste.ate) + '</b>.</div><a class="btn" href="' + NP_URL + '?modo=ajuste">AJUSTAR MINHA PLANILHA</a></div>';
     lembreteSemana1();
   } else if (j.nova.pode){
