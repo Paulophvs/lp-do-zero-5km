@@ -1383,4 +1383,70 @@ document.getElementById('btnTema').onclick=()=>{
     }).catch(function(){});
 })();
 </script>
+<script>
+/* ===== Limite de avaliacoes (regra do Paulo 01/11): ate 2 a cada 27 dias =====
+   Bloco separado de proposito, igual ao da area de membros acima: o motor e as telas
+   do Artifact v64 nao mudam. Aqui so (1) ao comecar, avisa quando e a 2a da janela e
+   barra a 3a; (2) no ultimo passo, registra a avaliacao no servidor (/api/avaliacao),
+   que e quem decide de verdade (vale em qualquer aparelho). A reavaliacao do fim do
+   bloco nao gasta a conta (o servidor confere se o bloco foi mesmo concluido). */
+(function(){
+  var aluno = null;
+  try { aluno = JSON.parse(localStorage.getItem('pp-aluno') || 'null'); } catch(_){}
+  if (!aluno || !aluno.token) return;
+  var AUTH = 'Bearer ' + aluno.token;
+  function ddmm(ts){ var d = new Date(ts); return String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0'); }
+  function api(metodo, corpo){
+    return fetch('/api/avaliacao', { method: metodo, cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', Authorization: AUTH }, body: corpo ? JSON.stringify(corpo) : undefined })
+      .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ return { s: r.status, j: j }; }); });
+  }
+  var caixa = null;
+  function fechar(){ if (caixa){ caixa.remove(); caixa = null; } }
+  function aviso(titulo, texto, botoes){
+    fechar();
+    caixa = document.createElement('div');
+    caixa.id = 'avisoAval';
+    caixa.setAttribute('role', 'dialog');
+    caixa.style.cssText = 'position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:20px';
+    var h = '<div class="diag" style="max-width:420px;width:100%;margin:0"><h3 style="margin-bottom:8px">' + titulo + '</h3><p>' + texto + '</p>' +
+      '<div class="nav" style="margin-top:16px;display:flex;flex-direction:column;gap:10px">';
+    botoes.forEach(function(b, i){ h += '<button class="btn ' + (i === 0 ? 'pri' : 'sec') + '" type="button" data-i="' + i + '" style="width:100%">' + b[0] + '</button>'; });
+    caixa.innerHTML = h + '</div></div>';
+    caixa.querySelectorAll('button').forEach(function(el){ el.onclick = function(){ var f = botoes[+el.dataset.i][1]; fechar(); f(); }; });
+    document.body.appendChild(caixa);
+  }
+  function bloqueio(j){
+    var temPlano = !!lerPlano();
+    aviso('Você já fez 2 avaliações neste período', 'Sua próxima avaliação libera em <b>' + ddmm(j.libera_em) + '</b>. Até lá, siga o seu plano atual.',
+      [[temPlano ? 'CONTINUAR MEU PLANO' : 'VOLTAR', function(){ if (temPlano) continuarPlano(); else { refazer(); } }]]);
+  }
+
+  // 1) ao comecar a avaliacao (botao da tela inicial; o "Refazer" do plano volta para ela)
+  var btn = document.getElementById('btnComecar');
+  if (btn) btn.onclick = function(){
+    var v = lerPlano();
+    if (v && v.fim){ ir(10); return; }   // bloco concluido: o caminho e a reavaliacao, que nao gasta a conta
+    api('GET').then(function(x){
+      if (x.s !== 200 || !x.j.ok){ ir(10); return; }   // sem resposta: segue; o registro no fim confere de novo
+      if (!x.j.pode){ bloqueio(x.j); return; }
+      if (x.j.ultima){
+        aviso('Antes de começar', 'Essa é a sua 2ª avaliação deste período. Depois dessa, você só vai poder fazer uma nova avaliação em <b>' +
+          ddmm(x.j.libera_em) + '</b>.', [['CONTINUAR', function(){ ir(10); }], ['VOLTAR', function(){}]]);
+        return;
+      }
+      ir(10);
+    }).catch(function(){ ir(10); });
+  };
+
+  // 2) no ultimo passo, antes de montar o plano: registra no servidor; se passou do limite, nao monta
+  var val5Original = val5;
+  val5 = function(){
+    api('POST', { modo: resp.modo === 'reav' ? 'reav' : 'primeira' }).then(function(x){
+      if (x.s === 429){ bloqueio(x.j); return; }
+      val5Original();
+    }).catch(function(){ val5Original(); });   // servidor fora do ar nao trava o aluno que pagou
+  };
+})();
+</script>
 </body></html>
