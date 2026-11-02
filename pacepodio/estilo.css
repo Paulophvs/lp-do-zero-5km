@@ -316,3 +316,5 @@
   .btn-sec{background:transparent;border:2px solid var(--linha);color:var(--texto)}
   .btn-sec:hover{background:#1E1E1E;border-color:var(--texto-fraco)}
   .card-garantia{font-size:13px;color:var(--texto-fraco);text-align:center;margin:4px 0 0}
+  .card-faixa .faixa-1{display:block;font-size:17px;font-weight:800}
+  .card-faixa .faixa-2{display:block;font-size:15px;font-weight:700;margin-top:2px}
