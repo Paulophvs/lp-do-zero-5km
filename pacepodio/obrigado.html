@@ -81,6 +81,9 @@
   .pp-pronta.aberta .pp-oferta{display:block}
   .pp-pronta.aberta .pp-abrir{display:none}
   .pp-oferta .btn{margin-top:14px}
+  /* 02/11 (Paulo): botao de voltar pra area embaixo do PDF; contorno pra nao competir com o laranja */
+  .btn-voltar-area{display:block;margin-top:12px;text-align:center;text-decoration:none;background:transparent;color:#fff;border:2px solid #fff;border-radius:12px;padding:16px 20px;font-size:16px;font-weight:800;letter-spacing:.04em}
+  .btn-voltar-area:hover{background:rgba(255,255,255,.08)}
   .pp-esperar{display:block;margin:12px auto 0;background:none;border:0;color:var(--texto-fraco);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer}
 </style>
 </head>
@@ -204,6 +207,7 @@
     <p class="obs-plano" id="obs-plano" style="display:none"></p>
     <div id="plano-corpo"></div>
     <button class="btn" onclick="baixarPDFAtual(this)">BAIXAR MINHA PLANILHA (PDF)</button>
+    <a class="btn-voltar-area" href="/pacepodio/treinos/">VOLTAR PARA A ÁREA DO ALUNO</a>
   </section>
 
 </div>
