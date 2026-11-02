@@ -203,7 +203,7 @@
     </div>
     <p class="obs-plano" id="obs-plano" style="display:none"></p>
     <div id="plano-corpo"></div>
-    <button class="btn" onclick="baixarPDF()">BAIXAR MINHA PLANILHA (PDF)</button>
+    <button class="btn" onclick="baixarPDFAtual(this)">BAIXAR MINHA PLANILHA (PDF)</button>
   </section>
 
 </div>
@@ -221,6 +221,52 @@
 var CHAVE_PEDIDO_LOCAL = 'pacebaixo_pedido';
 var TENTATIVAS_MAX = 20;   // ~1 min de polling (3s cada)
 var tentativas = 0;
+
+// 02/11 (Paulo): aba aberta antes de um ajuste/planilha nova guardava a planilha
+// velha e o PDF saia antigo. Quando o aluno volta pra aba e antes do PDF, busca o
+// pedido atual no servidor; se mudou, redesenha a tela e o PDF sai com a nova.
+var emailPlano = null;
+var conferidoEm = 0;
+var FRESCO_MS = 15000;   // conferiu ha menos de 15s: gera o PDF direto (download no mesmo toque)
+function chavePlano(){
+  return [resp.distancia, resp.min, resp.seg, resp.dias, (resp.diasSemana || []).join(','), resp.ciclo].join('|');
+}
+function atualizarPlano(){
+  if (!emailPlano) return Promise.resolve(false);
+  return fetch('/api/consultar-pedido?email=' + encodeURIComponent(emailPlano), { cache: 'no-store' })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(out){
+      var p = out && out.ok && out.pedido;
+      if (!p || p.status !== 'pago' || p.sem_dados) return false;
+      conferidoEm = Date.now();
+      var antes = chavePlano();
+      preencherRespComPedido(p);
+      if (chavePlano() === antes) return false;
+      verPlano();
+      var bc = document.getElementById('bloco-ciclo');
+      if (bc) bc.style.display = 'none';
+      mostrarRegraPlanilha(p.email || emailPlano);
+      return true;
+    })
+    .catch(function(){ return false; });
+}
+function baixarPDFAtual(btn){
+  if (btn.disabled) return;
+  if (Date.now() - conferidoEm < FRESCO_MS) { baixarPDF(); return; }
+  btn.disabled = true; btn.textContent = 'Gerando PDF...';
+  atualizarPlano().then(function(){
+    btn.disabled = false; btn.textContent = 'BAIXAR MINHA PLANILHA (PDF)';
+    baixarPDF();
+  });
+}
+function planoNaTela(){
+  var t = document.getElementById('tela-plano');
+  return !!t && t.classList.contains('ativa');
+}
+document.addEventListener('visibilitychange', function(){
+  if (document.visibilityState === 'visible' && planoNaTela()) atualizarPlano();
+});
+window.addEventListener('pageshow', function(e){ if (e.persisted && planoNaTela()) atualizarPlano(); });
 
 function preencherRespComPedido(p){
   resp.distancia = p.distancia;
@@ -395,6 +441,8 @@ function consultarEEsperar(email){
           av.style.display = '';
         }
         preencherRespComPedido(pedido);
+        emailPlano = email;
+        conferidoEm = Date.now();
         verPlano();
         // o seletor de ciclo (M1-M4) e ferramenta interna de teste do Paulo;
         // quem pagou ve so o mes 1, nao faz sentido mostrar isso pro aluno.
