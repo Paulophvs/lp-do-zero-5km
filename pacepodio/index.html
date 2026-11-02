@@ -144,8 +144,8 @@
 
   <!-- ===== TELA 5B: ESCOLHA DE PLANO ===== -->
   <section class="tela" id="tela-preco">
-    <p class="passo">ÚLTIMO PASSO</p>
-    <h2 class="pergunta">Escolhe o plano pra receber sua planilha completa</h2>
+    <p class="passo">QUASE LÁ</p>
+    <h2 class="pergunta">Para onde enviamos a sua planilha completa?</h2>
     <p class="ajuda">Assim que o pagamento for confirmado, sua planilha das 4 semanas abre na hora e também chega no seu e-mail, com botão pra baixar em PDF.</p>
     <div class="campos">
       <div class="campo">
@@ -166,9 +166,46 @@
       </div>
     </div>
     <p class="erro" id="erro-preco"></p>
-    <button class="btn" id="btn-mensal" onclick="irCheckout('mensal')">PLANO MENSAL</button>
-    <button class="btn" id="btn-anual" onclick="irCheckout('anual')">PLANO ANUAL</button>
+    <p class="aviso-planos">Na próxima tela você vê os planos e os preços.</p>
+    <button class="btn" id="btn-ver-planos" onclick="verPlanos()">VER OS PLANOS</button>
     <button class="voltar" onclick="irPara('tela-res')">Voltar</button>
+  </section>
+
+  <!-- ===== TELA 5C: PLANOS (cards de preco, Paulo 03/11) ===== -->
+  <section class="tela" id="tela-planos">
+    <p class="passo">ÚLTIMO PASSO</p>
+    <h2 class="pergunta">Escolha o seu plano</h2>
+
+    <div class="card-plano card-anual">
+      <span class="card-selo">RECOMENDADO</span>
+      <p class="card-nome">Plano Anual</p>
+      <p class="card-preco">12x de R$ 19,50</p>
+      <p class="card-avista">ou R$ 188,50 à vista</p>
+      <ul class="card-lista">
+        <li class="tem">Planilha nova a cada 4 semanas, o ano inteiro</li>
+        <li class="tem">Fortalecimento muscular personalizado para corredores</li>
+        <li class="tem">Alimentação e suplementação para corredores</li>
+        <li class="tem">Grupo VIP no WhatsApp</li>
+      </ul>
+      <p class="card-faixa">Sai por menos da metade do preço do mensal</p>
+      <button class="btn" id="btn-anual" onclick="irCheckout('anual')">QUERO O PLANO ANUAL</button>
+    </div>
+
+    <div class="card-plano card-mensal">
+      <p class="card-nome">Plano Mensal</p>
+      <p class="card-preco">R$ 39,90 por mês</p>
+      <ul class="card-lista">
+        <li class="tem">Sua planilha de 4 semanas</li>
+        <li class="tem">Planilha nova a cada renovação</li>
+        <li class="nao">Fortalecimento muscular</li>
+        <li class="nao">Alimentação e suplementação</li>
+        <li class="nao">Grupo VIP no WhatsApp</li>
+      </ul>
+      <button class="btn btn-sec" id="btn-mensal" onclick="irCheckout('mensal')">QUERO O PLANO MENSAL</button>
+    </div>
+
+    <p class="card-garantia">Garantia de 7 dias: se não gostar, devolvemos seu dinheiro.</p>
+    <button class="voltar" onclick="irPara('tela-preco')">Voltar</button>
   </section>
 
   <!-- ===== TELA 6: PLANILHA COMPLETA ===== -->

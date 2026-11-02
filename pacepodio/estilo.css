@@ -296,3 +296,23 @@
     font-size:14px;font-weight:600;line-height:1.5;
   }
   .aquecimento .pc{color:var(--laranja);font-weight:800}
+
+  /* ---- tela dos planos: 2 cards de preco (Paulo 03/11) ---- */
+  .aviso-planos{font-size:13px;color:var(--texto-fraco);text-align:center;margin:0 0 12px}
+  .card-plano{position:relative;background:var(--carvao);border:1px solid var(--linha);border-radius:16px;padding:22px 18px 18px;margin-bottom:16px}
+  .card-anual{border:2px solid var(--laranja);background:linear-gradient(180deg,rgba(248,104,0,.10),var(--carvao) 45%);margin-top:14px}
+  .card-mensal{opacity:.85}
+  .card-selo{position:absolute;top:-12px;left:18px;background:var(--laranja);color:#fff;font-size:11px;font-weight:800;letter-spacing:.12em;padding:5px 10px;border-radius:999px}
+  .card-nome{font-size:14px;font-weight:700;color:var(--texto-fraco);margin-bottom:6px}
+  .card-preco{font-size:28px;font-weight:800;line-height:1.15}
+  .card-mensal .card-preco{font-size:22px}
+  .card-avista{font-size:14px;color:var(--texto-fraco);margin-top:4px}
+  .card-lista{list-style:none;margin:16px 0}
+  .card-lista li{position:relative;padding:6px 0 6px 26px;font-size:14px;line-height:1.45}
+  .card-lista li.tem::before{content:"✓";position:absolute;left:0;top:6px;color:var(--verde);font-weight:800}
+  .card-lista li.nao{color:#6E6E6E;text-decoration:line-through}
+  .card-lista li.nao::before{content:"✕";position:absolute;left:0;top:6px;color:#6E6E6E;font-weight:800}
+  .card-faixa{background:rgba(0,230,118,.10);color:var(--verde);font-size:13px;font-weight:700;text-align:center;border-radius:10px;padding:10px;margin-bottom:14px}
+  .btn-sec{background:transparent;border:2px solid var(--linha);color:var(--texto)}
+  .btn-sec:hover{background:#1E1E1E;border-color:var(--texto-fraco)}
+  .card-garantia{font-size:13px;color:var(--texto-fraco);text-align:center;margin:4px 0 0}

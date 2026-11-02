@@ -683,7 +683,8 @@ function telefoneValido(v){
   return d.length === 10 || d.length === 11; // DDD + numero, com ou sem 9
 }
 
-function irCheckout(plano){
+// confere o formulario; devolve os dados ou null (e mostra o erro na tela do formulario)
+function dadosFormulario(){
   var campoNome = document.getElementById('preco-nome');
   var campoEmail = document.getElementById('preco-email');
   var campoWhats = document.getElementById('preco-whatsapp');
@@ -694,23 +695,36 @@ function irCheckout(plano){
 
   if (!nome){
     if (erro) erro.textContent = 'Digita seu nome.';
-    return;
+    return null;
   }
   if (!emailValido(email)){
     if (erro) erro.textContent = 'Digita um e-mail válido pra gente mandar sua planilha.';
-    return;
+    return null;
   }
   // 01/11 (Paulo): confirmar o e-mail reduz erro de digitacao (e-mail errado = planilha que nao chega)
   var campoEmail2 = document.getElementById('preco-email2');
   if (campoEmail2 && campoEmail2.value.trim().toLowerCase() !== email.toLowerCase()){
     if (erro) erro.textContent = 'Os dois e-mails estão diferentes. Confere e digita igual nos dois campos.';
-    return;
+    return null;
   }
   if (!telefoneValido(whatsapp)){
     if (erro) erro.textContent = 'Digita seu WhatsApp com DDD, ex: (11) 99999-9999.';
-    return;
+    return null;
   }
   if (erro) erro.textContent = '';
+  return { nome: nome, email: email, whatsapp: whatsapp };
+}
+
+// 03/11 (Paulo): formulario primeiro, depois a tela dos 2 cards de preco
+function verPlanos(){
+  if (!dadosFormulario()) return;
+  irPara('tela-planos');
+}
+
+function irCheckout(plano){
+  var dados = dadosFormulario();
+  if (!dados){ irPara('tela-preco'); return; }
+  var nome = dados.nome, email = dados.email, whatsapp = dados.whatsapp;
 
   var btnMensal = document.getElementById('btn-mensal');
   var btnAnual = document.getElementById('btn-anual');
