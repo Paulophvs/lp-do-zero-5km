@@ -69,6 +69,7 @@
   .pp-faixa.liberada{background:rgba(0,230,118,.1);border-color:rgba(0,230,118,.5)}
   .pp-faixa.liberada .pp-tit{color:var(--verde)}
   .pp-faixa .btn{margin-top:12px}
+  .pp-faixa .pp-atencao{font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--laranja);margin-bottom:6px}
   /* 02/11: botao que e link (<a>) saia sublinhado e alinhado a esquerda */
   .pp-faixa a.btn,.pp-oferta a.btn{text-decoration:none;text-align:center}
   .pp-lembrete{margin:-4px 0 12px;padding:10px 14px;border-radius:10px;border:1px dashed rgba(248,104,0,.6);font-size:14px;color:var(--texto-fraco)}
@@ -319,8 +320,9 @@ function mostrarRegraPlanilha(emailPedido){
 function pintarRegra(j, aluno){
   var box = document.getElementById('pp-regra'), html = '';
   if (j.ajuste.pode){
-    // Paulo 02/11: texto direto, sem titulo, e o ajuste fica SO aqui (saiu o lembrete da semana 1)
-    html = '<div class="pp-faixa"><div>Durante a primeira semana, se os treinos ficarem fortes ou fracos demais, ou se os ' +
+    // Paulo 02/11: texto direto, e o ajuste fica SO aqui (saiu o lembrete da semana 1)
+    // Paulo 03/11: rotulo ATENCAO pequeno em laranja em cima (estilo do .passo)
+    html = '<div class="pp-faixa"><div class="pp-atencao">ATENÇÃO</div><div>Durante a primeira semana, se os treinos ficarem fortes ou fracos demais, ou se os ' +
       j.atual.qtdDias + ' dias por semana não couberem na sua rotina, volte aqui e reajuste sua planilha. ' +
       'Você pode fazer isso 1 vez, até <b>' + ddmm(j.ajuste.ate) + '</b>.</div>' +
       '<a class="btn" href="' + NP_URL + '?modo=ajuste">REAJUSTAR MINHA PLANILHA</a></div>';
