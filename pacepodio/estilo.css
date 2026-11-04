@@ -321,3 +321,39 @@
   .card-garantia{font-size:13px;color:var(--texto-fraco);text-align:center;margin:4px 0 0}
   .card-faixa .faixa-1{display:block;font-size:17px;font-weight:800}
   .card-faixa .faixa-2{display:block;font-size:15px;font-weight:700;margin-top:2px}
+
+  /* ---- resultado 4/8/12 semanas (Paulo 04/11): um embaixo do outro, tudo numa tela ---- */
+  #tela-res .res-hoje{padding:12px 16px;margin-bottom:8px}
+  #tela-res #r-dist{text-transform:uppercase}
+  #tela-res .hoje-mini{display:flex;justify-content:space-between;align-items:baseline}
+  #tela-res .hoje-mini .t{font-size:24px;font-weight:900}
+  #tela-res .marcos{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:8px}
+  #tela-res .marco{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px;row-gap:2px;background:var(--carvao);border:1px solid var(--linha);border-radius:14px;padding:9px 14px}
+  #tela-res .marco .res-rotulo{grid-column:1;grid-row:1;margin:0;font-size:11px;white-space:nowrap}
+  #tela-res .marco .m-delta{grid-column:1;grid-row:2;font-size:12px;color:var(--texto-fraco);font-weight:600}
+  #tela-res .marco .m-tempo{grid-column:2;grid-row:1/3;font-size:24px;font-weight:900;color:var(--verde);letter-spacing:-.02em}
+  #tela-res .m4 .r4{justify-self:start;display:inline-block;border-bottom:2px solid var(--laranja);padding-bottom:2px}
+  #tela-res .heroi{background:linear-gradient(180deg,rgba(0,230,118,.10),var(--carvao) 60%);border:2px solid var(--verde);border-radius:16px;padding:12px 16px;text-align:center;margin-bottom:6px}
+  #tela-res .heroi .res-rotulo{color:var(--verde);text-align:center}
+  #tela-res .heroi .h-tempo{font-size:clamp(40px,11vw,52px);font-weight:900;letter-spacing:-.02em;color:var(--verde);line-height:1.05}
+  #tela-res .heroi .h-pace{font-size:14px;color:var(--texto-fraco);font-weight:600;margin-top:2px}
+  #tela-res .heroi .h-delta{display:inline-block;margin-top:6px;background:rgba(0,230,118,.14);color:var(--verde);font-weight:800;font-size:14px;border-radius:999px;padding:4px 12px}
+  #tela-res .nota{font-size:11px;color:#777;text-align:center;margin:0 0 8px}
+  #tela-res .selo-nivel{margin-bottom:12px}
+  @media (max-height:660px){
+    #tela-res .res-hoje{padding-top:10px;padding-bottom:10px}
+    #tela-res .heroi{padding:10px 16px}
+    #tela-res .heroi .h-tempo{font-size:38px}
+    #tela-res .heroi .h-delta{margin-top:4px;padding:3px 12px}
+    #tela-res .selo-frase{display:none}
+    #tela-res .nota{margin:4px 0 8px}
+  }
+  @media (max-height:600px){
+    #tela-res .heroi .h-pace{display:none}
+    #tela-res .marco{padding:7px 12px}
+    #tela-res .marco .m-tempo{font-size:21px}
+    #tela-res .marcos{gap:6px}
+    #tela-res .heroi .h-tempo{font-size:34px}
+    #tela-res .selo-nivel{margin-bottom:8px}
+    #tela-res .nota{margin:2px 0 6px}
+  }

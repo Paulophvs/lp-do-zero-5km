@@ -109,30 +109,24 @@
 
   <!-- ===== TELA 5: RESULTADO ===== -->
   <section class="tela" id="tela-res">
-    <div class="res-bloco">
-      <p class="res-rotulo laranja">HOJE</p>
-      <p class="res-frase">
-        Você corre <b id="r-dist">10 km</b> em
-        <span class="res-num" id="r-tempo-hoje">43:54</span>
-        <span class="res-pace">num pace de <b id="r-pace-hoje">4:23</b> por km</span>
-      </p>
+    <!-- 04/11 (Paulo): resultado em 3 marcos, um embaixo do outro. 4 semanas = a promessa
+         do titulo (linha laranja); 12 semanas = destaque. Conta encadeada: cada bloco parte
+         do tempo do bloco anterior e sobe de faixa (igual a reavaliacao a cada 4 semanas). -->
+    <div class="res-bloco res-hoje">
+      <p class="res-rotulo laranja">HOJE · <span id="r-dist">10 km</span></p>
+      <div class="hoje-mini"><span class="t" id="r-tempo-hoje">43:54</span><span class="res-pace">pace <b id="r-pace-hoje">4:23</b>/km</span></div>
     </div>
-
-    <div class="res-bloco">
-      <p class="res-rotulo verde">DAQUI A 4 SEMANAS</p>
-      <p class="res-frase">
-        Seguindo o método Pace Pódio, você vai estar correndo em
-        <span class="res-num verde" id="r-tempo-novo">43:00</span>
-        <span class="res-pace">num pace de <b id="r-pace-novo">4:18</b> por km</span>
-      </p>
+    <div class="marcos">
+      <div class="marco m4"><p class="res-rotulo verde r4">EM 4 SEMANAS</p><div class="m-tempo" id="r-tempo-novo">43:00</div><div class="m-delta" id="r-delta">54 segundos a menos</div></div>
+      <div class="marco"><p class="res-rotulo verde">EM 8 SEMANAS</p><div class="m-tempo" id="r-tempo-8">42:10</div><div class="m-delta" id="r-delta-8">1:44 a menos</div></div>
     </div>
-
-    <div class="soco">
-      <div class="soco-num" id="r-delta">54 segundos</div>
-      <div class="soco-txt">A MENOS</div>
+    <div class="heroi">
+      <p class="res-rotulo">EM 12 SEMANAS</p>
+      <div class="h-tempo" id="r-tempo-12">41:20</div>
+      <div class="h-pace">pace de <b id="r-pace-12">4:08</b> por km</div>
+      <div class="h-delta" id="r-delta-12">2:34 a menos</div>
     </div>
-
-    <p class="venda">Esse número não vem de sorte. Vem de <b>4 semanas de treinos feitos sob medida pra você</b>, com o tempo, a velocidade, a distância e o pace exato de cada treino.</p>
+    <p class="nota">Estimativa pelo seu tempo de corrida de hoje.</p>
 
     <div class="selo-nivel res-bloco" id="bloco-nivel" style="display:none"></div>
 

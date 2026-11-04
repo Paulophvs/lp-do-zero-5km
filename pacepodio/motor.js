@@ -210,6 +210,12 @@ function segParaTempo(t){
   if (h > 0) return h + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
   return m + ':' + String(s).padStart(2,'0');
 }
+/* "1:32 a menos" / "45 segundos a menos" (cards do resultado, 04/11) */
+function deltaCurto(seg){
+  if (seg <= 0) return 'o mesmo tempo';
+  if (seg < 60) return seg + ' segundos a menos';
+  return Math.floor(seg/60) + ':' + String(seg % 60).padStart(2,'0') + ' a menos';
+}
 function textoDelta(seg){
   if (seg <= 0) return 'o mesmo tempo';
   if (seg < 60) return seg + ' segundos';
@@ -389,12 +395,21 @@ function calcular(){
   resp.min = mmTotal; resp.seg = ss;   // guarda o total (hora ja somada) pra montar a planilha
   var r = prever(d, mmTotal, ss);
 
+  // 8 e 12 semanas (Paulo 04/11): o mesmo calculo de novo, partindo do tempo do bloco
+  // anterior e subindo de faixa, como na reavaliacao a cada 4 semanas
+  var r8  = prever(d, Math.floor(r.segNovo / 60), r.segNovo % 60);
+  var r12 = prever(d, Math.floor(r8.segNovo / 60), r8.segNovo % 60);
+
   document.getElementById('r-dist').textContent       = d + ' km';
   document.getElementById('r-tempo-hoje').textContent = segParaTempo(r.segHoje);
   document.getElementById('r-pace-hoje').textContent  = ms(r.paceHoje);
   document.getElementById('r-tempo-novo').textContent = segParaTempo(r.segNovo);
-  document.getElementById('r-pace-novo').textContent  = ms(r.paceNovo);
-  document.getElementById('r-delta').textContent      = textoDelta(r.delta);
+  document.getElementById('r-delta').textContent      = deltaCurto(r.segHoje - r.segNovo);
+  document.getElementById('r-tempo-8').textContent    = segParaTempo(r8.segNovo);
+  document.getElementById('r-delta-8').textContent    = deltaCurto(r.segHoje - r8.segNovo);
+  document.getElementById('r-tempo-12').textContent   = segParaTempo(r12.segNovo);
+  document.getElementById('r-pace-12').textContent    = ms(r12.paceNovo);
+  document.getElementById('r-delta-12').textContent   = deltaCurto(r.segHoje - r12.segNovo);
   renderSeloNivel(nivelDoTempo(d, mmTotal + ss/60));
   mostrarObs('obs-res');
   irPara('tela-res');
