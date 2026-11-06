@@ -851,7 +851,7 @@ function baixarPlano(){
         tipo='Intervalado'; td=t.min+' min';
         pace=t.durForte+' forte a '+t.paceForte+'/km, '+t.durLeve+' leve a '+t.paceLeve+'/km';
       } else if (t.tipo === 'competicao'){
-        tipo='Competicao'; td=t.km+' km'; pace='alvo '+t.paceAlvo+'/km (previsto '+t.tempoPrevisto+')';
+        tipo='Ritmo de prova'; td=t.km+' km'; pace='alvo '+t.paceAlvo+'/km (previsto '+t.tempoPrevisto+')';
       } else if (t.tipo === 'livre'){
         tipo='Treino regenerativo livre'; td=''; pace=t.texto;
       } else if (t.tipo === 'tiro'){

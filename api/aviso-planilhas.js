@@ -15,8 +15,9 @@ async function enviarEmail(email) {
   const link = `${SITE}/pacepodio/treinos/`;
   const html = `<div style="font-family:Arial,sans-serif;font-size:16px;color:#1d1d1f;max-width:480px">
 <p>Olá!</p>
-<p>Suas 4 semanas de treino fecharam e a sua <b>nova planilha do Pace Pódio está liberada</b>.</p>
-<p>Ela é montada com o seu tempo de agora, então a evolução dessas semanas já entra no próximo treino.</p>
+<p>Sua <b>nova planilha do Pace Pódio já está liberada</b>.</p>
+<p style="font-size:18px;font-weight:bold">Só solicite a nova planilha depois de terminar a atual, porque você vai precisar fazer uma nova avaliação em nosso site.</p>
+<p>Não precisa ser hoje. Você pode entrar no site no dia que quiser para solicitar sua nova planilha.</p>
 <p style="margin:28px 0"><a href="${link}" style="background:#f86800;color:#fff;text-decoration:none;font-weight:bold;padding:14px 24px;border-radius:8px;display:inline-block">GERAR MINHA NOVA PLANILHA</a></p>
 <p style="font-size:14px;color:#666">Entre na sua área do aluno com o seu e-mail e senha.</p>
 <p style="font-size:14px;color:#666">PH Corridas</p></div>`;
