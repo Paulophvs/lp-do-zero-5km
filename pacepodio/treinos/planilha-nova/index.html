@@ -82,11 +82,11 @@
     <div class="tripla" id="caixas-tempo">
       <div class="campo" id="campo-hora">
         <label for="hora">Horas</label>
-        <input id="hora" type="number" inputmode="numeric" min="1" max="2" placeholder="0"
+        <input id="hora" autocomplete="off" type="number" inputmode="numeric" min="1" max="2" placeholder="0"
                oninput="this.value=this.value.replace(/[^12]/g,'').slice(0,1)">
       </div>
-      <div class="campo"><label for="min">Minutos</label><input id="min" type="number" inputmode="numeric" min="0" max="59" placeholder="00"></div>
-      <div class="campo"><label for="seg">Segundos</label><input id="seg" type="number" inputmode="numeric" min="0" max="59" placeholder="00"></div>
+      <div class="campo"><label for="min">Minutos</label><input id="min" autocomplete="off" type="number" inputmode="numeric" min="0" max="59" placeholder="00"></div>
+      <div class="campo"><label for="seg">Segundos</label><input id="seg" autocomplete="off" type="number" inputmode="numeric" min="0" max="59" placeholder="00"></div>
     </div>
     <p class="erro" id="erro-tempo"></p>
     <button class="btn" onclick="seguirTempo()">CONTINUAR</button>
@@ -120,10 +120,11 @@ function nomesDias(ds){ return ds.map(function(d){ return NOMES_DIAS[d].slice(0,
 function tempoTxt(min, seg){ return segParaTempo(min*60 + seg); }
 
 function escolherDist(d){
+  var mudou = np.distancia !== d;   // Paulo 15/11: tocar na mesma distância não apaga o tempo digitado
   np.distancia = d;
   var ops = document.querySelectorAll('.opcao[data-dist]');
   for (var i=0;i<ops.length;i++) ops[i].classList.toggle('marcada', Number(ops[i].dataset.dist) === d);
-  prepararTempo();
+  prepararTempo(mudou);
   setTimeout(function(){ irPara('tela-dias'); }, 180);
 }
 
@@ -154,23 +155,17 @@ function seguirDias(){
   irPara('tela-tempo');
 }
 
-function prepararTempo(){
+function prepararTempo(limpar){
   var d = np.distancia, t10 = d === 10;
   document.getElementById('np-pergunta-tempo').textContent = 'Qual o seu tempo exato nos ' + d + ' km hoje?';
   document.getElementById('np-ajuda-tempo').textContent = 'Use seu melhor tempo dos últimos 15 dias, ou o da última vez que você correu ' + d +
     ' km. Se você usar um recorde pessoal de meses atrás, o treino vai sair forte demais para você.';
   document.getElementById('campo-hora').style.display = t10 ? '' : 'none';
   document.getElementById('caixas-tempo').className = t10 ? 'tripla' : 'dupla';
-  // sugestao: no ajuste, o tempo que ele colocou; na nova, a previsao da planilha que terminou
-  var a = est.atual, totSeg;
-  if (MODO === 'nova' && d === a.distancia){
-    totSeg = prever(a.distancia, a.minutos, a.segundos).segNovo;
-    var s = document.getElementById('np-sugestao');
-    s.textContent = 'Preenchemos com a previsão da sua última planilha (' + segParaTempo(totSeg) + '). Troque pelo seu tempo real de hoje.';
-    s.style.display = '';
-  } else if (d === a.distancia){
-    totSeg = a.minutos*60 + a.segundos;
-  } else { totSeg = null; document.getElementById('np-sugestao').style.display = 'none'; }
+  // Paulo 15/11: na nova planilha nada vem preenchido (sem previsão); no ajuste, o tempo que ele colocou na compra
+  document.getElementById('np-sugestao').style.display = 'none';
+  if (!limpar) return;   // mesma distância: mantém o que ele digitou
+  var a = est.atual, totSeg = (MODO === 'ajuste' && d === a.distancia) ? a.minutos*60 + a.segundos : null;
   var h = document.getElementById('hora'), m = document.getElementById('min'), sg = document.getElementById('seg');
   if (totSeg === null){ h.value = ''; m.value = ''; sg.value = ''; return; }
   var mm = Math.floor(totSeg/60), ss = totSeg % 60;
@@ -266,10 +261,12 @@ function confirmar(){
       est = j;
       if (MODO === 'ajuste' && !j.ajuste.pode){ mensagem('Ajuste indisponível', j.ajuste.usado ? 'Você já usou o seu ajuste.' : 'O ajuste vale só nos 7 primeiros dias da primeira planilha.'); return; }
       if (MODO === 'nova' && !j.nova.pode){ mensagem('Ainda não liberou', j.nova.faltam_dias > 0 ? 'Sua nova planilha libera em ' + j.nova.faltam_dias + (j.nova.faltam_dias === 1 ? ' dia.' : ' dias.') : 'Sua nova planilha libera na renovação do plano.'); return; }
-      np.dias = (j.atual.diasSemana || []).slice(); pintarDias();
-      var ops = document.querySelectorAll('.opcao[data-dist]');
-      for (var i=0;i<ops.length;i++) ops[i].classList.toggle('marcada', Number(ops[i].dataset.dist) === j.atual.distancia);
-      np.distancia = j.atual.distancia; prepararTempo();
+      if (MODO === 'ajuste'){   // ajuste (1ª semana): continua preenchido para corrigir só o que estava errado
+        np.dias = (j.atual.diasSemana || []).slice(); pintarDias();
+        var ops = document.querySelectorAll('.opcao[data-dist]');
+        for (var i=0;i<ops.length;i++) ops[i].classList.toggle('marcada', Number(ops[i].dataset.dist) === j.atual.distancia);
+        np.distancia = j.atual.distancia; prepararTempo(true);
+      }   // nova planilha (Paulo 15/11): distância, dias e tempo vêm em branco
       irPara('tela-dist');
     })
     .catch(function(){ mensagem('Sem conexão', 'Não consegui carregar sua planilha. Tenta de novo em instantes.'); });
